@@ -46,8 +46,7 @@ rules/Learn-More/Video-list sub-sections inside the longer topics.
 Mentions of videos (e.g. "Watch this video to learn more about how to register for the GED®:",
 "Video 1: Eliminating Wrong Answers") stay as plain text — the source has no actual video asset
 to embed, just a title. The trailing `Source: https://classroom.usahello.org/... · © USAHello (CC
-BY-NC-SA 4.0)` line is kept as a small attribution block at the end of the page, since that's the
-actual license this content is reused under.
+BY-NC-SA 4.0)` attribution line is dropped — not part of the extracted content.
 
 ## Extraction
 
