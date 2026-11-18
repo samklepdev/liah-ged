@@ -10,7 +10,7 @@ import { courses } from '../models/schema.ts';
 import type { ParsedCourse, ParsedSubject } from '../lib/quiz-parser.ts';
 
 const subject: ParsedSubject = JSON.parse(
-  readFileSync(new URL('../data/chassis.quiz.json', import.meta.url), 'utf8'),
+  readFileSync(new URL('../test/fixtures/chassis.quiz.json', import.meta.url), 'utf8'),
 );
 const SLUG_1 = 'chassis-tire-and-rim-essentials';
 const SLUG_2 = 'chassis-best-practice-tire-fitment';

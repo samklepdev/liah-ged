@@ -1,11 +1,14 @@
-# LIAH
+# LIAH HSD
 
-An e-learning platform for LIAH Wellness — lets users browse subjects and courses, take quizzes, review their results, and track progress. Admins can import quizzes/users and review learner attempts.
+A high-school-diploma learning platform for LIAH Wellness — students browse
+subjects and courses, take quizzes, review their results, track progress, and
+earn a downloadable diploma certificate once every course is passed. Admins
+can import quizzes/users and review learner attempts.
 
 ## Stack
 
 - **Frontend**: React 19 + TypeScript, Vite, React Router, Vitest + Testing Library
-- **Backend**: Express 5 + TypeScript, Drizzle ORM, PostgreSQL, Argon2 (password hashing), Zod (validation)
+- **Backend**: Express 5 + TypeScript, Drizzle ORM, PostgreSQL, Argon2 (password hashing), Zod (validation), pdfkit (certificates)
 - **Monorepo**: npm workspaces (`backend`, `frontend`), run together with `concurrently`
 - **Deployment**: Vercel (see `vercel.json` — frontend served as a Vite app, backend as a serverless function, `/api/*` routed to the backend)
 
@@ -14,18 +17,19 @@ An e-learning platform for LIAH Wellness — lets users browse subjects and cour
 ```
 backend/
   src/
-    routes/        # auth, catalog, quiz, admin, admin-import
+    routes/        # auth, catalog, quiz, admin, admin-import, certificates
     controllers/    # request handlers (one per route group, with colocated tests)
-    models/         # Drizzle schema + data access (users, quizzes, attempts, sessions, catalog)
+    models/         # Drizzle schema + data access (users, quizzes, attempts, sessions, catalog, certificates)
     middleware/
     lib/, config/, types/
-    scripts/        # quiz PDF parsing, quiz/admin seeding
+    scripts/        # quiz PDF parsing, quiz/admin/subject seeding
   drizzle.config.ts
 
 frontend/
   src/
     pages/          # QuizPage, ResultsPage, ProgressPage, ProfilePage, SubjectCoursesPage, admin/*
     quiz/           # quiz-taking logic & components (useQuizAttempt, QuestionCard, ReviewGrid, ...)
+    certificates/   # certificate status card + API client
     admin/, auth/, shell/, shared/, lib/
 
 docs/               # project docs
@@ -52,6 +56,10 @@ cp backend/.env.example backend/.env
 
 # push the Drizzle schema to the database
 npm run db:push
+
+# seed the four placeholder subjects (Mathematics, English Language Arts,
+# Science, Social Studies) — real courses/quizzes arrive later
+npm run seed:subjects
 ```
 
 ### Run
@@ -67,7 +75,8 @@ In dev, Vite proxies API requests so the frontend and backend share an origin.
 ### Seeding data
 
 ```bash
-npm run quiz:parse    # parse a quiz PDF into source data
+npm run seed:subjects # placeholder subjects with no courses yet
+npm run quiz:parse    # parse a quiz PDF into source data, once a pack exists
 npm run quiz:seed     # seed quizzes into the database
 npm run db:generate    # generate Drizzle migrations from schema changes
 ```
@@ -93,7 +102,7 @@ npm run build          # builds backend then frontend
 
 See `backend/.env.example` for the full list, including:
 
-- `DATABASE_URL` — Postgres connection string (matches `docker-compose.yml` by default, on port `54330`)
+- `DATABASE_URL` — Postgres connection string (matches `docker-compose.yml` by default, on port `54331`)
 - `PORT`, `NODE_ENV`
 - `CORS_ORIGIN` — only needed if the frontend is served from a different origin than the API
 - `SESSION_TTL_DAYS` — login session lifetime

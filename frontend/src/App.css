@@ -32,12 +32,24 @@
   text-align: center;
 }
 
+.brand-seal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--heading);
+  font-weight: 700;
+}
+
 .auth-mark {
-  display: block;
   width: 3.5rem;
   height: 3.5rem;
   margin: 0 auto;
-  object-fit: contain;
+  font-size: 1.4rem;
+  border-width: 2px;
 }
 
 .auth-head h1 {
@@ -466,11 +478,9 @@ button.primary { padding: 0.6rem 1rem; border-radius: 0.5rem; cursor: pointer; }
 }
 
 .topnav-mark {
-  display: block;
-  flex: 0 0 auto;
   width: 1.75rem;
   height: 1.75rem;
-  object-fit: contain;
+  font-size: 0.75rem;
 }
 
 /* Lets the wordmark truncate instead of overflowing past the navbar's

@@ -1,5 +1,5 @@
 import { useState, type SubmitEvent } from 'react';
-import liahLogo from '../assets/liah-logo.png';
+import { BrandMark } from '../shell/BrandMark';
 import { authApi } from './api';
 import { useAuth } from './useAuth';
 
@@ -46,7 +46,7 @@ export function LoginForm() {
       <div className="auth-page">
         <div className="auth-card">
           <header className="auth-head">
-            <img src={liahLogo} alt="LIAH" className="auth-mark" />
+            <BrandMark className="auth-mark" />
             <h1>Forgot your password?</h1>
           </header>
 
@@ -93,7 +93,7 @@ export function LoginForm() {
     <div className="auth-page">
       <div className="auth-card">
         <header className="auth-head">
-          <img src={liahLogo} alt="LIAH" className="auth-mark" />
+          <BrandMark className="auth-mark" />
           <h1>Sign in to your account</h1>
         </header>
 

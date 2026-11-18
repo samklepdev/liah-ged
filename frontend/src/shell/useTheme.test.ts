@@ -85,17 +85,17 @@ describe('useTheme', () => {
     const { result } = renderHook(() => useTheme());
 
     act(() => result.current.setPref('dark'));
-    expect(window.localStorage.getItem('liah.theme')).toBe('dark');
+    expect(window.localStorage.getItem('liah-hsd.theme')).toBe('dark');
 
     act(() => result.current.setPref('system'));
     // Absence of a value is what the pre-paint script in index.html reads as
     // "follow the OS", so the two must agree.
-    expect(window.localStorage.getItem('liah.theme')).toBeNull();
+    expect(window.localStorage.getItem('liah-hsd.theme')).toBeNull();
   });
 
   test('a stored choice is picked up on mount', () => {
     stubMatchMedia(true);
-    window.localStorage.setItem('liah.theme', 'light');
+    window.localStorage.setItem('liah-hsd.theme', 'light');
 
     const { result } = renderHook(() => useTheme());
 

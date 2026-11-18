@@ -120,6 +120,8 @@ rm -f backend/src/data/*.quiz.json
 
 Expected: the first `ls` lists 8 `*.quiz.json` files before deletion; `backend/src/data/` is empty of `.quiz.json` files afterward. Leave `backend/src/lib/quiz-parser.ts`, `backend/src/scripts/parse-quiz-pdf.ts`, `backend/src/scripts/seed-quizzes.ts`, and `backend/src/test/fixtures/` untouched — the parsing pipeline and its dialect-regression tests are reused as-is, ready for real HSD quiz packs later.
 
+**Important — discovered during execution:** `chassis.quiz.json` is not just app content. Seven test files (`src/scripts/seed-quizzes.test.ts` and six controller tests: `quiz`, `progress`, `grading`, `attempt`, `catalog`, `admin-courses`) read it directly at module scope as their fixture corpus — deleting it breaks the whole backend suite with `ENOENT`. The fix: `cp` `chassis.quiz.json` from `liah-learning` into `backend/src/test/fixtures/` (next to the already-present `chassis.txt` dialect fixture) instead of `backend/src/data/`, then repoint those 7 files' `readFileSync(new URL('../data/chassis.quiz.json', ...))` to `'../test/fixtures/chassis.quiz.json'` (adjust the relative segment per file's own depth). This both fixes the suite and keeps the file out of the `src/data/*.quiz.json` glob `quiz:seed` iterates with no arguments, so a stray `npm run quiz:seed` can never reintroduce automotive content into the running app.
+
 - [ ] **Step 3: Rename the root package**
 
 Read `package.json`, then:

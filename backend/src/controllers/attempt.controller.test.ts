@@ -9,7 +9,7 @@ import { findQuizByCourseSlug } from '../models/quiz.model.ts';
 import type { ParsedSubject } from '../lib/quiz-parser.ts';
 
 const subject: ParsedSubject = JSON.parse(
-  readFileSync(new URL('../data/chassis.quiz.json', import.meta.url), 'utf8'),
+  readFileSync(new URL('../test/fixtures/chassis.quiz.json', import.meta.url), 'utf8'),
 );
 const SLUG = 'chassis-tire-and-rim-essentials';
 

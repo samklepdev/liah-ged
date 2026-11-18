@@ -1,5 +1,5 @@
 import { useState, type SubmitEvent } from 'react';
-import liahLogo from '../assets/liah-logo.png';
+import { BrandMark } from '../shell/BrandMark';
 import { authApi, MIN_PASSWORD_LENGTH } from './api';
 import { useAuth } from './useAuth';
 
@@ -28,7 +28,7 @@ export function ForcedPasswordChangeForm() {
     <div className="auth-page">
       <div className="auth-card">
         <header className="auth-head">
-          <img src={liahLogo} alt="LIAH" className="auth-mark" />
+          <BrandMark className="auth-mark" />
           <h1>Set your password</h1>
           <p className="auth-subtitle">
             An admin created your account with a temporary password. Set your own password to continue.

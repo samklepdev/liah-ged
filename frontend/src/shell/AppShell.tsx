@@ -1,8 +1,8 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
-import liahLogo from '../assets/liah-logo.png';
 import { useAuth } from '../auth/useAuth';
 import type { CatalogContext } from '../quiz/useCatalog';
 import { AccountMenu } from './AccountMenu';
+import { BrandMark } from './BrandMark';
 import { GlobalSearch } from './GlobalSearch';
 import { SidebarNav } from './SidebarNav';
 import { useSidebar } from './useSidebar';
@@ -66,8 +66,8 @@ export function AppShell() {
           </button>
 
           <Link to="/subjects" className="topnav-brand">
-            <img src={liahLogo} alt="" className="topnav-mark" />
-            <span className="topnav-brand-label">LIAH</span>
+            <BrandMark className="topnav-mark" />
+            <span className="topnav-brand-label">LIAH HSD</span>
           </Link>
         </div>
 
