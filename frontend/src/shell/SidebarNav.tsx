@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import { NavLink, useLocation } from 'react-router';
-import { BookIcon, ChartIcon, ChevronRightIcon, SubjectIcon, VideoIcon } from './icons';
+import { BookIcon, ChartIcon, ChevronRightIcon, SubjectIcon } from './icons';
 import { hasPassed } from '../quiz/passed';
 import type { SubjectNavState } from './useSubjectNav';
 
