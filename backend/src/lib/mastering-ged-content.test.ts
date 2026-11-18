@@ -1,6 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseMasteringGedContent, assertExpectedStructure, type Block } from './mastering-ged-content.ts';
+import {
+  parseMasteringGedContent,
+  assertExpectedStructure,
+  dropVideoResourcesSection,
+  type Block,
+} from './mastering-ged-content.ts';
 
 test('parses a heading followed by a paragraph', () => {
   const text = ["What you'll learn", '', 'Some intro paragraph.'].join('\n');
@@ -136,4 +141,28 @@ test('assertExpectedStructure passes when every known heading and subheading is 
 test('assertExpectedStructure throws when headings are missing', () => {
   const blocks: Block[] = [{ type: 'paragraph', text: 'nothing matched' }];
   assert.throws(() => assertExpectedStructure(blocks), /Expected 9 heading blocks, found 0/);
+});
+
+test('dropVideoResourcesSection removes the Video resources heading and everything after it', () => {
+  const blocks: Block[] = [
+    { type: 'heading', text: "What you'll learn" },
+    { type: 'paragraph', text: 'Intro text.' },
+    { type: 'heading', text: 'Video resources' },
+    { type: 'paragraph', text: 'Listed below are videos...' },
+    { type: 'subheading', text: 'Want to enable Spanish sub-titles?' },
+  ];
+
+  assert.deepEqual(dropVideoResourcesSection(blocks), [
+    { type: 'heading', text: "What you'll learn" },
+    { type: 'paragraph', text: 'Intro text.' },
+  ]);
+});
+
+test('dropVideoResourcesSection is a no-op when there is no Video resources heading', () => {
+  const blocks: Block[] = [
+    { type: 'heading', text: "What you'll learn" },
+    { type: 'paragraph', text: 'Intro text.' },
+  ];
+
+  assert.deepEqual(dropVideoResourcesSection(blocks), blocks);
 });
