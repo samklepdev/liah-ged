@@ -153,18 +153,38 @@ export function parseMasteringGedContent(pdfText: string): Block[] {
   return blocks;
 }
 
-const DROPPED_HEADINGS = new Set<string>(['Video resources']);
+const DROPPED_HEADINGS = new Set<string>(['Video resources', 'USAHello’s GED Preparatory Course']);
 
 /**
- * Drops the "Video resources" section (that heading and everything after
- * it, since it's the document's final section) — the GED program no longer
- * wants video links surfaced on this page.
+ * Standalone paragraphs that reference a video embed pdftotext can't
+ * capture (the embed itself produces no extractable text), so the lead-in
+ * line is left dangling with nothing to introduce and reads as a dead end.
  */
-export function dropVideoResourcesSection(blocks: Block[]): Block[] {
-  const cutIndex = blocks.findIndex(
-    (b) => b.type === 'heading' && DROPPED_HEADINGS.has(b.text),
-  );
-  return cutIndex === -1 ? blocks : blocks.slice(0, cutIndex);
+const DROPPED_PARAGRAPHS = new Set<string>([
+  'Watch this video to learn more about how to register for the GED®:',
+]);
+
+/**
+ * Drops each section in DROPPED_HEADINGS: the heading itself and every
+ * block up to (not including) the next heading, or the end of the
+ * document if the dropped heading is the last section. Also drops any
+ * standalone paragraph in DROPPED_PARAGRAPHS.
+ */
+export function dropSections(blocks: Block[]): Block[] {
+  const result: Block[] = [];
+  let dropping = false;
+
+  for (const block of blocks) {
+    if (block.type === 'heading') {
+      dropping = DROPPED_HEADINGS.has(block.text);
+      if (dropping) continue;
+    }
+    if (dropping) continue;
+    if (block.type === 'paragraph' && DROPPED_PARAGRAPHS.has(block.text)) continue;
+    result.push(block);
+  }
+
+  return result;
 }
 
 /**
@@ -173,9 +193,9 @@ export function dropVideoResourcesSection(blocks: Block[]): Block[] {
  * known title differently than expected (e.g. a quote character changed)
  * and it silently fell through to a `paragraph` block instead — this check
  * turns that into a loud failure instead of quietly losing a section
- * break. Runs against the full parsed blocks, before dropVideoResourcesSection
- * trims the output, so it still catches extraction drift in the dropped
- * section too.
+ * break. Runs against the full parsed blocks, before dropSections trims
+ * the output, so it still catches extraction drift in the dropped
+ * sections too.
  */
 export function assertExpectedStructure(blocks: Block[]): void {
   const headings = blocks.filter((b) => b.type === 'heading').length;

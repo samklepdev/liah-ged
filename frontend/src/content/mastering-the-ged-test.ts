@@ -25,22 +25,6 @@ export const masteringGedContent: MasteringGedBlock[] = [
   },
   {
     "type": "heading",
-    "text": "USAHello’s GED Preparatory Course"
-  },
-  {
-    "type": "paragraph",
-    "text": "USAHello offers a free, self-paced online GED preparatory course designed to help you succeed on the GED exam. With four comprehensive courses, this program includes over 800 quiz questions and around 68 instructional videos , providing you with the tools and practice you need."
-  },
-  {
-    "type": "paragraph",
-    "text": "Whether you're studying at home or on the go, USAHello’s user-friendly platform allows you to progress at your own pace, making it easy to fit learning into your schedule."
-  },
-  {
-    "type": "paragraph",
-    "text": "Prepare with confidence and take the next step towards achieving your education goals with USAHello."
-  },
-  {
-    "type": "heading",
     "text": "GED Exam: From Signing Up to Receiving the Results"
   },
   {
@@ -54,10 +38,6 @@ export const masteringGedContent: MasteringGedBlock[] = [
   {
     "type": "paragraph",
     "text": "You also have the option to take the tests in Spanish. Simply select Spanish as your preferred language when you register. If you'd like, you can even take some subjects in Spanish and others in English."
-  },
-  {
-    "type": "paragraph",
-    "text": "Watch this video to learn more about how to register for the GED®:"
   },
   {
     "type": "subheading",

@@ -3,7 +3,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import {
   assertExpectedStructure,
-  dropVideoResourcesSection,
+  dropSections,
   parseMasteringGedContent,
 } from '../lib/mastering-ged-content.ts';
 
@@ -15,7 +15,7 @@ const pdfText = execFileSync('pdftotext', ['-layout', pdfPath, '-'], {
 
 const parsedBlocks = parseMasteringGedContent(pdfText);
 assertExpectedStructure(parsedBlocks);
-const blocks = dropVideoResourcesSection(parsedBlocks);
+const blocks = dropSections(parsedBlocks);
 
 const outDir = fileURLToPath(new URL('../../../frontend/src/content/', import.meta.url));
 mkdirSync(outDir, { recursive: true });
