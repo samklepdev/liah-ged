@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   parseMasteringGedContent,
   assertExpectedStructure,
-  dropVideoResourcesSection,
+  dropSections,
   type Block,
 } from './mastering-ged-content.ts';
 
@@ -143,7 +143,7 @@ test('assertExpectedStructure throws when headings are missing', () => {
   assert.throws(() => assertExpectedStructure(blocks), /Expected 9 heading blocks, found 0/);
 });
 
-test('dropVideoResourcesSection removes the Video resources heading and everything after it', () => {
+test('dropSections removes the Video resources heading and everything after it', () => {
   const blocks: Block[] = [
     { type: 'heading', text: "What you'll learn" },
     { type: 'paragraph', text: 'Intro text.' },
@@ -152,17 +152,49 @@ test('dropVideoResourcesSection removes the Video resources heading and everythi
     { type: 'subheading', text: 'Want to enable Spanish sub-titles?' },
   ];
 
-  assert.deepEqual(dropVideoResourcesSection(blocks), [
+  assert.deepEqual(dropSections(blocks), [
     { type: 'heading', text: "What you'll learn" },
     { type: 'paragraph', text: 'Intro text.' },
   ]);
 });
 
-test('dropVideoResourcesSection is a no-op when there is no Video resources heading', () => {
+test('dropSections removes a mid-document dropped heading up to the next heading', () => {
+  const blocks: Block[] = [
+    { type: 'heading', text: "What you'll learn" },
+    { type: 'paragraph', text: 'Intro text.' },
+    { type: 'heading', text: 'USAHello’s GED Preparatory Course' },
+    { type: 'paragraph', text: 'USAHello offers a free course.' },
+    { type: 'paragraph', text: 'More USAHello details.' },
+    { type: 'heading', text: 'GED Exam: From Signing Up to Receiving the Results' },
+    { type: 'paragraph', text: 'Registration details.' },
+  ];
+
+  assert.deepEqual(dropSections(blocks), [
+    { type: 'heading', text: "What you'll learn" },
+    { type: 'paragraph', text: 'Intro text.' },
+    { type: 'heading', text: 'GED Exam: From Signing Up to Receiving the Results' },
+    { type: 'paragraph', text: 'Registration details.' },
+  ]);
+});
+
+test('dropSections removes a dropped standalone paragraph', () => {
+  const blocks: Block[] = [
+    { type: 'heading', text: "What you'll learn" },
+    { type: 'paragraph', text: 'Watch this video to learn more about how to register for the GED®:' },
+    { type: 'paragraph', text: 'Registration details.' },
+  ];
+
+  assert.deepEqual(dropSections(blocks), [
+    { type: 'heading', text: "What you'll learn" },
+    { type: 'paragraph', text: 'Registration details.' },
+  ]);
+});
+
+test('dropSections is a no-op when there is no dropped heading', () => {
   const blocks: Block[] = [
     { type: 'heading', text: "What you'll learn" },
     { type: 'paragraph', text: 'Intro text.' },
   ];
 
-  assert.deepEqual(dropVideoResourcesSection(blocks), blocks);
+  assert.deepEqual(dropSections(blocks), blocks);
 });
