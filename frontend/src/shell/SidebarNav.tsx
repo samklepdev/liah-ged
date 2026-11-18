@@ -103,18 +103,6 @@ export function SidebarNav({
             <span className="nav-label">My Progress</span>
           </NavLink>
         </li>
-        <li>
-          <a
-            href="https://dh.identifix.com/TrainingVideos/TrainingVideos"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={onNavigate}
-            className="nav-item"
-          >
-            <VideoIcon className="nav-icon" />
-            <span className="nav-label">Videos</span>
-          </a>
-        </li>
 
         {nav.error && (
           <li role="alert" className="nav-panel-note">
