@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Fork `liah-learning` into `liah-hsd`, rebrand it under the "Registrar" visual direction, and add a downloadable diploma certificate issued once a student has passed every active course.
+**Goal:** Fork `liah-learning` into `liah-ged`, rebrand it under the "Registrar" visual direction, and add a downloadable diploma certificate issued once a student has passed every active course.
 
 **Architecture:** Same Express 5 + Drizzle + PostgreSQL backend and React 19 + Vite frontend as `liah-learning`, copied wholesale and then modified. Certificates are a new `certificates` table plus a model/route/controller layer that reuses the existing best-score-per-course data already computed for progress tracking.
 
@@ -11,7 +11,7 @@
 ## Global Constraints
 
 - Source project to copy from: `/Users/sam/Projects/liah-wellness/liah-learning` (read-only — never modify it).
-- Target repo: `/Users/sam/Projects/liah-wellness/liah-hsd` (already `git init`'d, remote `origin` → `https://github.com/samklepdev/liah-hsd.git`, branch `main`).
+- Target repo: `/Users/sam/Projects/liah-wellness/liah-ged` (already `git init`'d, remote `origin` → `https://github.com/samklepdev/liah-ged.git`, branch `main`).
 - Roles stay exactly `user` and `admin` — no new roles.
 - Curriculum model stays Subjects → Courses → Quizzes — no grade-level layer.
 - Certificate trigger: **all active courses passed** (not per-subject), matching the approved spec.
@@ -29,7 +29,7 @@
 New/changed files by the end of this plan:
 
 ```
-liah-hsd/
+liah-ged/
   backend/
     src/
       models/
@@ -74,7 +74,7 @@ liah-hsd/
     src/assets/fonts/                  # REMOVED
   docker-compose.yml                   # own container/port/db name
   backend/.env.example                 # own DATABASE_URL
-  package.json                         # renamed to liah-hsd
+  package.json                         # renamed to liah-ged
   README.md                            # rewritten
 ```
 
@@ -91,7 +91,7 @@ liah-hsd/
 - [ ] **Step 1: Copy `backend/` and `frontend/` from `liah-learning`, excluding build artifacts and secrets**
 
 ```bash
-cd /Users/sam/Projects/liah-wellness/liah-hsd
+cd /Users/sam/Projects/liah-wellness/liah-ged
 
 rsync -a \
   --exclude 'node_modules' --exclude 'dist' --exclude '.vercel' \
@@ -128,7 +128,7 @@ Read `package.json`, then:
 
 ```json
 {
-  "name": "liah-hsd",
+  "name": "liah-ged",
   "version": "1.0.0",
   "description": "LIAH HSD — a high-school-diploma learning platform: students take quizzes toward a diploma and earn a certificate on completion.",
   ...
@@ -145,26 +145,26 @@ Replace the file's contents:
 services:
   postgres:
     image: postgres:17-alpine
-    container_name: liah-hsd-postgres
+    container_name: liah-ged-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: liah_hsd
-      POSTGRES_PASSWORD: liah_hsd_dev_password
-      POSTGRES_DB: liah_hsd
+      POSTGRES_USER: liah_ged
+      POSTGRES_PASSWORD: liah_ged_dev_password
+      POSTGRES_DB: liah_ged
     # liah-learning's own Postgres container already uses 54330, so this
     # project exposes on 54331 instead, bound to loopback only.
     ports:
       - '127.0.0.1:54331:5432'
     volumes:
-      - liah_hsd_pgdata:/var/lib/postgresql/data
+      - liah_ged_pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U liah_hsd -d liah_hsd']
+      test: ['CMD-SHELL', 'pg_isready -U liah_ged -d liah_ged']
       interval: 5s
       timeout: 5s
       retries: 10
 
 volumes:
-  liah_hsd_pgdata:
+  liah_ged_pgdata:
 ```
 
 - [ ] **Step 5: Point `backend/.env.example` at the same database**
@@ -173,7 +173,7 @@ Read `backend/.env.example`, then edit the `DATABASE_URL` line and its comment:
 
 ```
 # Matches docker-compose.yml (host port 54331 to avoid a clash with other projects)
-DATABASE_URL=postgresql://liah_hsd:liah_hsd_dev_password@127.0.0.1:54331/liah_hsd
+DATABASE_URL=postgresql://liah_ged:liah_ged_dev_password@127.0.0.1:54331/liah_ged
 ```
 
 Leave every other line (`PORT`, `CORS_ORIGIN`, `SESSION_TTL_DAYS`, `SERVE_FRONTEND`) unchanged.
@@ -211,7 +211,7 @@ Expected: `{"status":"ok"}`.
 
 ```bash
 git add -A
-git commit -m "Bootstrap liah-hsd from liah-learning"
+git commit -m "Bootstrap liah-ged from liah-learning"
 ```
 
 ---
@@ -280,7 +280,7 @@ test('seedPlaceholderSubjects is idempotent', async () => {
 node --import tsx --env-file=backend/.env.test --test --test-concurrency=1 "backend/src/scripts/seed-subjects.test.ts"
 ```
 
-Expected: FAIL — `Cannot find module './seed-subjects.ts'` (or similar), since the file doesn't exist yet. If `backend/.env.test` doesn't exist yet, first create it by copying `backend/.env.example` and changing the database name to `liah_hsd_test` (and run `npm run db:push:test` once against it) — mirror whatever `liah-learning/backend/.env.test` does, pointed at this project's own test database.
+Expected: FAIL — `Cannot find module './seed-subjects.ts'` (or similar), since the file doesn't exist yet. If `backend/.env.test` doesn't exist yet, first create it by copying `backend/.env.example` and changing the database name to `liah_ged_test` (and run `npm run db:push:test` once against it) — mirror whatever `liah-learning/backend/.env.test` does, pointed at this project's own test database.
 
 - [ ] **Step 3: Implement the seeder**
 
@@ -590,9 +590,9 @@ Then add a new rule (anywhere near those two, e.g. just above `.auth-mark`):
 
 - [ ] **Step 12: Update the page title and theme storage key**
 
-In `frontend/index.html`, change `<title>LIAH</title>` to `<title>LIAH HSD</title>`, and change `localStorage.getItem('liah.theme')` to `localStorage.getItem('liah-hsd.theme')`.
+In `frontend/index.html`, change `<title>LIAH</title>` to `<title>LIAH HSD</title>`, and change `localStorage.getItem('liah.theme')` to `localStorage.getItem('liah-ged.theme')`.
 
-In `frontend/src/shell/useTheme.ts`, change `const STORAGE_KEY = 'liah.theme';` to `const STORAGE_KEY = 'liah-hsd.theme';`.
+In `frontend/src/shell/useTheme.ts`, change `const STORAGE_KEY = 'liah.theme';` to `const STORAGE_KEY = 'liah-ged.theme';`.
 
 - [ ] **Step 13: Rewrite `README.md`**
 
@@ -1370,7 +1370,7 @@ export async function download(req: Request, res: Response): Promise<void> {
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader(
     'Content-Disposition',
-    `attachment; filename="liah-hsd-certificate-${certificate.verificationId}.pdf"`,
+    `attachment; filename="liah-ged-certificate-${certificate.verificationId}.pdf"`,
   );
 
   const doc = buildCertificatePdf({
@@ -1965,7 +1965,7 @@ git commit -m "Show diploma certificate status and download on the Progress page
 - [ ] **Step 1: Run the full test suite and typecheck one more time from a clean install**
 
 ```bash
-cd /Users/sam/Projects/liah-wellness/liah-hsd
+cd /Users/sam/Projects/liah-wellness/liah-ged
 npm run typecheck
 npm run test
 ```
@@ -1988,8 +1988,8 @@ project: "[[LIAH HSD]]"
 A high-school-diploma learning platform, forked from [[LIAH International Academy]]'s
 codebase (`liah-learning`) and rebranded under its own "Registrar" visual
 identity (navy `#152542` / gold `#9c7a2e`, serif headings). Repo:
-`https://github.com/samklepdev/liah-hsd`, local path
-`/Users/sam/Projects/liah-wellness/liah-hsd`.
+`https://github.com/samklepdev/liah-ged`, local path
+`/Users/sam/Projects/liah-wellness/liah-ged`.
 
 ## What's reused as-is from liah-learning
 
@@ -2034,8 +2034,8 @@ In `/Users/sam/Library/Mobile Documents/iCloud~md~obsidian/Documents/agent-wiki/
 - [ ] **Step 4: Push**
 
 ```bash
-cd /Users/sam/Projects/liah-wellness/liah-hsd
+cd /Users/sam/Projects/liah-wellness/liah-ged
 git push origin main
 ```
 
-Expected: pushes all commits from Tasks 1–6 (and this task, if anything in the repo changed — it shouldn't have) to `https://github.com/samklepdev/liah-hsd`.
+Expected: pushes all commits from Tasks 1–6 (and this task, if anything in the repo changed — it shouldn't have) to `https://github.com/samklepdev/liah-ged`.

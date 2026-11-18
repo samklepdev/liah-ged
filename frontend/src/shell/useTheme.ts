@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 export type ThemePref = 'light' | 'dark' | 'system';
 
-const STORAGE_KEY = 'liah-hsd.theme';
+const STORAGE_KEY = 'liah-ged.theme';
 const DARK_QUERY = '(prefers-color-scheme: dark)';
 
 function readStored(): ThemePref {
