@@ -115,20 +115,6 @@ export function SidebarNav({
             <span className="nav-label">Videos</span>
           </a>
         </li>
-            <li className="nav-video">
-              <span className="nav-label">
-                <strong>Login and Select Pro Academy!</strong>
-                </span>
-                <br />
-            <span className="nav-label">
-              <strong>Login:</strong> LutheB98
-            </span>
-            <br />
-            <span className="nav-label">
-              <strong>Password:</strong> alliance
-            </span>
-        
-        </li>
 
         {nav.error && (
           <li role="alert" className="nav-panel-note">
