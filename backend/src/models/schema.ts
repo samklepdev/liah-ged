@@ -187,3 +187,16 @@ export type Question = typeof questions.$inferSelect;
 export type QuestionOption = typeof questionOptions.$inferSelect;
 export type Attempt = typeof attempts.$inferSelect;
 export type AttemptAnswer = typeof attemptAnswers.$inferSelect;
+
+export const certificates = pgTable('certificates', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id')
+    .notNull()
+    .unique()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  /** Short public code printed on the PDF and checked by the public verify endpoint. */
+  verificationId: text('verification_id').notNull().unique(),
+  issuedAt: timestamp('issued_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+export type Certificate = typeof certificates.$inferSelect;

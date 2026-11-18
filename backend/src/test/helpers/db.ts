@@ -11,8 +11,8 @@ if (!env.DATABASE_URL.endsWith('_test')) {
 /** Empties every table. Safe only against the _test database. */
 export async function resetDb(): Promise<void> {
   await db.execute(sql`
-    truncate table attempt_answers, attempts, question_options, questions,
-                   modules, courses, subjects, sessions, users
+    truncate table certificates, attempt_answers, attempts, question_options,
+                   questions, modules, courses, subjects, sessions, users
     restart identity cascade
   `);
 }
