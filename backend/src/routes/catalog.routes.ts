@@ -7,4 +7,5 @@ export const catalogRouter = Router();
 // populated only when a session cookie is present.
 catalogRouter.get('/subjects', catalog.getSubjects);
 catalogRouter.get('/courses', catalog.getCourses);
+catalogRouter.get('/courses/:slug', catalog.getCourseBySlug);
 catalogRouter.get('/search', catalog.search);

@@ -105,9 +105,6 @@ describe('SubjectCoursesPage', () => {
     renderPage();
 
     const link = await screen.findByRole('link', { name: 'Tire and Rim Essentials' });
-    expect(link).toHaveAttribute(
-      'href',
-      '/courses/chassis-tire-and-rim-essentials/quiz',
-    );
+    expect(link).toHaveAttribute('href', '/courses/chassis-tire-and-rim-essentials');
   });
 });

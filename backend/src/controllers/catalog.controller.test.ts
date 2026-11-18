@@ -64,6 +64,21 @@ test('GET /api/v1/courses 404s for an unknown subject', async () => {
   assert.equal(res.status, 404);
 });
 
+test('GET /api/v1/courses/:slug returns one course with its content', async () => {
+  const res = await fetch(`${baseUrl}/api/v1/courses/chassis-tire-and-rim-essentials`);
+  assert.equal(res.status, 200);
+  const body = (await res.json()) as { course: Record<string, unknown> };
+  assert.equal(body.course.slug, 'chassis-tire-and-rim-essentials');
+  assert.equal(body.course.title, 'Tire and Rim Essentials');
+  assert.equal(body.course.content, null);
+  assert.equal(body.course.subjectSlug, 'chassis');
+});
+
+test('GET /api/v1/courses/:slug 404s for an unknown course', async () => {
+  const res = await fetch(`${baseUrl}/api/v1/courses/does-not-exist`);
+  assert.equal(res.status, 404);
+});
+
 test('an unknown /api/v1 route answers with JSON, not the SPA fallback', async () => {
   // The notFound handler is scoped to /api/v1 so the SPA fallback can own every
   // other path. If that scoping is lost, unknown API routes start returning

@@ -5,6 +5,7 @@ import { LoginForm } from './auth/LoginForm';
 import { useAuth } from './auth/useAuth';
 import { AdminCoursesPage } from './pages/admin/AdminCoursesPage';
 import { AdminUsersPage } from './pages/admin/AdminUsersPage';
+import { CourseContentPage } from './pages/CourseContentPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { PasswordRequestsPage } from './pages/admin/PasswordRequestsPage';
 import { ProfilePage } from './pages/ProfilePage';
@@ -80,6 +81,7 @@ export function AppRouter() {
         >
           <Route path="/subjects" element={<SubjectsIndexPage />} />
           <Route path="/subjects/:subjectSlug" element={<SubjectCoursesPage />} />
+          <Route path="/courses/:slug" element={<CourseContentPage />} />
           <Route path="/courses/:slug/quiz" element={<QuizPage />} />
           <Route path="/courses/:slug/results/:attemptId" element={<ResultsPage />} />
           <Route path="/profile" element={<ProfilePage />} />

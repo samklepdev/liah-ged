@@ -1,5 +1,7 @@
 import type { Request, Response } from 'express';
+import { param } from '../lib/http.ts';
 import {
+  findCourseBySlug,
   findSubjectBySlug,
   listCoursesBySubject,
   listSubjects,
@@ -23,6 +25,15 @@ export async function getCourses(req: Request, res: Response): Promise<void> {
   }
 
   res.json({ courses: await listCoursesBySubject(slug, req.user?.id ?? null) });
+}
+
+export async function getCourseBySlug(req: Request, res: Response): Promise<void> {
+  const course = await findCourseBySlug(param(req, 'slug'));
+  if (!course) {
+    res.status(404).json({ error: 'Course not found' });
+    return;
+  }
+  res.json({ course });
 }
 
 export async function search(req: Request, res: Response): Promise<void> {

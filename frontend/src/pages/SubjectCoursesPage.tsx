@@ -65,7 +65,7 @@ export function SubjectCoursesPage() {
           <li key={c.id} className="course-row">
             <div>
               <span className="course-position">Quiz {c.position}</span>
-              <Link to={`/courses/${c.slug}/quiz`}>{c.title}</Link>
+              <Link to={`/courses/${c.slug}`}>{c.title}</Link>
             </div>
             <div className="course-score">
               <PassBadge bestScore={c.bestScore} passScore={c.passScore} />

@@ -141,3 +141,38 @@ export async function searchCatalog(q: string): Promise<SearchResult> {
     courses: courseRows.map((r) => ({ ...r, bestScore: null, attemptCount: 0 })),
   };
 }
+
+export type CourseDetail = {
+  id: string;
+  slug: string;
+  title: string;
+  position: number;
+  passScore: number;
+  questionCount: number;
+  content: string | null;
+  subjectSlug: string;
+  subjectTitle: string;
+};
+
+/** The content page's data source. Mirrors listCoursesBySubject's isActive
+ *  filter — a soft-deleted course must not be reachable here either. */
+export async function findCourseBySlug(slug: string): Promise<CourseDetail | null> {
+  const [row] = await db
+    .select({
+      id: courses.id,
+      slug: courses.slug,
+      title: courses.title,
+      position: courses.position,
+      passScore: courses.passScore,
+      questionCount: courses.questionCount,
+      content: courses.content,
+      subjectSlug: subjects.slug,
+      subjectTitle: subjects.title,
+    })
+    .from(courses)
+    .innerJoin(subjects, eq(courses.subjectId, subjects.id))
+    .where(and(eq(courses.slug, slug), eq(courses.isActive, true)))
+    .limit(1);
+
+  return row ?? null;
+}

@@ -592,7 +592,7 @@ function readQuestion(
 // Answer keys
 // ---------------------------------------------------------------------------
 
-export type OptionLabel = 'A' | 'B' | 'C' | 'D';
+export type OptionLabel = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
 
 export type ParsedOption = { label: OptionLabel; body: string; isCorrect: boolean };
 
@@ -611,6 +611,11 @@ export type ParsedCourse = {
   moduleTitles: string[];
   questionCount: number;
   questions: ParsedQuestion[];
+  /** Defaults to the column default (9) in seedSubject when omitted. */
+  passScore?: number;
+  /** Lesson reading text, as plain `\n\n`-separated paragraphs. Omitted means
+   *  no reading material. */
+  content?: string;
 };
 
 export type ParsedSubject = { slug: string; title: string; courses: ParsedCourse[] };
