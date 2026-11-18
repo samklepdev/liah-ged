@@ -1,7 +1,11 @@
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { assertExpectedStructure, parseMasteringGedContent } from '../lib/mastering-ged-content.ts';
+import {
+  assertExpectedStructure,
+  dropVideoResourcesSection,
+  parseMasteringGedContent,
+} from '../lib/mastering-ged-content.ts';
 
 const pdfPath = fileURLToPath(new URL('../data/mastering-the-ged-test.pdf', import.meta.url));
 const pdfText = execFileSync('pdftotext', ['-layout', pdfPath, '-'], {
@@ -9,8 +13,9 @@ const pdfText = execFileSync('pdftotext', ['-layout', pdfPath, '-'], {
   maxBuffer: 32 * 1024 * 1024,
 });
 
-const blocks = parseMasteringGedContent(pdfText);
-assertExpectedStructure(blocks);
+const parsedBlocks = parseMasteringGedContent(pdfText);
+assertExpectedStructure(parsedBlocks);
+const blocks = dropVideoResourcesSection(parsedBlocks);
 
 const outDir = fileURLToPath(new URL('../../../frontend/src/content/', import.meta.url));
 mkdirSync(outDir, { recursive: true });

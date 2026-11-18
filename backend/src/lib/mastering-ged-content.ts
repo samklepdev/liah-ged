@@ -153,13 +153,29 @@ export function parseMasteringGedContent(pdfText: string): Block[] {
   return blocks;
 }
 
+const DROPPED_HEADINGS = new Set<string>(['Video resources']);
+
+/**
+ * Drops the "Video resources" section (that heading and everything after
+ * it, since it's the document's final section) — the GED program no longer
+ * wants video links surfaced on this page.
+ */
+export function dropVideoResourcesSection(blocks: Block[]): Block[] {
+  const cutIndex = blocks.findIndex(
+    (b) => b.type === 'heading' && DROPPED_HEADINGS.has(b.text),
+  );
+  return cutIndex === -1 ? blocks : blocks.slice(0, cutIndex);
+}
+
 /**
  * Throws if the parsed block list doesn't have exactly the expected number
  * of headings/subheadings. A real mismatch here means pdftotext rendered a
  * known title differently than expected (e.g. a quote character changed)
  * and it silently fell through to a `paragraph` block instead — this check
  * turns that into a loud failure instead of quietly losing a section
- * break.
+ * break. Runs against the full parsed blocks, before dropVideoResourcesSection
+ * trims the output, so it still catches extraction drift in the dropped
+ * section too.
  */
 export function assertExpectedStructure(blocks: Block[]): void {
   const headings = blocks.filter((b) => b.type === 'heading').length;
