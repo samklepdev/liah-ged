@@ -1,10 +1,11 @@
 import { test, before, after, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { db } from '../db/index.ts';
 import { resetDb, closeDb } from '../test/helpers/db.ts';
 import { seedSubject } from './seed-quizzes.ts';
+import { courses } from '../models/schema.ts';
 import type { ParsedSubject } from '../lib/quiz-parser.ts';
 
 const subject: ParsedSubject = JSON.parse(
@@ -51,4 +52,56 @@ test('seedSubject is idempotent', async () => {
   await seedSubject(subject);
   const second = await counts();
   assert.deepEqual(second, first);
+});
+
+test('seedSubject writes passScore and content when provided', async () => {
+  const withExtras: ParsedSubject = {
+    slug: 'ged-demo',
+    title: 'GED Demo',
+    courses: [
+      {
+        position: 1,
+        slug: 'ged-demo-lesson-1',
+        title: 'Lesson 1',
+        moduleTitles: ['Quiz A'],
+        questionCount: 1,
+        passScore: 1,
+        content: 'First paragraph.\n\nSecond paragraph.',
+        questions: [
+          {
+            position: 1,
+            prompt: 'What is 1 + 1?',
+            moduleTitle: 'Quiz A',
+            explanation: 'Basic addition.',
+            options: [
+              { label: 'A', body: '1', isCorrect: false },
+              { label: 'B', body: '2', isCorrect: true },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
+  await seedSubject(withExtras);
+
+  const [row] = await db
+    .select({ passScore: courses.passScore, content: courses.content })
+    .from(courses)
+    .where(eq(courses.slug, 'ged-demo-lesson-1'));
+
+  assert.equal(row?.passScore, 1);
+  assert.equal(row?.content, 'First paragraph.\n\nSecond paragraph.');
+});
+
+test('seedSubject defaults passScore to 9 and content to null when omitted', async () => {
+  await seedSubject(subject); // the chassis fixture, which sets neither field
+
+  const [row] = await db
+    .select({ passScore: courses.passScore, content: courses.content })
+    .from(courses)
+    .where(eq(courses.slug, 'chassis-tire-and-rim-essentials'));
+
+  assert.equal(row?.passScore, 9);
+  assert.equal(row?.content, null);
 });

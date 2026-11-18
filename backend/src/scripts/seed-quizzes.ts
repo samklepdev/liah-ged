@@ -31,6 +31,8 @@ export async function seedSubject(
           slug: course.slug,
           title: course.title,
           questionCount: course.questionCount,
+          passScore: course.passScore ?? 9,
+          content: course.content ?? null,
         })
         .onConflictDoUpdate({
           target: courses.slug,
@@ -39,6 +41,8 @@ export async function seedSubject(
             position: course.position,
             title: course.title,
             questionCount: course.questionCount,
+            passScore: course.passScore ?? 9,
+            content: course.content ?? null,
           },
         })
         .returning({ id: courses.id });
