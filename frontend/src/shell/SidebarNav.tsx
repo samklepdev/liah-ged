@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import { NavLink, useLocation } from 'react-router';
-import { BookIcon, ChartIcon, ChevronRightIcon, SubjectIcon } from './icons';
+import { BookIcon, ChartIcon, ChevronRightIcon, ClipboardIcon, SubjectIcon } from './icons';
 import { hasPassed } from '../quiz/passed';
 import type { SubjectNavState } from './useSubjectNav';
 
@@ -101,6 +101,13 @@ export function SidebarNav({
           <NavLink to="/progress" onClick={onNavigate} className={itemClass}>
             <ChartIcon className="nav-icon" />
             <span className="nav-label">My Progress</span>
+          </NavLink>
+        </li>
+
+        <li>
+          <NavLink to="/mastering-the-ged-test" onClick={onNavigate} className={itemClass}>
+            <ClipboardIcon className="nav-icon" />
+            <span className="nav-label">Mastering the GED Test</span>
           </NavLink>
         </li>
 

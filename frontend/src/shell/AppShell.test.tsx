@@ -89,6 +89,17 @@ describe('AppShell — top navbar', () => {
   });
 });
 
+describe('AppShell — sidebar', () => {
+  test('links to the Mastering the GED Test page', async () => {
+    renderAt();
+    const sidebar = await nav();
+    expect(within(sidebar).getByRole('link', { name: 'Mastering the GED Test' })).toHaveAttribute(
+      'href',
+      '/mastering-the-ged-test',
+    );
+  });
+});
+
 describe('AppShell — theme toggle', () => {
   // The toggle lives inside the account menu now, so it has to be opened
   // first — but cycling the theme doesn't close the menu, so one open is
