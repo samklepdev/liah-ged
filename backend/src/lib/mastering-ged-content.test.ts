@@ -37,6 +37,23 @@ test('merges wrapped bullet lines and consecutive bullets separated by blank lin
   ]);
 });
 
+test('a heading with no blank line before the following paragraph is still its own block', () => {
+  const text = [
+    'USAHello’s GED Preparatory Course',
+    'USAHello offers a free, self-paced online GED preparatory course designed to help you succeed on the GED',
+    'exam.',
+  ].join('\n');
+
+  const blocks = parseMasteringGedContent(text);
+  assert.deepEqual(blocks, [
+    { type: 'heading', text: 'USAHello’s GED Preparatory Course' },
+    {
+      type: 'paragraph',
+      text: 'USAHello offers a free, self-paced online GED preparatory course designed to help you succeed on the GED exam.',
+    },
+  ]);
+});
+
 test('drops page footers, Lesson headers, lesson-meta lines, Source lines, and the title line', () => {
   const text = [
     'Mastering the GED Test',

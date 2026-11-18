@@ -82,22 +82,39 @@ function dropFurniture(pdfText: string): string[] {
  * same grouping toParagraphs() uses in ged-content.ts — kept as a list of
  * chunk strings rather than immediately joined, so each chunk can still be
  * classified individually below.
+ *
+ * A line that exactly matches a known heading or subheading is always its
+ * own isolated chunk, even with no blank line around it: the source often
+ * runs a heading straight into the next paragraph with no blank line in
+ * between (e.g. "USAHello's GED Preparatory Course" is immediately
+ * followed, same-paragraph-style, by "USAHello offers a free..."), so
+ * relying on blank lines alone would glue the heading onto that paragraph's
+ * text.
  */
 function toChunks(lines: string[]): string[] {
   const chunks: string[] = [];
   let current: string[] = [];
+  const flush = () => {
+    if (current.length > 0) {
+      chunks.push(current.join(' '));
+      current = [];
+    }
+  };
+
   for (const raw of lines) {
     const trimmed = raw.trim();
     if (trimmed === '') {
-      if (current.length > 0) {
-        chunks.push(current.join(' '));
-        current = [];
-      }
+      flush();
+      continue;
+    }
+    if (HEADINGS.has(trimmed) || SUBHEADINGS.has(trimmed)) {
+      flush();
+      chunks.push(trimmed);
       continue;
     }
     current.push(trimmed);
   }
-  if (current.length > 0) chunks.push(current.join(' '));
+  flush();
   return chunks;
 }
 
