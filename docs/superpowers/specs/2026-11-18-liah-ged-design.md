@@ -20,7 +20,7 @@ the same way LIAH Learning's content arrived after the app was built (see
 ## Starting point
 
 Fork, not a rewrite. Copy `liah-learning`'s `backend/` and `frontend/`
-workspaces into this repo (`liah-hsd`), keeping:
+workspaces into this repo (`liah-ged`), keeping:
 
 - npm workspaces monorepo (`backend`, `frontend`), run together with
   `concurrently`

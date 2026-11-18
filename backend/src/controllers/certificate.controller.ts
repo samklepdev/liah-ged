@@ -57,7 +57,7 @@ export async function download(req: Request, res: Response): Promise<void> {
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader(
     'Content-Disposition',
-    `attachment; filename="liah-hsd-certificate-${certificate.verificationId}.pdf"`,
+    `attachment; filename="liah-ged-certificate-${certificate.verificationId}.pdf"`,
   );
 
   const doc = buildCertificatePdf({
