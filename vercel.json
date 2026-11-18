@@ -1,0 +1,35 @@
+{
+  "services": {
+    "frontend": {
+      "root": "frontend",
+      "framework": "vite",
+      "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+    },
+    "backend": {
+      "root": "backend",
+      "entrypoint": "src/app.ts",
+      "buildCommand": "npm run db:migrate:deploy && npm run build",
+      "functions": {
+        "src/app.ts": {
+          "includeFiles": "node_modules/argon2/prebuilds/**"
+        }
+      }
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api(/.*)?",
+      "destination": {
+        "type": "service",
+        "service": "backend"
+      }
+    },
+    {
+      "source": "/(.*)",
+      "destination": {
+        "type": "service",
+        "service": "frontend"
+      }
+    }
+  ]
+}

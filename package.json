@@ -1,0 +1,40 @@
+{
+  "name": "liah-hsd",
+  "version": "1.0.0",
+  "description": "LIAH HSD — a high-school-diploma learning platform: students take quizzes toward a diploma and earn a certificate on completion.",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,web -c cyan,magenta \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "npm run dev -w backend",
+    "dev:web": "npm run dev -w frontend",
+    "build": "npm run build -w backend && npm run build -w frontend",
+    "db:push": "npm run db:push -w backend",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:generate": "npm run db:generate -w backend",
+    "typecheck": "npm run typecheck -w backend && npm run build -w frontend",
+    "quiz:parse": "npm run quiz:parse -w backend --",
+    "quiz:seed": "npm run quiz:seed -w backend",
+    "seed:subjects": "npm run seed:subjects -w backend",
+    "test": "npm run test -w backend && npm run test -w frontend",
+    "test:api": "npm run test -w backend",
+    "test:web": "npm run test -w frontend"
+  },
+  "keywords": [],
+  "author": "Sam Klepper",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^10.0.6"
+  },
+  "allowScripts": {
+    "esbuild@0.18.20": true,
+    "esbuild@0.25.12": true,
+    "esbuild@0.28.2": true,
+    "argon2@0.44.0": true,
+    "fsevents@2.3.3": true
+  }
+}

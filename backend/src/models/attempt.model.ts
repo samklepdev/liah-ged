@@ -1,0 +1,412 @@
+import { and, asc, count, desc, eq, isNotNull, isNull, max, ne } from 'drizzle-orm';
+import { db } from '../db/index.ts';
+import {
+  attemptAnswers,
+  attempts,
+  courses,
+  modules,
+  questionOptions,
+  questions,
+  subjects,
+} from './schema.ts';
+
+export type AttemptRow = {
+  id: string;
+  userId: string;
+  courseId: string;
+  score: number | null;
+  startedAt: Date;
+  submittedAt: Date | null;
+};
+
+export type SavedAnswer = { questionId: string; optionId: string };
+
+export async function findOpenAttempt(
+  userId: string,
+  courseId: string,
+): Promise<AttemptRow | null> {
+  const [row] = await db
+    .select()
+    .from(attempts)
+    .where(
+      and(
+        eq(attempts.userId, userId),
+        eq(attempts.courseId, courseId),
+        isNull(attempts.submittedAt),
+      ),
+    )
+    .limit(1);
+  return row ?? null;
+}
+
+/**
+ * Creates an open attempt, or returns null if this user already has one for
+ * this course. The conflict target matches the partial unique index, so
+ * Postgres — not application code — decides the winner when two requests
+ * insert at once.
+ */
+export async function insertOpenAttempt(
+  userId: string,
+  courseId: string,
+): Promise<AttemptRow | null> {
+  const [row] = await db
+    .insert(attempts)
+    .values({ userId, courseId })
+    // `where` — not `targetWhere`. onConflictDoNothing only accepts
+    // { target, where }, and silently drops targetWhere, which produces
+    // `ON CONFLICT (cols) DO NOTHING` with no predicate. Postgres then fails
+    // with "no unique or exclusion constraint matching the ON CONFLICT
+    // specification", because the index is partial.
+    .onConflictDoNothing({
+      target: [attempts.userId, attempts.courseId],
+      where: isNull(attempts.submittedAt),
+    })
+    .returning();
+
+  return row ?? null;
+}
+
+/**
+ * Returns the caller's unfinished attempt if one exists, otherwise creates one.
+ *
+ * Must not be a read-then-write: the quiz page fires this twice per mount
+ * (React StrictMode double-invokes effects), and two requests that both read
+ * "no open attempt" would both insert, tripping the one-open-attempt index and
+ * surfacing as a 500 on retake. The insert is therefore atomic, and losing the
+ * race just means re-reading whoever won.
+ */
+export async function startOrResumeAttempt(
+  userId: string,
+  courseId: string,
+): Promise<{ attempt: AttemptRow; created: boolean }> {
+  const existing = await findOpenAttempt(userId, courseId);
+  if (existing) return { attempt: existing, created: false };
+
+  const created = await insertOpenAttempt(userId, courseId);
+  if (created) return { attempt: created, created: true };
+
+  // Conflict: a concurrent request created it between our read and our insert.
+  const winner = await findOpenAttempt(userId, courseId);
+  if (winner) return { attempt: winner, created: false };
+
+  // Neither inserted nor findable. Only reachable if the row was submitted in
+  // the same instant, which would make a fresh attempt the right answer.
+  const retried = await insertOpenAttempt(userId, courseId);
+  if (retried) return { attempt: retried, created: true };
+
+  throw new Error(
+    `Could not open an attempt for user ${userId} on course ${courseId}: ` +
+      'insert conflicted but no open attempt exists.',
+  );
+}
+
+export async function findAttemptById(id: string): Promise<AttemptRow | null> {
+  const [row] = await db.select().from(attempts).where(eq(attempts.id, id)).limit(1);
+  return row ?? null;
+}
+
+export async function listAnswers(attemptId: string): Promise<SavedAnswer[]> {
+  return db
+    .select({ questionId: attemptAnswers.questionId, optionId: attemptAnswers.optionId })
+    .from(attemptAnswers)
+    .where(eq(attemptAnswers.attemptId, attemptId));
+}
+
+/** Confirms the option really belongs to the question, and reports its course. */
+export async function findOptionForQuestion(
+  questionId: string,
+  optionId: string,
+): Promise<{ isCorrect: boolean; courseId: string } | null> {
+  const [row] = await db
+    .select({ isCorrect: questionOptions.isCorrect, courseId: questions.courseId })
+    .from(questionOptions)
+    .innerJoin(questions, eq(questions.id, questionOptions.questionId))
+    .where(and(eq(questionOptions.id, optionId), eq(questionOptions.questionId, questionId)))
+    .limit(1);
+  return row ?? null;
+}
+
+export async function saveAnswer(
+  attemptId: string,
+  questionId: string,
+  optionId: string,
+  isCorrect: boolean,
+): Promise<void> {
+  await db
+    .insert(attemptAnswers)
+    .values({ attemptId, questionId, optionId, isCorrect })
+    .onConflictDoUpdate({
+      target: [attemptAnswers.attemptId, attemptAnswers.questionId],
+      set: { optionId, isCorrect },
+    });
+}
+
+export type GradedOption = { id: string; label: string; body: string; isCorrect: boolean };
+
+export type GradedQuestion = {
+  id: string;
+  position: number;
+  prompt: string;
+  moduleTitle: string;
+  explanation: string;
+  selectedOptionId: string | null;
+  wasCorrect: boolean;
+  options: GradedOption[];
+};
+
+export type GradedAttempt = {
+  id: string;
+  courseSlug: string;
+  courseTitle: string;
+  /** Addresses the subject's quiz list, which the results page links back to. */
+  subjectSlug: string;
+  score: number;
+  questionCount: number;
+  passScore: number;
+  previousBest: number | null;
+  submittedAt: Date;
+  modulesToReview: string[];
+  questions: GradedQuestion[];
+};
+
+/**
+ * Grades and closes the attempt. Score is the count of answers already flagged
+ * correct at save time, so unanswered questions simply never contribute.
+ * Returns the score. Caller must ensure the attempt is still open.
+ */
+export async function submitAttempt(attemptId: string): Promise<number> {
+  const [row] = await db
+    .select({ correct: count() })
+    .from(attemptAnswers)
+    .where(and(eq(attemptAnswers.attemptId, attemptId), eq(attemptAnswers.isCorrect, true)));
+
+  const score = Number(row?.correct ?? 0);
+
+  await db
+    .update(attempts)
+    .set({ score, submittedAt: new Date() })
+    .where(and(eq(attempts.id, attemptId), isNull(attempts.submittedAt)));
+
+  return score;
+}
+
+/** Best submitted score for this user and course, excluding the given attempt. */
+export async function findBestScoreBefore(
+  userId: string,
+  courseId: string,
+  attemptId: string,
+): Promise<number | null> {
+  const [row] = await db
+    .select({ best: max(attempts.score) })
+    .from(attempts)
+    .where(
+      and(
+        eq(attempts.userId, userId),
+        eq(attempts.courseId, courseId),
+        isNotNull(attempts.submittedAt),
+        ne(attempts.id, attemptId),
+      ),
+    );
+  return row?.best === null || row?.best === undefined ? null : Number(row.best);
+}
+
+/**
+ * The caller's record on one course: best submitted score and how many
+ * submissions. Submitted attempts only, matching listCoursesBySubject — an
+ * attempt still open is not a result yet and must not inflate the count.
+ *
+ * bestScore is null for a course never submitted, which callers must not
+ * conflate with a score of zero.
+ */
+export async function findCourseHistory(
+  userId: string,
+  courseId: string,
+): Promise<{ bestScore: number | null; attemptCount: number }> {
+  const [row] = await db
+    .select({ best: max(attempts.score), submitted: count(attempts.id) })
+    .from(attempts)
+    .where(
+      and(
+        eq(attempts.userId, userId),
+        eq(attempts.courseId, courseId),
+        isNotNull(attempts.submittedAt),
+      ),
+    );
+
+  return {
+    bestScore: row?.best === null || row?.best === undefined ? null : Number(row.best),
+    attemptCount: Number(row?.submitted ?? 0),
+  };
+}
+
+export async function findGradedAttempt(attemptId: string): Promise<GradedAttempt | null> {
+  const attempt = await findAttemptById(attemptId);
+  if (!attempt || attempt.submittedAt === null) return null;
+
+  // Explicit columns plus the subject join: the results page needs the subject
+  // slug to link back to its quiz list, and `select()` on courses alone cannot
+  // reach it.
+  const [course] = await db
+    .select({
+      slug: courses.slug,
+      title: courses.title,
+      passScore: courses.passScore,
+      questionCount: courses.questionCount,
+      subjectSlug: subjects.slug,
+    })
+    .from(courses)
+    .innerJoin(subjects, eq(subjects.id, courses.subjectId))
+    .where(eq(courses.id, attempt.courseId))
+    .limit(1);
+  if (!course) return null;
+
+  const rows = await db
+    .select({
+      questionId: questions.id,
+      position: questions.position,
+      prompt: questions.prompt,
+      explanation: questions.explanation,
+      moduleTitle: modules.title,
+      optionId: questionOptions.id,
+      label: questionOptions.label,
+      body: questionOptions.body,
+      isCorrect: questionOptions.isCorrect,
+      selectedOptionId: attemptAnswers.optionId,
+    })
+    .from(questions)
+    .innerJoin(modules, eq(modules.id, questions.moduleId))
+    .innerJoin(questionOptions, eq(questionOptions.questionId, questions.id))
+    .leftJoin(
+      attemptAnswers,
+      and(
+        eq(attemptAnswers.questionId, questions.id),
+        eq(attemptAnswers.attemptId, attemptId),
+      ),
+    )
+    .where(eq(questions.courseId, attempt.courseId))
+    .orderBy(asc(questions.position), asc(questionOptions.label));
+
+  const byQuestion = new Map<string, GradedQuestion>();
+  for (const r of rows) {
+    let q = byQuestion.get(r.questionId);
+    if (!q) {
+      q = {
+        id: r.questionId,
+        position: r.position,
+        prompt: r.prompt,
+        moduleTitle: r.moduleTitle,
+        explanation: r.explanation,
+        selectedOptionId: r.selectedOptionId ?? null,
+        wasCorrect: false,
+        options: [],
+      };
+      byQuestion.set(r.questionId, q);
+    }
+    if (r.selectedOptionId) q.selectedOptionId = r.selectedOptionId;
+    q.options.push({ id: r.optionId, label: r.label, body: r.body, isCorrect: r.isCorrect });
+  }
+
+  const graded = [...byQuestion.values()].map((q) => ({
+    ...q,
+    wasCorrect:
+      q.selectedOptionId !== null &&
+      q.options.some((o) => o.id === q.selectedOptionId && o.isCorrect),
+  }));
+
+  const modulesToReview = [
+    ...new Set(graded.filter((q) => !q.wasCorrect).map((q) => q.moduleTitle)),
+  ];
+
+  return {
+    id: attempt.id,
+    courseSlug: course.slug,
+    courseTitle: course.title,
+    subjectSlug: course.subjectSlug,
+    score: attempt.score ?? 0,
+    questionCount: course.questionCount,
+    passScore: course.passScore,
+    previousBest: await findBestScoreBefore(attempt.userId, attempt.courseId, attempt.id),
+    submittedAt: attempt.submittedAt,
+    modulesToReview,
+    questions: graded,
+  };
+}
+
+export type ProgressRow = {
+  courseId: string;
+  courseTitle: string;
+  courseSlug: string;
+  subjectSlug: string;
+  passScore: number;
+  questionCount: number;
+  bestScore: number;
+  attemptCount: number;
+  lastAttemptId: string;
+  lastSubmittedAt: Date;
+};
+
+/**
+ * One row per course the caller has at least one submitted attempt for,
+ * newest last-completed first. A course never submitted does not appear.
+ */
+export async function findMyProgress(userId: string): Promise<ProgressRow[]> {
+  const aggregates = await db
+    .select({
+      courseId: attempts.courseId,
+      courseTitle: courses.title,
+      courseSlug: courses.slug,
+      subjectSlug: subjects.slug,
+      passScore: courses.passScore,
+      questionCount: courses.questionCount,
+      bestScore: max(attempts.score),
+      attemptCount: count(attempts.id),
+    })
+    .from(attempts)
+    .innerJoin(courses, eq(courses.id, attempts.courseId))
+    .innerJoin(subjects, eq(subjects.id, courses.subjectId))
+    .where(and(eq(attempts.userId, userId), isNotNull(attempts.submittedAt)))
+    .groupBy(
+      attempts.courseId,
+      courses.title,
+      courses.slug,
+      subjects.slug,
+      courses.passScore,
+      courses.questionCount,
+    );
+
+  if (aggregates.length === 0) return [];
+
+  // Newest first, so the first row seen per course below is that course's
+  // most recent submitted attempt. Simpler than a SQL window function, and
+  // this scans one caller's own attempts — never a large set.
+  const submitted = await db
+    .select({ courseId: attempts.courseId, id: attempts.id, submittedAt: attempts.submittedAt })
+    .from(attempts)
+    .where(and(eq(attempts.userId, userId), isNotNull(attempts.submittedAt)))
+    .orderBy(desc(attempts.submittedAt));
+
+  const lastByCourse = new Map<string, { id: string; submittedAt: Date }>();
+  for (const row of submitted) {
+    if (!lastByCourse.has(row.courseId)) {
+      lastByCourse.set(row.courseId, { id: row.id, submittedAt: row.submittedAt! });
+    }
+  }
+
+  return aggregates
+    .map((row) => {
+      const last = lastByCourse.get(row.courseId)!;
+      return {
+        courseId: row.courseId,
+        courseTitle: row.courseTitle,
+        courseSlug: row.courseSlug,
+        subjectSlug: row.subjectSlug,
+        passScore: row.passScore,
+        questionCount: row.questionCount,
+        bestScore: Number(row.bestScore),
+        attemptCount: Number(row.attemptCount),
+        lastAttemptId: last.id,
+        lastSubmittedAt: last.submittedAt,
+      };
+    })
+    .sort((a, b) => b.lastSubmittedAt.getTime() - a.lastSubmittedAt.getTime());
+}

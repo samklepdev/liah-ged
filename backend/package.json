@@ -1,0 +1,48 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=.env src/index.ts",
+    "build": "tsc -p tsconfig.build.json && node -e \"require('fs').writeFileSync('dist/package.json', JSON.stringify({ type: 'module' }))\"",
+    "start": "node --env-file-if-exists=.env dist/index.js",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:migrate": "drizzle-kit migrate",
+    "db:migrate:deploy": "node scripts/migrate-on-deploy.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --import tsx --env-file=.env.test --test --test-concurrency=1 \"src/**/*.test.ts\"",
+    "db:push:test": "node --env-file=.env.test ../node_modules/drizzle-kit/bin.cjs push",
+    "quiz:parse": "tsx src/scripts/parse-quiz-pdf.ts",
+    "quiz:seed": "node --import tsx --env-file-if-exists=.env src/scripts/seed-quizzes.ts",
+    "seed:subjects": "node --import tsx --env-file-if-exists=.env src/scripts/seed-subjects.ts",
+    "seed:admin": "node --import tsx --env-file-if-exists=.env src/scripts/seed-admin.ts",
+    "reset-admin-password": "node --import tsx --env-file-if-exists=.env src/scripts/reset-admin-password.ts"
+  },
+  "dependencies": {
+    "argon2": "^0.44.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "drizzle-orm": "^0.45.4",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.4",
+    "multer": "^2.5.0",
+    "pdfkit": "^0.15.0",
+    "pg": "^8.16.3",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/multer": "^2.3.0",
+    "@types/node": "^24.19.2",
+    "@types/pdfkit": "^0.13.4",
+    "@types/pg": "^8.15.5",
+    "drizzle-kit": "^0.31.11",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3"
+  }
+}

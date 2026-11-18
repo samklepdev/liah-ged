@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: liah-hsd-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: liah_hsd
+      POSTGRES_PASSWORD: liah_hsd_dev_password
+      POSTGRES_DB: liah_hsd
+    # liah-learning's own Postgres container already uses 54330, so this
+    # project exposes on 54331 instead, bound to loopback only.
+    ports:
+      - '127.0.0.1:54331:5432'
+    volumes:
+      - liah_hsd_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U liah_hsd -d liah_hsd']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  liah_hsd_pgdata:
