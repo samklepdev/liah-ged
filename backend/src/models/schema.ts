@@ -84,6 +84,9 @@ export const courses = pgTable(
     title: text('title').notNull(),
     passScore: integer('pass_score').notNull().default(9),
     questionCount: integer('question_count').notNull().default(10),
+    /** Lesson reading text shown before the quiz, as plain `\n\n`-separated
+     *  paragraphs. Null means there is no reading material for this course. */
+    content: text('content'),
     /** Soft-delete flag. false hides the course from the active catalog
      *  (listSubjects/listCoursesBySubject); a learner's own attempt history
      *  is unaffected. See deletedAt. */
