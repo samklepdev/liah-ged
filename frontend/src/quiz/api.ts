@@ -21,6 +21,18 @@ export type CourseSummary = {
 
 export type SearchCourseResult = CourseSummary & { subjectSlug: string; subjectTitle: string };
 
+export type CourseDetail = {
+  id: string;
+  slug: string;
+  title: string;
+  position: number;
+  passScore: number;
+  questionCount: number;
+  content: string | null;
+  subjectSlug: string;
+  subjectTitle: string;
+};
+
 export type QuizOption = { id: string; label: string; body: string };
 
 export type QuizQuestion = {
@@ -99,6 +111,8 @@ export const quizApi = {
 
   listCourses: (subject: string) =>
     request<{ courses: CourseSummary[] }>(`/courses?subject=${encodeURIComponent(subject)}`),
+
+  getCourse: (slug: string) => request<{ course: CourseDetail }>(`/courses/${slug}`),
 
   search: (q: string) =>
     request<{ subjects: SubjectSummary[]; courses: SearchCourseResult[] }>(
