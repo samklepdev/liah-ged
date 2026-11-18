@@ -18,7 +18,7 @@ export type GedBankEntry = {
   explanation: string;
 };
 
-const OPTION_LABELS = ['A', 'B', 'C', 'D', 'E'] as const;
+const OPTION_LABELS = ['A', 'B', 'C', 'D', 'E', 'F'] as const;
 const LESSON_NUMBER_RE = /^Lesson (\d+):\s*(.+)$/;
 
 /** Entries the schema can represent: a single correct option out of several. */
@@ -132,16 +132,25 @@ export function quizTitlesByLesson(
   return out;
 }
 
-/** Each lesson's kept question prompts — the input assertNoLeakedQuestions checks for in extracted content. */
-export function promptsByLesson(
+export type LeakCheckQuestion = { prompt: string; options: string[] };
+
+/**
+ * Each lesson's kept questions (prompt + option bodies) — what
+ * assertNoLeakedQuestions checks for in extracted content. Carrying the
+ * options alongside the prompt lets that check tell a genuine leaked quiz
+ * block apart from a lesson's own intro coincidentally restating one of its
+ * quiz questions verbatim (observed in practice: "What is a hypothesis?" is
+ * both a "you will learn" preview line and, separately, a real quiz prompt).
+ */
+export function questionsByLesson(
   entries: GedBankEntry[],
   subjectSlug: string,
-): Map<string, string[]> {
-  const out = new Map<string, string[]>();
+): Map<string, LeakCheckQuestion[]> {
+  const out = new Map<string, LeakCheckQuestion[]>();
   for (const entry of entries) {
     if (!isUsable(entry, subjectSlug)) continue;
     const list = out.get(entry.lesson) ?? [];
-    list.push(entry.question);
+    list.push({ prompt: entry.question, options: entry.options });
     out.set(entry.lesson, list);
   }
   return out;

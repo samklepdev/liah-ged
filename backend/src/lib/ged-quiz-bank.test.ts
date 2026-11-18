@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildGedSubject, promptsByLesson, quizTitlesByLesson, type GedBankEntry } from './ged-quiz-bank.ts';
+import { buildGedSubject, questionsByLesson, quizTitlesByLesson, type GedBankEntry } from './ged-quiz-bank.ts';
 
 function entry(overrides: Partial<GedBankEntry> = {}): GedBankEntry {
   return {
@@ -98,10 +98,13 @@ test('quizTitlesByLesson lists quiz titles in first-appearance order, deduped', 
   assert.deepEqual(quizTitlesByLesson(entries, 'ged-demo'), new Map([['Lesson 1: Vocabulary', ['Quiz A', 'Quiz B']]]));
 });
 
-test('promptsByLesson lists every kept question prompt for a lesson', () => {
+test('questionsByLesson lists every kept question with its options for a lesson', () => {
   const entries: GedBankEntry[] = [
-    entry({ question: 'Q1?', correctIndex: 0 }),
+    entry({ question: 'Q1?', options: ['One', 'Two'], correctIndex: 0 }),
     entry({ question: 'Q2?', options: ['Fill in the blank 1 of 1'], correctIndex: [] as unknown as number }),
   ];
-  assert.deepEqual(promptsByLesson(entries, 'ged-demo'), new Map([['Lesson 1: Vocabulary', ['Q1?']]]));
+  assert.deepEqual(
+    questionsByLesson(entries, 'ged-demo'),
+    new Map([['Lesson 1: Vocabulary', [{ prompt: 'Q1?', options: ['One', 'Two'] }]]]),
+  );
 });

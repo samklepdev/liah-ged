@@ -94,6 +94,34 @@ test('stripQuizBlocks keeps skipping a quiz block across a page-footer line', ()
   assert.doesNotMatch(stripped, /drop two/);
 });
 
+test('stripQuizBlocks re-arms the skip for a second question interleaved with real content', () => {
+  const text = [
+    'Intro paragraph.',
+    'Quiz on Video: Example',
+    'Q1. drop one.',
+    'a) one',
+    'b) two (correct)',
+    'Explanation: because.',
+    '',
+    'Explore further: Root Words',
+    'Some real content about root words.',
+    '',
+    'Q2. drop two.',
+    'a) three',
+    'b) four (correct)',
+    'Explanation: because again.',
+    'GED Exam Tip',
+    'A useful tip.',
+  ].join('\n');
+
+  const stripped = stripQuizBlocks(text, ['Quiz on Video: Example']);
+  assert.match(stripped, /Intro paragraph\./);
+  assert.match(stripped, /Some real content about root words\./);
+  assert.match(stripped, /A useful tip\./);
+  assert.doesNotMatch(stripped, /drop one/);
+  assert.doesNotMatch(stripped, /drop two/);
+});
+
 test('stripQuizBlocks strips the widget-dump chrome used by the language-arts export', () => {
   const text = [
     'Intro paragraph.',
@@ -150,14 +178,36 @@ test('extractLessonContent throws when a lesson has no matching PDF heading', ()
   );
 });
 
-test('assertNoLeakedQuestions throws when a prompt survives into the content', () => {
-  const content = new Map([['Lesson 1: Vocabulary', 'What is the meaning of idyllic?']]);
-  const prompts = new Map([['Lesson 1: Vocabulary', ['What is the meaning of idyllic?']]]);
-  assert.throws(() => assertNoLeakedQuestions(content, prompts), /still contains/);
+test('assertNoLeakedQuestions throws when a prompt and one of its options both survive', () => {
+  const content = new Map([
+    ['Lesson 1: Vocabulary', 'What is the meaning of idyllic? a) perfect b) terrible'],
+  ]);
+  const questions = new Map([
+    ['Lesson 1: Vocabulary', [{ prompt: 'What is the meaning of idyllic?', options: ['perfect', 'terrible'] }]],
+  ]);
+  assert.throws(() => assertNoLeakedQuestions(content, questions), /still contains/);
 });
 
 test('assertNoLeakedQuestions passes when prompts are absent from the content', () => {
   const content = new Map([['Lesson 1: Vocabulary', 'Unrelated reading text.']]);
-  const prompts = new Map([['Lesson 1: Vocabulary', ['What is the meaning of idyllic?']]]);
-  assert.doesNotThrow(() => assertNoLeakedQuestions(content, prompts));
+  const questions = new Map([
+    ['Lesson 1: Vocabulary', [{ prompt: 'What is the meaning of idyllic?', options: ['perfect', 'terrible'] }]],
+  ]);
+  assert.doesNotThrow(() => assertNoLeakedQuestions(content, questions));
+});
+
+test('assertNoLeakedQuestions passes when the prompt alone restates a learning objective', () => {
+  // A lesson's own "In this lesson... you will learn..." preview can
+  // legitimately restate a quiz question verbatim, with none of that
+  // question's options anywhere nearby.
+  const content = new Map([
+    ['Lesson 1: The Scientific Method', 'In this lesson you will learn what is a hypothesis?'],
+  ]);
+  const questions = new Map([
+    [
+      'Lesson 1: The Scientific Method',
+      [{ prompt: 'What is a hypothesis?', options: ['An educated guess', 'A random guess'] }],
+    ],
+  ]);
+  assert.doesNotThrow(() => assertNoLeakedQuestions(content, questions));
 });

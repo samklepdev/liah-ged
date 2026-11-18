@@ -41,9 +41,11 @@ function isQuizNoiseLine(line: string): boolean {
 
   const chromePhrases = [
     'Quiz Summary',
+    'Quiz question',
     'Questions completed',
     'Quiz is loading',
     'sign in or sign up',
+    'sign up to start the quiz',
     'Time limit:',
     'Correct Incorrect',
     'Earned Point',
@@ -53,6 +55,11 @@ function isQuizNoiseLine(line: string): boolean {
     'Review Answered',
     'Back to topic',
     'already completed the quiz',
+    'Results Quiz complete',
+    'Results are being recorded',
+    'Questions answered correctly',
+    'Time has elapsed',
+    'point(s)',
   ];
   return chromePhrases.some((phrase) => t.includes(phrase));
 }
@@ -71,16 +78,29 @@ export function stripQuizBlocks(lessonText: string, quizTitles: string[]): strin
   const isHeading = (line: string): boolean =>
     quizTitles.some((title) => line.trim() === title.trim());
 
+  // A blank line alone never (re-)starts a skip run — real paragraphs have
+  // blank lines between them too, and those must survive so toParagraphs can
+  // still find the paragraph breaks. But a quiz can interleave genuine lesson
+  // content *between* two of its own questions (observed in the language-arts
+  // export), so anything else that looks like quiz noise re-arms the skip even
+  // outside the lines immediately following a heading.
+  const isSkipTrigger = (line: string): boolean => line.trim() !== '' && isQuizNoiseLine(line);
+
   const kept: string[] = [];
   let i = 0;
   while (i < lines.length) {
-    if (!isHeading(lines[i]!)) {
-      kept.push(lines[i]!);
-      i++;
+    const line = lines[i]!;
+    if (isHeading(line)) {
+      i++; // skip the heading itself
+      while (i < lines.length && isQuizNoiseLine(lines[i]!)) i++;
       continue;
     }
-    i++; // skip the heading itself
-    while (i < lines.length && isQuizNoiseLine(lines[i]!)) i++;
+    if (isSkipTrigger(line)) {
+      while (i < lines.length && isQuizNoiseLine(lines[i]!)) i++;
+      continue;
+    }
+    kept.push(line);
+    i++;
   }
   return kept.join('\n');
 }
@@ -139,26 +159,50 @@ export function extractLessonContent(
   return content;
 }
 
+/** How far past a matched prompt to look for one of its own options, when
+ *  deciding whether a prompt match is a genuine leaked quiz block. */
+const LEAK_OPTION_WINDOW = 500;
+
 /**
  * Throws if any lesson's extracted content still contains one of that
- * lesson's quiz question prompts verbatim (whitespace-normalized) — the
- * signal that a quiz block survived stripping and leaked into the reading
- * material.
+ * lesson's quiz questions — its prompt *and* at least one of its own
+ * options, within a short distance of each other, both whitespace- and
+ * case-normalized. Requiring an option too (not just the prompt) is what
+ * tells a genuine leaked quiz block apart from a lesson's own intro
+ * coincidentally restating one of its quiz questions verbatim as a learning
+ * objective — e.g. a lesson's "In this lesson... you will learn... what is a
+ * hypothesis?" preview line matches that lesson's "What is a hypothesis?"
+ * quiz prompt exactly, with no quiz content anywhere nearby.
  */
 export function assertNoLeakedQuestions(
   content: Map<string, string>,
-  promptsByLesson: Map<string, string[]>,
+  questionsByLesson: Map<string, Array<{ prompt: string; options: string[] }>>,
 ): void {
   const normalize = (s: string): string => s.replace(/\s+/g, ' ').trim().toLowerCase();
 
-  for (const [lessonTitle, prompts] of promptsByLesson) {
+  for (const [lessonTitle, questions] of questionsByLesson) {
     const normalizedContent = normalize(content.get(lessonTitle) ?? '');
-    for (const prompt of prompts) {
-      if (normalizedContent.includes(normalize(prompt))) {
-        throw new Error(
-          `"${lessonTitle}" content still contains the question ` +
-            `"${prompt.slice(0, 60)}…" — a quiz block was not fully stripped.`,
+
+    for (const { prompt, options } of questions) {
+      const normalizedPrompt = normalize(prompt);
+      let searchFrom = 0;
+      for (;;) {
+        const matchIndex = normalizedContent.indexOf(normalizedPrompt, searchFrom);
+        if (matchIndex === -1) break;
+
+        const window = normalizedContent.slice(
+          matchIndex,
+          matchIndex + normalizedPrompt.length + LEAK_OPTION_WINDOW,
         );
+        const hasNearbyOption = options.some((option) => window.includes(normalize(option)));
+        if (hasNearbyOption) {
+          throw new Error(
+            `"${lessonTitle}" content still contains the question ` +
+              `"${prompt.slice(0, 60)}…" and one of its options — a quiz block was not fully stripped.`,
+          );
+        }
+
+        searchFrom = matchIndex + normalizedPrompt.length;
       }
     }
   }

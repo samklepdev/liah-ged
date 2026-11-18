@@ -592,7 +592,7 @@ function readQuestion(
 // Answer keys
 // ---------------------------------------------------------------------------
 
-export type OptionLabel = 'A' | 'B' | 'C' | 'D' | 'E';
+export type OptionLabel = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
 
 export type ParsedOption = { label: OptionLabel; body: string; isCorrect: boolean };
 
