@@ -138,6 +138,33 @@ export function toParagraphs(text: string): string {
 }
 
 /**
+ * Removes sentences that tell the reader to watch a video — e.g. "Watch the
+ * video, then take the optional quiz.", "Watch this video to learn more
+ * about genetics research", "Click here to watch the video" — since no
+ * video is ever shown on the content page and none of these source PDFs
+ * carry an actual video URL to link to. The source always attaches these
+ * directly after a short lead-in ("Video: Context Clues Watch the video and
+ * then answer the practice questions."), so only the prompt sentence itself
+ * is stripped, never the lead-in or anything in a different paragraph.
+ *
+ * A paragraph that was *only* a video prompt (a common case — many videos
+ * get their own one-line paragraph) ends up empty and is dropped entirely so
+ * no stray blank paragraph is left behind.
+ */
+export function stripVideoPrompts(text: string): string {
+  const withoutPrompts = text
+    .replace(/\b(?:you can also )?click here to watch[^.\n]*\.?/gi, '')
+    .replace(/\bwatch (?:the|this) video\b[^.\n]*\./gi, '')
+    .replace(/\bwatch (?:the|this) video\b[^.\n]*$/gim, '');
+
+  return withoutPrompts
+    .split('\n\n')
+    .map((paragraph) => paragraph.replace(/\s{2,}/g, ' ').trim())
+    .filter((paragraph) => paragraph.length > 0)
+    .join('\n\n');
+}
+
+/**
  * Builds { lessonTitle -> cleaned content } for one subject's PDF text, given
  * each lesson's ordered, deduped quizTitle list (from quiz-bank.json).
  */
@@ -153,7 +180,8 @@ export function extractLessonContent(
     if (raw === undefined) {
       throw new Error(`No "${lessonTitle}" heading found in the PDF text.`);
     }
-    content.set(lessonTitle, toParagraphs(stripQuizBlocks(raw, quizTitles)));
+    const paragraphs = toParagraphs(stripQuizBlocks(raw, quizTitles));
+    content.set(lessonTitle, stripVideoPrompts(paragraphs));
   }
 
   return content;
