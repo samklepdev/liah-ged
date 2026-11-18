@@ -6,6 +6,7 @@ import { useAuth } from './auth/useAuth';
 import { AdminCoursesPage } from './pages/admin/AdminCoursesPage';
 import { AdminUsersPage } from './pages/admin/AdminUsersPage';
 import { CourseContentPage } from './pages/CourseContentPage';
+import { MasteringGedTestPage } from './pages/MasteringGedTestPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { PasswordRequestsPage } from './pages/admin/PasswordRequestsPage';
 import { ProfilePage } from './pages/ProfilePage';
@@ -80,6 +81,7 @@ export function AppRouter() {
           }
         >
           <Route path="/subjects" element={<SubjectsIndexPage />} />
+          <Route path="/mastering-the-ged-test" element={<MasteringGedTestPage />} />
           <Route path="/subjects/:subjectSlug" element={<SubjectCoursesPage />} />
           <Route path="/courses/:slug" element={<CourseContentPage />} />
           <Route path="/courses/:slug/quiz" element={<QuizPage />} />

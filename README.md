@@ -14,7 +14,7 @@ can import quizzes/users and review learner attempts.
 
 ## Project structure
 
-```
+```text
 backend/
   src/
     routes/        # auth, catalog, quiz, admin, admin-import, certificates
