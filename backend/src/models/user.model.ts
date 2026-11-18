@@ -87,6 +87,13 @@ export async function findUserByUsernameWithHash(
   return user ?? null;
 }
 
+/** The safe-to-send shape, by id. Used wherever a caller needs someone else's
+ *  public profile (e.g. the certificate it belongs to), not their own. */
+export async function findUserById(id: string): Promise<PublicUser | null> {
+  const [user] = await db.select(publicColumns).from(users).where(eq(users.id, id)).limit(1);
+  return user ?? null;
+}
+
 /** Includes the password hash — only the change-password path should call this. */
 export async function findUserByIdWithHash(
   id: string,
