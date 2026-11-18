@@ -1,4 +1,4 @@
-# LIAH HSD
+# LIAH GED
 
 A high-school-diploma learning platform for LIAH Wellness — students browse
 subjects and courses, take quizzes, review their results, track progress, and
