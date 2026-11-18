@@ -57,9 +57,8 @@ cp backend/.env.example backend/.env
 # push the Drizzle schema to the database
 npm run db:push
 
-# seed the four placeholder subjects (Mathematics, English Language Arts,
-# Science, Social Studies) — real courses/quizzes arrive later
-npm run seed:subjects
+# seed the GED subjects, courses, and quiz content
+npm run quiz:seed
 ```
 
 ### Run
@@ -75,7 +74,6 @@ In dev, Vite proxies API requests so the frontend and backend share an origin.
 ### Seeding data
 
 ```bash
-npm run seed:subjects # placeholder subjects with no courses yet
 npm run quiz:parse    # parse a quiz PDF into source data, once a pack exists
 npm run quiz:seed     # seed quizzes into the database
 npm run db:generate    # generate Drizzle migrations from schema changes

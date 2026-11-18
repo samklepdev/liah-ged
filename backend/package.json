@@ -17,7 +17,6 @@
     "quiz:parse": "tsx src/scripts/parse-quiz-pdf.ts",
     "ged:import": "tsx src/scripts/import-ged-content.ts",
     "quiz:seed": "node --import tsx --env-file-if-exists=.env src/scripts/seed-quizzes.ts",
-    "seed:subjects": "node --import tsx --env-file-if-exists=.env src/scripts/seed-subjects.ts",
     "seed:admin": "node --import tsx --env-file-if-exists=.env src/scripts/seed-admin.ts",
     "reset-admin-password": "node --import tsx --env-file-if-exists=.env src/scripts/reset-admin-password.ts"
   },
