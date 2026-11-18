@@ -67,7 +67,7 @@ export function AppShell() {
 
           <Link to="/subjects" className="topnav-brand">
             <BrandMark className="topnav-mark" />
-            <span className="topnav-brand-label">LIAH HSD</span>
+            <span className="topnav-brand-label">LIAH GED</span>
           </Link>
         </div>
 

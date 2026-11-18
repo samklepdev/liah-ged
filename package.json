@@ -1,7 +1,7 @@
 {
   "name": "liah-ged",
   "version": "1.0.0",
-  "description": "LIAH HSD — a high-school-diploma learning platform: students take quizzes toward a diploma and earn a certificate on completion.",
+  "description": "LIAH GED — a high-school-diploma learning platform: students take quizzes toward a diploma and earn a certificate on completion.",
   "private": true,
   "workspaces": [
     "backend",
