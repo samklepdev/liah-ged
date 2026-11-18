@@ -1466,8 +1466,10 @@ git commit -m "Add certificate PDF generation and API routes"
 ## Task 5: Wire certificate issuance into quiz submission
 
 **Files:**
-- Create: `backend/src/controllers/attempt.controller.test.ts` (does not exist yet in `liah-learning` — confirmed by listing `backend/src/controllers/*.controller.test.ts` during planning)
+- Create: `backend/src/controllers/attempt-certificate.controller.test.ts`
 - Modify: `backend/src/controllers/attempt.controller.ts`
+
+**Correction made during execution:** the planning-time check for `attempt.controller.test.ts` was wrong — it exists in `liah-learning` with 11 real tests built against the full chassis fixture (shared `baseUrl`/`cookie` across tests, no `beforeEach` reset). Writing the new certificate-wiring tests into a fresh `attempt.controller.test.ts` would have clobbered those. It's also the wrong fixture to extend: certificate eligibility requires *every* active course passed, and the chassis fixture seeds 11 courses most tests never touch. The new tests went into their own file, `attempt-certificate.controller.test.ts`, with their own isolated single-course fixtures (same pattern as `certificate.controller.test.ts` in Task 4) — `attempt.controller.test.ts` itself is untouched.
 
 **Interfaces:**
 - Consumes: `checkAndIssueCertificate` from `../models/certificate.model.ts` (Task 3).

@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
 import { param } from '../lib/http.ts';
+import { checkAndIssueCertificate } from '../models/certificate.model.ts';
 import { findQuizByCourseSlug } from '../models/quiz.model.ts';
 import {
   findAttemptById,
@@ -72,6 +73,14 @@ export async function submit(req: Request, res: Response): Promise<void> {
   // Idempotent: a second submit returns the existing grade rather than regrading.
   if (!attempt.submittedAt) {
     await submitAttempt(attempt.id);
+    // Best-effort: a failure here must not fail the submission itself.
+    // checkAndIssueCertificate is idempotent, so the next
+    // GET /certificates/me simply retries it.
+    try {
+      await checkAndIssueCertificate(req.user!.id);
+    } catch (err) {
+      console.error('certificate issuance check failed', err);
+    }
   }
 
   const graded = await findGradedAttempt(attempt.id);
