@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
+import { certificatesApi, type CertificateStatus } from '../certificates/api';
+import { CertificateCard } from '../certificates/CertificateCard';
 import { quizApi, type ProgressCourse } from '../quiz/api';
 
-type State = { kind: 'ready'; courses: ProgressCourse[] } | { kind: 'error'; message: string };
+type State =
+  | { kind: 'ready'; courses: ProgressCourse[]; certificate: CertificateStatus | null }
+  | { kind: 'error'; message: string };
 
 export function ProgressPage() {
   const [state, setState] = useState<State | null>(null);
@@ -12,8 +16,11 @@ export function ProgressPage() {
 
     void (async () => {
       try {
-        const { courses } = await quizApi.getMyProgress();
-        if (!cancelled) setState({ kind: 'ready', courses });
+        const [{ courses }, certificate] = await Promise.all([
+          quizApi.getMyProgress(),
+          certificatesApi.getMine().catch(() => null),
+        ]);
+        if (!cancelled) setState({ kind: 'ready', courses, certificate });
       } catch (err) {
         if (!cancelled) {
           setState({
@@ -38,11 +45,13 @@ export function ProgressPage() {
     );
   }
 
-  const { courses } = state;
+  const { courses, certificate } = state;
 
   return (
     <div className="course-list">
       <h1>My Progress</h1>
+
+      {certificate && <CertificateCard status={certificate} />}
 
       {courses.length === 0 ? (
         <p className="course-intro">You haven&apos;t completed any quizzes yet.</p>

@@ -999,3 +999,44 @@ button.primary { padding: 0.6rem 1rem; border-radius: 0.5rem; cursor: pointer; }
     border: 0;
   }
 }
+
+.cert-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.1rem 1.25rem;
+  margin: 1.25rem 0;
+  background: var(--surface);
+}
+
+.cert-card-seal {
+  width: 2.75rem;
+  height: 2.75rem;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.cert-card h3 {
+  font-family: var(--heading);
+  font-weight: 400;
+  margin: 0 0 0.35rem;
+  color: var(--text-h);
+}
+
+.cert-card p {
+  margin: 0 0 0.5rem;
+}
+
+.cert-card-download {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--on-accent);
+  border: none;
+  border-radius: 3px;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
