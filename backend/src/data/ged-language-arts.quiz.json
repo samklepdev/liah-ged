@@ -7,6 +7,8 @@
       "slug": "ged-language-arts-vocabulary-questions",
       "title": "Vocabulary Questions",
       "moduleTitles": [
+        "Practice Question 1",
+        "Practice Question 2",
         "Quiz on Video: Finding the Meaning of a Word",
         "Final Quiz: Vocabulary"
       ],
@@ -180,6 +182,62 @@
               "isCorrect": true
             }
           ]
+        },
+        {
+          "position": 7,
+          "prompt": "Read the following passage. Determine the meaning of the word Identical.\n\n“Mark Twain’s book “The Prince and the Pauper” is about two boys who look identical. One is a prince and one is a pauper. After they meet, they switch places with each other. They become trapped in the other boy’s world. Both boys have difficulty living as the other boy.”\n\nIn this passage, the word identical means which of the following?",
+          "moduleTitle": "Practice Question 1",
+          "explanation": "Identical means looking the same. The passage says the two boys look identical, which is why they can switch places and be mistaken for each other — option B restates that meaning directly.",
+          "options": [
+            {
+              "label": "A",
+              "body": "Different",
+              "isCorrect": false
+            },
+            {
+              "label": "B",
+              "body": "Looking the same",
+              "isCorrect": true
+            },
+            {
+              "label": "C",
+              "body": "Brothers",
+              "isCorrect": false
+            },
+            {
+              "label": "D",
+              "body": "Like a Prince and a Pauper",
+              "isCorrect": false
+            }
+          ]
+        },
+        {
+          "position": 8,
+          "prompt": "Read the following text. Then answer the question.\n\n“Starting at age 55, our hippocampus, a brain region critical to memory, shrinks 1 to 2 percent every year, to say nothing of the fact that one in nine people age 65 and older has Alzheimer’s disease. The number afflicted is expected to grow rapidly as the baby boom generation ages. Given these grim statistics, it’s no wonder that Americans are a captive market for anything, from supposed smart drugs and supplements to brain training, which promises to boost normal mental functioning or to stem its all-too-common decline.” (courtesy of The New York Times.)\n\nIn the text, the word stem means which of the following?",
+          "moduleTitle": "Practice Question 2",
+          "explanation": "Stem means to stop or hold back. The sentence talks about brain training that promises to stem its all-too-common decline — in other words, to prevent or slow the decline, which is what option B says.",
+          "options": [
+            {
+              "label": "A",
+              "body": "Stalk",
+              "isCorrect": false
+            },
+            {
+              "label": "B",
+              "body": "Prevent",
+              "isCorrect": true
+            },
+            {
+              "label": "C",
+              "body": "Originate",
+              "isCorrect": false
+            },
+            {
+              "label": "D",
+              "body": "Develop",
+              "isCorrect": false
+            }
+          ]
         }
       ],
       "topics": [
@@ -227,6 +285,10 @@
           "title": "Final Quiz: Vocabulary",
           "content": null
         }
+      ],
+      "practiceModuleTitles": [
+        "Practice Question 1",
+        "Practice Question 2"
       ]
     },
     {
