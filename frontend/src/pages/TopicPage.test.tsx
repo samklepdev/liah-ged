@@ -23,6 +23,7 @@ function makeTopicDetail(overrides: Partial<TopicDetail> = {}): TopicDetail {
     courseTitle: 'Vocabulary Questions',
     subjectSlug: 'ged-language-arts',
     next: { position: 2, title: 'Words to know' },
+    practiceQuestions: null,
     ...overrides,
   };
 }
@@ -82,6 +83,28 @@ describe('TopicPage', () => {
     renderPage();
     const link = await screen.findByRole('link', { name: 'Take the quiz' });
     expect(link).toBeInTheDocument();
+  });
+
+  test('shows practice questions inline when the topic has them', async () => {
+    getTopic.mockResolvedValue({
+      topic: makeTopicDetail({
+        content: null,
+        practiceQuestions: [
+          {
+            id: 'q1',
+            position: 1,
+            prompt: 'What is 1 + 1?',
+            explanation: 'Basic addition.',
+            options: [
+              { id: 'q1-a', label: 'A', body: '1', isCorrect: false },
+              { id: 'q1-b', label: 'B', body: '2', isCorrect: true },
+            ],
+          },
+        ],
+      }),
+    });
+    renderPage();
+    expect(await screen.findByText('What is 1 + 1?')).toBeInTheDocument();
   });
 
   test('shows an error message when the fetch fails', async () => {

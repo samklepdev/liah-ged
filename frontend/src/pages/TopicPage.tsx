@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { quizApi, type TopicDetail } from '../quiz/api';
+import { PracticeQuiz } from '../quiz/PracticeQuiz';
 
 type Key = { slug: string; position: string };
 
@@ -64,6 +65,8 @@ export function TopicPage() {
           <Markdown remarkPlugins={[remarkGfm]}>{topic.content}</Markdown>
         </div>
       )}
+
+      {topic.practiceQuestions && <PracticeQuiz questions={topic.practiceQuestions} />}
 
       {topic.next ? (
         <Link to={`/courses/${topic.courseSlug}/topics/${topic.next.position}`} className="primary">
