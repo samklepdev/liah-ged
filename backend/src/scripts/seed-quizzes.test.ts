@@ -5,7 +5,7 @@ import { eq, sql } from 'drizzle-orm';
 import { db } from '../db/index.ts';
 import { resetDb, closeDb } from '../test/helpers/db.ts';
 import { seedSubject } from './seed-quizzes.ts';
-import { courses, topics } from '../models/schema.ts';
+import { courses, modules, topics } from '../models/schema.ts';
 import type { ParsedSubject } from '../lib/quiz-parser.ts';
 
 const subject: ParsedSubject = JSON.parse(
@@ -126,6 +126,54 @@ test('seedSubject inserts each course\'s topics in order, with their content', a
   assert.deepEqual(rows, [
     { position: 1, title: 'In this lesson…', content: 'You will learn things.' },
     { position: 2, title: 'Practice Question 1', content: null },
+  ]);
+});
+
+test('seedSubject links a topic to its module when the titles match', async () => {
+  const withQuizTopic: ParsedSubject = {
+    slug: 'ged-demo',
+    title: 'GED Demo',
+    courses: [
+      {
+        position: 1,
+        slug: 'ged-demo-course',
+        title: 'Demo Course',
+        questionCount: 1,
+        moduleTitles: ['Final Quiz'],
+        topics: [
+          { title: 'Summary', content: 'Wrap-up text.' },
+          { title: 'Final Quiz', content: null },
+        ],
+        questions: [
+          {
+            position: 1,
+            prompt: 'What is 1 + 1?',
+            moduleTitle: 'Final Quiz',
+            explanation: 'Basic addition.',
+            options: [
+              { label: 'A', body: '1', isCorrect: false },
+              { label: 'B', body: '2', isCorrect: true },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
+  await seedSubject(withQuizTopic);
+
+  const [course] = await db.select().from(courses).where(eq(courses.slug, 'ged-demo-course'));
+  const [module] = await db.select().from(modules).where(eq(modules.courseId, course!.id));
+
+  const rows = await db
+    .select({ title: topics.title, moduleId: topics.moduleId })
+    .from(topics)
+    .where(eq(topics.courseId, course!.id))
+    .orderBy(topics.position);
+
+  assert.deepEqual(rows, [
+    { title: 'Summary', moduleId: null },
+    { title: 'Final Quiz', moduleId: module!.id },
   ]);
 });
 

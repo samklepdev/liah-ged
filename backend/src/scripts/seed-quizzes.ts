@@ -93,7 +93,9 @@ export async function seedSubject(
         questionTotal += 1;
       }
 
-      // Replace topics wholesale too, same reasoning as modules above.
+      // Replace topics wholesale too, same reasoning as modules above. A
+      // topic whose title matches one of this course's modules is a
+      // practice-stop: the frontend shows that module's questions inline.
       await tx.delete(topics).where(eq(topics.courseId, courseId));
       if (course.topics && course.topics.length > 0) {
         await tx.insert(topics).values(
@@ -102,6 +104,7 @@ export async function seedSubject(
             position: index + 1,
             title: topic.title,
             content: topic.content,
+            moduleId: moduleIdByTitle.get(topic.title) ?? null,
           })),
         );
       }
