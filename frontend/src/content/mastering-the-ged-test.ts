@@ -213,18 +213,6 @@ export const masteringGedContent: MasteringGedBlock[] = [
     "text": "Consider these factors carefully to choose the option that best fits your needs."
   },
   {
-    "type": "subheading",
-    "text": "Learn More:"
-  },
-  {
-    "type": "bullets",
-    "items": [
-      "Watch this video to see what it’s like to take the GED online: YouTube Video",
-      "Try the virtual whiteboard here: Using the Whiteboard for GED",
-      "Learn more about the GED Ready practice test: YouTube Video"
-    ]
-  },
-  {
     "type": "heading",
     "text": "Using the TI Calculator on the GED Math Test"
   },
