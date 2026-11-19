@@ -94,6 +94,33 @@ test('seedSubject writes passScore and content when provided', async () => {
   assert.equal(row?.content, 'First paragraph.\n\nSecond paragraph.');
 });
 
+test('seedSubject prefers a markdown override file over JSON content', async () => {
+  const withContent: ParsedSubject = {
+    slug: 'ged-demo',
+    title: 'GED Demo',
+    courses: [
+      {
+        position: 1,
+        slug: 'ged-demo-course',
+        title: 'Demo Course',
+        questionCount: 0,
+        content: 'Plain JSON content.',
+        moduleTitles: ['Reading'],
+        questions: [],
+      },
+    ],
+  };
+
+  const contentDir = new URL('../test/fixtures/content-overrides/', import.meta.url);
+  await seedSubject(withContent, contentDir);
+
+  const [row] = await db
+    .select({ content: courses.content })
+    .from(courses)
+    .where(eq(courses.slug, 'ged-demo-course'));
+  assert.equal(row!.content, '## Overridden\n\nThis came from the markdown file, not the JSON.\n');
+});
+
 test('seedSubject defaults passScore to 9 and content to null when omitted', async () => {
   await seedSubject(subject); // the chassis fixture, which sets neither field
 

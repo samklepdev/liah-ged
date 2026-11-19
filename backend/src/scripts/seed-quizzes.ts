@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { eq } from 'drizzle-orm';
 import { db, pool } from '../db/index.ts';
 import { courses, modules, questionOptions, questions, subjects } from '../models/schema.ts';
@@ -12,6 +12,7 @@ import type { ParsedSubject } from '../lib/quiz-parser.ts';
  */
 export async function seedSubject(
   subject: ParsedSubject,
+  contentDir: URL = new URL('../data/content/', import.meta.url),
 ): Promise<{ courses: number; questions: number }> {
   return db.transaction(async (tx) => {
     const [subjectRow] = await tx
@@ -23,6 +24,11 @@ export async function seedSubject(
     let questionTotal = 0;
 
     for (const course of subject.courses) {
+      const overridePath = new URL(`${course.slug}.md`, contentDir);
+      const content = existsSync(overridePath)
+        ? readFileSync(overridePath, 'utf8')
+        : course.content ?? null;
+
       const [courseRow] = await tx
         .insert(courses)
         .values({
@@ -32,7 +38,7 @@ export async function seedSubject(
           title: course.title,
           questionCount: course.questionCount,
           passScore: course.passScore ?? 9,
-          content: course.content ?? null,
+          content,
         })
         .onConflictDoUpdate({
           target: courses.slug,
@@ -42,7 +48,7 @@ export async function seedSubject(
             title: course.title,
             questionCount: course.questionCount,
             passScore: course.passScore ?? 9,
-            content: course.content ?? null,
+            content,
           },
         })
         .returning({ id: courses.id });
