@@ -104,14 +104,24 @@ export const modules = pgTable(
       .notNull()
       .references(() => courses.id, { onDelete: 'cascade' }),
     title: text('title').notNull(),
-    /** Topic order within the course, matching ParsedCourse.moduleTitles. */
-    position: integer('position').notNull().default(0),
-    /** This topic's reading, shown before its questions on the content page.
-     *  Null means there is no topic-level reading material. */
-    content: text('content'),
   },
   (t) => [unique('modules_course_title_unique').on(t.courseId, t.title)],
 );
+
+export const topics = pgTable('topics', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  courseId: uuid('course_id')
+    .notNull()
+    .references(() => courses.id, { onDelete: 'cascade' }),
+  /** Reading order within the course. Titles are not unique — e.g. "GED Exam
+   *  Tip" can legitimately appear more than once in one lesson — so position
+   *  (not title) is this course's per-topic identity, including in its URL. */
+  position: integer('position').notNull(),
+  title: text('title').notNull(),
+  /** Null means this heading had no body left after stripping video/quiz
+   *  noise (e.g. a bare "Practice Question 2" widget placeholder). */
+  content: text('content'),
+});
 
 export const questions = pgTable(
   'questions',

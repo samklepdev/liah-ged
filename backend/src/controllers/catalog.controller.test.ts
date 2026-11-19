@@ -79,6 +79,56 @@ test('GET /api/v1/courses/:slug 404s for an unknown course', async () => {
   assert.equal(res.status, 404);
 });
 
+test('GET /api/v1/courses/:slug returns its topics in reading order', async () => {
+  await seedSubject({
+    slug: 'ged-demo',
+    title: 'GED Demo',
+    courses: [
+      {
+        position: 1,
+        slug: 'ged-demo-course',
+        title: 'Demo Course',
+        questionCount: 0,
+        moduleTitles: [],
+        topics: [
+          { title: 'In this lesson…', content: 'Overview text.' },
+          { title: 'Words to know', content: null },
+        ],
+        questions: [],
+      },
+    ],
+  });
+
+  const res = await fetch(`${baseUrl}/api/v1/courses/ged-demo-course`);
+  assert.equal(res.status, 200);
+  const body = (await res.json()) as { course: { topics: Array<{ position: number; title: string }> } };
+  assert.deepEqual(body.course.topics, [
+    { position: 1, title: 'In this lesson…' },
+    { position: 2, title: 'Words to know' },
+  ]);
+});
+
+test('GET /api/v1/courses/:slug/topics/:position returns one topic', async () => {
+  const res = await fetch(`${baseUrl}/api/v1/courses/ged-demo-course/topics/1`);
+  assert.equal(res.status, 200);
+  const body = (await res.json()) as { topic: Record<string, unknown> };
+  assert.equal(body.topic.title, 'In this lesson…');
+  assert.equal(body.topic.content, 'Overview text.');
+  assert.equal(body.topic.courseSlug, 'ged-demo-course');
+  assert.equal(body.topic.courseTitle, 'Demo Course');
+  assert.equal(body.topic.subjectSlug, 'ged-demo');
+});
+
+test('GET /api/v1/courses/:slug/topics/:position 404s for an unknown position', async () => {
+  const res = await fetch(`${baseUrl}/api/v1/courses/ged-demo-course/topics/99`);
+  assert.equal(res.status, 404);
+});
+
+test('GET /api/v1/courses/:slug/topics/:position 400s for a non-integer position', async () => {
+  const res = await fetch(`${baseUrl}/api/v1/courses/ged-demo-course/topics/abc`);
+  assert.equal(res.status, 400);
+});
+
 test('an unknown /api/v1 route answers with JSON, not the SPA fallback', async () => {
   // The notFound handler is scoped to /api/v1 so the SPA fallback can own every
   // other path. If that scoping is lost, unknown API routes start returning

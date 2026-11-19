@@ -1,8 +1,96 @@
-import { useId } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { NavLink, useLocation } from 'react-router';
 import { BookIcon, ChartIcon, ChevronRightIcon, ClipboardIcon, SubjectIcon } from './icons';
 import { hasPassed } from '../quiz/passed';
+import { quizApi, type CourseSummary, type CourseTopicSummary } from '../quiz/api';
 import type { SubjectNavState } from './useSubjectNav';
+
+/**
+ * One course within a subject's panel: a link to the course itself, plus its
+ * own disclosure toggle for its topics. Topics are fetched lazily, the first
+ * time this group opens — same reasoning as subjects fetching their courses
+ * lazily in useSubjectNav.
+ */
+function CourseGroup({
+  course,
+  isCurrent,
+  onNavigate,
+}: {
+  course: CourseSummary;
+  isCurrent: boolean;
+  onNavigate?: () => void;
+}) {
+  const panelId = useId();
+  const [override, setOverride] = useState<boolean | null>(null);
+  const open = override ?? isCurrent;
+  const [topics, setTopics] = useState<CourseTopicSummary[] | undefined>(undefined);
+
+  useEffect(() => {
+    if (!open || topics !== undefined) return;
+    let cancelled = false;
+    void quizApi
+      .getCourse(course.slug)
+      .then((res) => {
+        if (!cancelled) setTopics(res.course.topics);
+      })
+      .catch(() => {
+        if (!cancelled) setTopics([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [open, topics, course.slug]);
+
+  return (
+    <li>
+      <div className="nav-sublink-row">
+        <NavLink
+          to={`/courses/${course.slug}`}
+          onClick={onNavigate}
+          className={({ isActive }: { isActive: boolean }) =>
+            isActive ? 'nav-sublink active' : 'nav-sublink'
+          }
+        >
+          <span className="nav-sublink-pos">{course.position}</span>
+          <span>{course.title}</span>
+          {hasPassed(course.bestScore, course.passScore) && (
+            <span className="nav-sublink-pass" role="img" aria-label="Passed">
+              ✓
+            </span>
+          )}
+        </NavLink>
+        <button
+          type="button"
+          className="nav-sublink-toggle"
+          aria-expanded={open}
+          aria-controls={panelId}
+          aria-label={`${open ? 'Collapse' : 'Expand'} topics for ${course.title}`}
+          onClick={() => setOverride(!open)}
+        >
+          <ChevronRightIcon className={open ? 'nav-chevron open' : 'nav-chevron'} />
+        </button>
+      </div>
+
+      <ul id={panelId} className="nav-panel nav-panel-topics" hidden={!open}>
+        {topics === undefined && <li className="nav-panel-note">Loading…</li>}
+        {topics?.length === 0 && <li className="nav-panel-note">No topics yet</li>}
+        {topics?.map((t) => (
+          <li key={t.position}>
+            <NavLink
+              to={`/courses/${course.slug}/topics/${t.position}`}
+              onClick={onNavigate}
+              className={({ isActive }: { isActive: boolean }) =>
+                isActive ? 'nav-topic-link active' : 'nav-topic-link'
+              }
+            >
+              {t.title}
+            </NavLink>
+          </li>
+        ))}
+      </ul>
+    </li>
+  );
+}
 
 /**
  * One subject: a disclosure button whose panel lists that subject's quizzes.
@@ -26,6 +114,7 @@ function SubjectGroup({
   onNavigate?: () => void;
 }) {
   const panelId = useId();
+  const { pathname } = useLocation();
   const open = nav.isOpen(slug);
   const quizzes = nav.courses[slug];
 
@@ -50,23 +139,12 @@ function SubjectGroup({
         {quizzes?.length === 0 && <li className="nav-panel-note">No quizzes yet</li>}
 
         {quizzes?.map((c) => (
-          <li key={c.id}>
-            <NavLink
-              to={`/courses/${c.slug}`}
-              onClick={onNavigate}
-              className={({ isActive }: { isActive: boolean }) =>
-                isActive ? 'nav-sublink active' : 'nav-sublink'
-              }
-            >
-              <span className="nav-sublink-pos">{c.position}</span>
-              <span>{c.title}</span>
-              {hasPassed(c.bestScore, c.passScore) && (
-                <span className="nav-sublink-pass" role="img" aria-label="Passed">
-                  ✓
-                </span>
-              )}
-            </NavLink>
-          </li>
+          <CourseGroup
+            key={c.id}
+            course={c}
+            isCurrent={pathname.startsWith(`/courses/${c.slug}`)}
+            onNavigate={onNavigate}
+          />
         ))}
       </ul>
     </li>

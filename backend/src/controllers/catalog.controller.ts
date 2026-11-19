@@ -3,6 +3,7 @@ import { param } from '../lib/http.ts';
 import {
   findCourseBySlug,
   findSubjectBySlug,
+  findTopic,
   listCoursesBySubject,
   listSubjects,
   searchCatalog,
@@ -34,6 +35,21 @@ export async function getCourseBySlug(req: Request, res: Response): Promise<void
     return;
   }
   res.json({ course });
+}
+
+export async function getTopic(req: Request, res: Response): Promise<void> {
+  const position = Number(param(req, 'position'));
+  if (!Number.isInteger(position)) {
+    res.status(400).json({ error: 'position must be an integer' });
+    return;
+  }
+
+  const topic = await findTopic(param(req, 'slug'), position);
+  if (!topic) {
+    res.status(404).json({ error: 'Topic not found' });
+    return;
+  }
+  res.json({ topic });
 }
 
 export async function search(req: Request, res: Response): Promise<void> {

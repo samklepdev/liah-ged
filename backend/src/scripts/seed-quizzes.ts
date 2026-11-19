@@ -1,13 +1,8 @@
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { eq } from 'drizzle-orm';
 import { db, pool } from '../db/index.ts';
-import { courses, modules, questionOptions, questions, subjects } from '../models/schema.ts';
-import { slugify, type ParsedSubject } from '../lib/quiz-parser.ts';
-
-/** Reads an override file's contents, or returns the fallback if it doesn't exist. */
-function readOverride(path: URL, fallback: string | null | undefined): string | null {
-  return existsSync(path) ? readFileSync(path, 'utf8') : fallback ?? null;
-}
+import { courses, modules, questionOptions, questions, subjects, topics } from '../models/schema.ts';
+import type { ParsedSubject } from '../lib/quiz-parser.ts';
 
 /**
  * Upserts a parsed subject. Content is replaced per course rather than merged —
@@ -17,7 +12,6 @@ function readOverride(path: URL, fallback: string | null | undefined): string | 
  */
 export async function seedSubject(
   subject: ParsedSubject,
-  contentDir: URL = new URL('../data/content/', import.meta.url),
 ): Promise<{ courses: number; questions: number }> {
   return db.transaction(async (tx) => {
     const [subjectRow] = await tx
@@ -29,7 +23,7 @@ export async function seedSubject(
     let questionTotal = 0;
 
     for (const course of subject.courses) {
-      const content = readOverride(new URL(`${course.slug}.md`, contentDir), course.content);
+      const content = course.content ?? null;
 
       const [courseRow] = await tx
         .insert(courses)
@@ -60,21 +54,13 @@ export async function seedSubject(
       // Replace content wholesale; questions and options cascade from modules.
       await tx.delete(modules).where(eq(modules.courseId, courseId));
 
-      const moduleContentDir = new URL(`${course.slug}/`, contentDir);
-      const moduleRows = await tx
-        .insert(modules)
-        .values(
-          course.moduleTitles.map((title, index) => ({
-            courseId,
-            title,
-            position: index + 1,
-            content: readOverride(
-              new URL(`${slugify(title)}.md`, moduleContentDir),
-              course.moduleContent?.[index],
-            ),
-          })),
-        )
-        .returning({ id: modules.id, title: modules.title });
+      const moduleRows =
+        course.moduleTitles.length > 0
+          ? await tx
+              .insert(modules)
+              .values(course.moduleTitles.map((title) => ({ courseId, title })))
+              .returning({ id: modules.id, title: modules.title })
+          : [];
 
       const moduleIdByTitle = new Map(moduleRows.map((m) => [m.title, m.id]));
 
@@ -105,6 +91,19 @@ export async function seedSubject(
         );
 
         questionTotal += 1;
+      }
+
+      // Replace topics wholesale too, same reasoning as modules above.
+      await tx.delete(topics).where(eq(topics.courseId, courseId));
+      if (course.topics && course.topics.length > 0) {
+        await tx.insert(topics).values(
+          course.topics.map((topic, index) => ({
+            courseId,
+            position: index + 1,
+            title: topic.title,
+            content: topic.content,
+          })),
+        );
       }
     }
 

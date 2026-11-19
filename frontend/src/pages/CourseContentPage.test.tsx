@@ -1,7 +1,7 @@
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
-import type { CourseDetail, CourseModuleDetail } from '../quiz/api';
+import type { CourseDetail } from '../quiz/api';
 import { CourseContentPage } from './CourseContentPage';
 
 const getCourse = vi.fn();
@@ -25,18 +25,7 @@ function makeCourseDetail(overrides: Partial<CourseDetail> = {}): CourseDetail {
     content: 'First paragraph.\n\nSecond paragraph.',
     subjectSlug: 'ged-language-arts',
     subjectTitle: 'GED Language Arts',
-    modules: [],
-    ...overrides,
-  };
-}
-
-function makeModule(overrides: Partial<CourseModuleDetail> = {}): CourseModuleDetail {
-  return {
-    id: 'module-1',
-    title: 'Context Clues',
-    position: 1,
-    content: null,
-    questionPrompts: [],
+    topics: [],
     ...overrides,
   };
 }
@@ -76,31 +65,22 @@ describe('CourseContentPage', () => {
     expect(items[0]).toHaveTextContent('Vocabulary — words you know');
   });
 
-  test('renders each topic with its reading and question prompts', async () => {
+  test('lists each topic as a link to its own page', async () => {
     getCourse.mockResolvedValue({
       course: makeCourseDetail({
         content: null,
-        modules: [
-          makeModule({
-            id: 'module-1',
-            title: 'Context Clues',
-            content: 'Use the words around a word to guess its meaning.',
-            questionPrompts: ['What does "idyllic" mean?', 'What does "identical" mean?'],
-          }),
-          makeModule({ id: 'module-2', title: 'Root Words', position: 2 }),
+        topics: [
+          { position: 1, title: 'In this lesson…' },
+          { position: 2, title: 'Words to know' },
         ],
       }),
     });
     renderPage();
 
-    expect(await screen.findByRole('heading', { name: 'Context Clues', level: 2 })).toBeInTheDocument();
-    expect(
-      await screen.findByText('Use the words around a word to guess its meaning.'),
-    ).toBeInTheDocument();
-    expect(await screen.findByText('What does "idyllic" mean?')).toBeInTheDocument();
-    expect(await screen.findByText('What does "identical" mean?')).toBeInTheDocument();
-
-    expect(await screen.findByRole('heading', { name: 'Root Words', level: 2 })).toBeInTheDocument();
+    const first = await screen.findByRole('link', { name: 'In this lesson…' });
+    expect(first).toHaveAttribute('href', '/courses/ged-language-arts-vocabulary-questions/topics/1');
+    const second = await screen.findByRole('link', { name: 'Words to know' });
+    expect(second).toHaveAttribute('href', '/courses/ged-language-arts-vocabulary-questions/topics/2');
   });
 
   test('links to the quiz', async () => {

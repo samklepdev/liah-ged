@@ -8,6 +8,7 @@ import { AppShell } from './AppShell';
 
 const listSubjects = vi.fn();
 const listCourses = vi.fn();
+const getCourse = vi.fn();
 const logout = vi.fn();
 
 vi.mock('../quiz/api', async (importOriginal) => {
@@ -18,6 +19,7 @@ vi.mock('../quiz/api', async (importOriginal) => {
       ...actual.quizApi,
       listSubjects: () => listSubjects(),
       listCourses: (s: string) => listCourses(s),
+      getCourse: (s: string) => getCourse(s),
     },
   };
 });
@@ -62,6 +64,10 @@ beforeEach(() => {
       makeCourse(),
       makeCourse({ id: 'c2', slug: 'chassis-fitment', title: 'Tire Fitment', position: 2 }),
     ],
+  });
+  getCourse.mockReset();
+  getCourse.mockResolvedValue({
+    course: { topics: [{ position: 1, title: 'Checking Tread Depth' }] },
   });
   window.localStorage.clear();
 });
@@ -235,6 +241,24 @@ describe('AppShell — subject disclosure', () => {
     expect(
       within(sidebar).getByRole('link', { name: /Tire Fitment/ }),
     ).toBeInTheDocument();
+  });
+
+  test('expanding a course loads and lists its topics', async () => {
+    renderAt();
+    const sidebar = await nav();
+
+    await userEvent.click(within(sidebar).getByRole('button', { name: /Chassis/ }));
+    await within(sidebar).findByRole('link', { name: /Tire and Rim Essentials/ });
+
+    expect(getCourse).not.toHaveBeenCalled();
+
+    await userEvent.click(
+      within(sidebar).getByRole('button', { name: /Expand topics for Tire and Rim Essentials/ }),
+    );
+
+    await waitFor(() => expect(getCourse).toHaveBeenCalledWith('chassis-tire-and-rim-essentials'));
+    const topicLink = await within(sidebar).findByRole('link', { name: 'Checking Tread Depth' });
+    expect(topicLink).toHaveAttribute('href', '/courses/chassis-tire-and-rim-essentials/topics/1');
   });
 
   test('collapsing then reopening does not refetch the quizzes', async () => {

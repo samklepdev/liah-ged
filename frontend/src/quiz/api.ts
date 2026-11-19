@@ -21,13 +21,7 @@ export type CourseSummary = {
 
 export type SearchCourseResult = CourseSummary & { subjectSlug: string; subjectTitle: string };
 
-export type CourseModuleDetail = {
-  id: string;
-  title: string;
-  position: number;
-  content: string | null;
-  questionPrompts: string[];
-};
+export type CourseTopicSummary = { position: number; title: string };
 
 export type CourseDetail = {
   id: string;
@@ -39,7 +33,16 @@ export type CourseDetail = {
   content: string | null;
   subjectSlug: string;
   subjectTitle: string;
-  modules: CourseModuleDetail[];
+  topics: CourseTopicSummary[];
+};
+
+export type TopicDetail = {
+  position: number;
+  title: string;
+  content: string | null;
+  courseSlug: string;
+  courseTitle: string;
+  subjectSlug: string;
 };
 
 export type QuizOption = { id: string; label: string; body: string };
@@ -122,6 +125,9 @@ export const quizApi = {
     request<{ courses: CourseSummary[] }>(`/courses?subject=${encodeURIComponent(subject)}`),
 
   getCourse: (slug: string) => request<{ course: CourseDetail }>(`/courses/${slug}`),
+
+  getTopic: (slug: string, position: number) =>
+    request<{ topic: TopicDetail }>(`/courses/${slug}/topics/${position}`),
 
   search: (q: string) =>
     request<{ subjects: SubjectSummary[]; courses: SearchCourseResult[] }>(

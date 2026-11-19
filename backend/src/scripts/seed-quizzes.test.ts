@@ -5,7 +5,7 @@ import { eq, sql } from 'drizzle-orm';
 import { db } from '../db/index.ts';
 import { resetDb, closeDb } from '../test/helpers/db.ts';
 import { seedSubject } from './seed-quizzes.ts';
-import { courses, modules } from '../models/schema.ts';
+import { courses, topics } from '../models/schema.ts';
 import type { ParsedSubject } from '../lib/quiz-parser.ts';
 
 const subject: ParsedSubject = JSON.parse(
@@ -94,8 +94,8 @@ test('seedSubject writes passScore and content when provided', async () => {
   assert.equal(row?.content, 'First paragraph.\n\nSecond paragraph.');
 });
 
-test('seedSubject prefers a markdown override file over JSON content', async () => {
-  const withContent: ParsedSubject = {
+test('seedSubject inserts each course\'s topics in order, with their content', async () => {
+  const withTopics: ParsedSubject = {
     slug: 'ged-demo',
     title: 'GED Demo',
     courses: [
@@ -104,87 +104,62 @@ test('seedSubject prefers a markdown override file over JSON content', async () 
         slug: 'ged-demo-course',
         title: 'Demo Course',
         questionCount: 0,
-        content: 'Plain JSON content.',
         moduleTitles: ['Reading'],
+        topics: [
+          { title: 'In this lesson…', content: 'You will learn things.' },
+          { title: 'Practice Question 1', content: null },
+        ],
         questions: [],
       },
     ],
   };
 
-  const contentDir = new URL('../test/fixtures/content-overrides/', import.meta.url);
-  await seedSubject(withContent, contentDir);
+  await seedSubject(withTopics);
 
-  const [row] = await db
-    .select({ content: courses.content })
-    .from(courses)
+  const rows = await db
+    .select({ position: topics.position, title: topics.title, content: topics.content })
+    .from(topics)
+    .innerJoin(courses, eq(courses.id, topics.courseId))
+    .where(eq(courses.slug, 'ged-demo-course'))
+    .orderBy(topics.position);
+
+  assert.deepEqual(rows, [
+    { position: 1, title: 'In this lesson…', content: 'You will learn things.' },
+    { position: 2, title: 'Practice Question 1', content: null },
+  ]);
+});
+
+test('seedSubject re-seeding replaces topics wholesale rather than merging', async () => {
+  const v1: ParsedSubject = {
+    slug: 'ged-demo',
+    title: 'GED Demo',
+    courses: [
+      {
+        position: 1,
+        slug: 'ged-demo-course',
+        title: 'Demo Course',
+        questionCount: 0,
+        moduleTitles: ['Reading'],
+        topics: [{ title: 'Old Topic', content: 'Old.' }],
+        questions: [],
+      },
+    ],
+  };
+  const v2: ParsedSubject = {
+    ...v1,
+    courses: [{ ...v1.courses[0]!, topics: [{ title: 'New Topic', content: 'New.' }] }],
+  };
+
+  await seedSubject(v1);
+  await seedSubject(v2);
+
+  const rows = await db
+    .select({ title: topics.title })
+    .from(topics)
+    .innerJoin(courses, eq(courses.id, topics.courseId))
     .where(eq(courses.slug, 'ged-demo-course'));
-  assert.equal(row!.content, '## Overridden\n\nThis came from the markdown file, not the JSON.\n');
-});
 
-test('seedSubject gives each module its position and markdown override content', async () => {
-  const withContent: ParsedSubject = {
-    slug: 'ged-demo',
-    title: 'GED Demo',
-    courses: [
-      {
-        position: 1,
-        slug: 'ged-demo-course',
-        title: 'Demo Course',
-        questionCount: 0,
-        moduleTitles: ['Reading', 'Vocabulary'],
-        questions: [],
-      },
-    ],
-  };
-
-  const contentDir = new URL('../test/fixtures/content-overrides/', import.meta.url);
-  await seedSubject(withContent, contentDir);
-
-  const rows = await db
-    .select({ title: modules.title, position: modules.position, content: modules.content })
-    .from(modules)
-    .innerJoin(courses, eq(courses.id, modules.courseId))
-    .where(eq(courses.slug, 'ged-demo-course'))
-    .orderBy(modules.position);
-
-  assert.deepEqual(rows, [
-    { title: 'Reading', position: 1, content: '## Reading Topic\n\nThis is the reading topic override.\n' },
-    { title: 'Vocabulary', position: 2, content: null },
-  ]);
-});
-
-test('seedSubject uses each parsed course\'s moduleContent as the module default, overridable by a markdown file', async () => {
-  const withModuleContent: ParsedSubject = {
-    slug: 'ged-demo',
-    title: 'GED Demo',
-    courses: [
-      {
-        position: 1,
-        slug: 'ged-demo-course',
-        title: 'Demo Course',
-        questionCount: 0,
-        moduleTitles: ['Reading', 'Vocabulary'],
-        moduleContent: ['Extracted reading content.', 'Extracted vocabulary content.'],
-        questions: [],
-      },
-    ],
-  };
-
-  const contentDir = new URL('../test/fixtures/content-overrides/', import.meta.url);
-  await seedSubject(withModuleContent, contentDir);
-
-  const rows = await db
-    .select({ title: modules.title, content: modules.content })
-    .from(modules)
-    .innerJoin(courses, eq(courses.id, modules.courseId))
-    .where(eq(courses.slug, 'ged-demo-course'))
-    .orderBy(modules.position);
-
-  assert.deepEqual(rows, [
-    // A matching content-overrides/ged-demo-course/reading.md file still wins.
-    { title: 'Reading', content: '## Reading Topic\n\nThis is the reading topic override.\n' },
-    { title: 'Vocabulary', content: 'Extracted vocabulary content.' },
-  ]);
+  assert.deepEqual(rows, [{ title: 'New Topic' }]);
 });
 
 test('seedSubject defaults passScore to 9 and content to null when omitted', async () => {

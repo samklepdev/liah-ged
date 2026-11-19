@@ -12,6 +12,7 @@ import { PasswordRequestsPage } from './pages/admin/PasswordRequestsPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { ProgressPage } from './pages/ProgressPage';
 import { QuizPage } from './pages/QuizPage';
+import { TopicPage } from './pages/TopicPage';
 import { RecycleBinPage } from './pages/admin/RecycleBinPage';
 import { ResultsPage } from './pages/ResultsPage';
 import { SubjectCoursesPage, SubjectsIndexPage } from './pages/SubjectCoursesPage';
@@ -84,6 +85,7 @@ export function AppRouter() {
           <Route path="/mastering-the-ged-test" element={<MasteringGedTestPage />} />
           <Route path="/subjects/:subjectSlug" element={<SubjectCoursesPage />} />
           <Route path="/courses/:slug" element={<CourseContentPage />} />
+          <Route path="/courses/:slug/topics/:position" element={<TopicPage />} />
           <Route path="/courses/:slug/quiz" element={<QuizPage />} />
           <Route path="/courses/:slug/results/:attemptId" element={<ResultsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
