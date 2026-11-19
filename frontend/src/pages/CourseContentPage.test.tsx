@@ -52,6 +52,18 @@ describe('CourseContentPage', () => {
     expect(await screen.findByText('Second paragraph.')).toBeInTheDocument();
   });
 
+  test('renders markdown headings and lists with structure', async () => {
+    getCourse.mockResolvedValue({
+      course: makeCourseDetail({
+        content: '## Words to Know\n\n- Vocabulary — words you know\n- Context clues — hints in the text',
+      }),
+    });
+    renderPage();
+    expect(await screen.findByRole('heading', { name: 'Words to Know', level: 2 })).toBeInTheDocument();
+    const items = await screen.findAllByRole('listitem');
+    expect(items[0]).toHaveTextContent('Vocabulary — words you know');
+  });
+
   test('links to the quiz', async () => {
     renderPage();
     const link = await screen.findByRole('link', { name: 'Take the quiz' });

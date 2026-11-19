@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { quizApi, type CourseDetail } from '../quiz/api';
 
 type State =
@@ -46,18 +48,15 @@ export function CourseContentPage() {
   }
 
   const { course } = current;
-  const paragraphs = course.content ? course.content.split('\n\n') : [];
 
   return (
     <div className="course-content">
       <span className="course-position">Quiz {course.position}</span>
       <h1>{course.title}</h1>
 
-      {paragraphs.length > 0 && (
+      {course.content && (
         <div className="course-content-body">
-          {paragraphs.map((paragraph, i) => (
-            <p key={i}>{paragraph}</p>
-          ))}
+          <Markdown remarkPlugins={[remarkGfm]}>{course.content}</Markdown>
         </div>
       )}
 

@@ -261,6 +261,12 @@
 
 .course-content-body p { margin: 0; line-height: 1.6; }
 
+.course-content-body h2 { font-size: 1.3rem; margin: 1rem 0 0; }
+.course-content-body h3 { font-size: 1.1rem; margin: 0.75rem 0 0; }
+.course-content-body ul,
+.course-content-body ol { margin: 0; padding-left: 1.5rem; line-height: 1.6; }
+.course-content-body li { margin: 0.25rem 0; }
+
 .course-content .primary {
   display: inline-block;
   padding: 0.55rem 1rem;
