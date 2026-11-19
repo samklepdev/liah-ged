@@ -9,7 +9,7 @@
       "moduleTitles": [
         "Practice Question 1",
         "Practice Question 2",
-        "Quiz on Video: Finding the Meaning of a Word",
+        "Quiz: Finding the Meaning of a Word",
         "Final Quiz: Vocabulary"
       ],
       "questionCount": 6,
@@ -18,7 +18,7 @@
         {
           "position": 1,
           "prompt": "What is “The Prince and the Pauper” about?",
-          "moduleTitle": "Quiz on Video: Finding the Meaning of a Word",
+          "moduleTitle": "Quiz: Finding the Meaning of a Word",
           "explanation": "Answer:\nb) Two boys who look the same.\nExplanation:\n“The Prince and the Pauper” is a book by Mark Twain about two boys who look identical, which means they look exactly the same.",
           "options": [
             {
@@ -46,7 +46,7 @@
         {
           "position": 2,
           "prompt": "What is the sixth (final) step in answering a vocabulary question?",
-          "moduleTitle": "Quiz on Video: Finding the Meaning of a Word",
+          "moduleTitle": "Quiz: Finding the Meaning of a Word",
           "explanation": "Answer:\nd) Decide the right answer.\nExplanation:\nThere are six steps to answering a vocabulary question:\nFirst, you read the idea in the first sentence or two.\nSecond, you read the question.\nThird, you read the whole text, the question, and the answer choices.\nFourth, you find the keywords.\nFifth, you predict an answer.\nFinally, you decide the right answer.",
           "options": [
             {
@@ -278,7 +278,7 @@
           "content": "Explore further: Discover additional resources to deepen your understanding. Root Words: Root words are the basic part of a word that gives it its main meaning. Other parts, like prefixes (beginnings) or suffixes (endings), can be added to root words to create new words. Here are some examples: Root Word: &#34;act&#34; Meaning: To do Examples: Action: The process of doing something. Actor: A person who performs in plays or movies. Root Word: &#34;graph&#34; Meaning: To write or draw Examples: Autograph: A person's own signature.\n\nPhotograph: A picture made using a camera. Root Word: &#34;tele&#34; Meaning: Far Examples: Telephone: A device to talk to someone far away. Television: A device to watch shows and movies broadcast from far away. Root Word: &#34;bio&#34; Meaning: Life Examples: Biology: The study of living things. Biography: The story of a person's life. Understanding root words can help you figure out the meaning of new words when you see them. Click here to see a list of Root Words from Greek and Latin languages."
         },
         {
-          "title": "Quiz on Video: Finding the Meaning of a Word",
+          "title": "Quiz: Finding the Meaning of a Word",
           "content": null
         },
         {
