@@ -1024,98 +1024,13 @@
       "slug": "ged-language-arts-expressing-and-influencing-opinions",
       "title": "Expressing and Influencing Opinions",
       "moduleTitles": [
-        "Quiz on Video: Questions About Facts and Opinions",
         "Final Quiz: Expressing and Influencing Opinions"
       ],
-      "questionCount": 8,
-      "passScore": 7,
+      "questionCount": 5,
+      "passScore": 4,
       "questions": [
         {
           "position": 1,
-          "prompt": "What’s the main difference between facts and opinions, as explained in the video?",
-          "moduleTitle": "Quiz on Video: Questions About Facts and Opinions",
-          "explanation": "Answer:\nb)\nFacts are true or false and can be checked, while opinions are what people think or believe.\nExplanation\n:\nThe video teaches us that facts are things we can check to see if they’re true or false, like measuring or looking up information. Opinions are what people think, so they can’t always be checked because everyone has different thoughts.",
-          "options": [
-            {
-              "label": "A",
-              "body": "Facts can be fun to read, while opinions are always serious.",
-              "isCorrect": false
-            },
-            {
-              "label": "B",
-              "body": "Facts are true or false and can be checked, while opinions are what people think or believe.",
-              "isCorrect": true
-            },
-            {
-              "label": "C",
-              "body": "Facts are always written in a formal style, while opinions are more casual.",
-              "isCorrect": false
-            },
-            {
-              "label": "D",
-              "body": "Facts are long sentences, while opinions are short and concise.",
-              "isCorrect": false
-            }
-          ]
-        },
-        {
-          "position": 2,
-          "prompt": "According to the video, how can you tell if something is an opinion in a text?",
-          "moduleTitle": "Quiz on Video: Questions About Facts and Opinions",
-          "explanation": "Answer:\nc)\nIf it describes something as good or bad.\nExplanation\n:\nThe video explains that when something says something is good or bad, it’s probably an opinion. Opinions often show what someone likes or dislikes, and they can be different for each person.",
-          "options": [
-            {
-              "label": "A",
-              "body": "If it's written in a formal tone.",
-              "isCorrect": false
-            },
-            {
-              "label": "B",
-              "body": "If it contains a lot of numbers and statistics.",
-              "isCorrect": false
-            },
-            {
-              "label": "C",
-              "body": "If it describes something as good or bad.",
-              "isCorrect": true
-            },
-            {
-              "label": "D",
-              "body": "If it uses complex vocabulary.",
-              "isCorrect": false
-            }
-          ]
-        },
-        {
-          "position": 3,
-          "prompt": "In the video, which statement may sound like a fact but is actually an opinion?",
-          "moduleTitle": "Quiz on Video: Questions About Facts and Opinions",
-          "explanation": "Answer:\nc)\n“In 10 years, everyone will have a flying car.”\nExplanation\n:\nThe video gives an example with “In 10 years, everyone will have a flying car” as something that may seem like a fact because it sounds certain, but it’s an opinion because it hasn’t happened yet, and we can’t check it.",
-          "options": [
-            {
-              "label": "A",
-              "body": "\"The Earth orbits the sun.\"",
-              "isCorrect": false
-            },
-            {
-              "label": "B",
-              "body": "\"Water boils at 100 degrees Celsius.\"",
-              "isCorrect": false
-            },
-            {
-              "label": "C",
-              "body": "\"In 10 years, everyone will have a flying car.\"",
-              "isCorrect": true
-            },
-            {
-              "label": "D",
-              "body": "\"The capital of France is Paris.\"",
-              "isCorrect": false
-            }
-          ]
-        },
-        {
-          "position": 4,
           "prompt": "In the years before the American Revolution, Patrick Henry was a delegate of an assembly called the Second Virginia Convention. At that time there was a debate taking place in the American colonies: should the colonists wait and bargain with the King of England, hoping to win more freedoms through diplomacy, or should they go to war to win their independence? Some men at the assembly spoke in favor of peace, and then Patrick Henry stood and gave a famous speech.\nPlease read the following excerpts from his famous speech and answer the question that follows.\n“… The question before the House is of great importance to this country. I myself consider it nothing less than a question of freedom or slavery. Since the importance of the subject is so great, the freedom of our debate should be just as great. It is only in this way that we can hope to arrive at truth, and fulfill the great responsibility which we hold to God and our country. If I kept back my opinions at such a time as this, through fear of offending someone, I should consider myself guilty of treason toward my country. I would also feel guilty of an act of disloyalty toward the Majesty of Heaven, which I honor above all earthly kings.\n…\n“Mr. President, it is natural for a man to allow himself to fool himself with hope. We are likely to shut our eyes against a painful truth. We are like the men in the Greek myth, who were lured in by the beautiful song of the Siren, until she transformed them into beasts. Is this what wise men, engaged in a great and difficult struggle for liberty should do? Are we to be like those who, even though they have eyes, see not, and, even though they have ears, hear not, the things which most concern their lives on earth? For my part, even if it may cause me pain of spirit, I am willing to know the whole truth; to know the worst, and to prepare for it. …\n“Sir, we have done everything that could be done to prevent the storm which is now coming.  It does not make sense for us to keep the fond hope of peace and reconciliation. There is no longer any room for hope. If we wish to be free — if we intend to keep safe those precious privileges for which we have fought so long —we must fight! I repeat it, sir, we must fight!\n…\n“It is in vain, sir, to make light of the matter. Gentlemen may cry, peace, peace — but there is no peace. The war is actually begun! The next storm that sweeps from the north will bring to our ears the clash of resounding arms! Our brothers are already in the battlefield! Why do we stand here idle? What is it that gentlemen wish? What would they have? Is life so dear, or peace so sweet, as to be purchased at the price of chains and slavery?\n“Forbid it, Almighty God! I know not what course others may take; but as for me, give me liberty or give me death!”\nQUESTION: Which is an example of a rhetorical question?",
           "moduleTitle": "Final Quiz: Expressing and Influencing Opinions",
           "explanation": "Answer:\na) Is this what wise men, engaged in a great and difficult struggle for liberty should do\nExplanation:\nThe rhetorical question is: “Is this what wise men, engaged in a great and difficult struggle for liberty should do?”\nA rhetorical question is a question asked for effect, not requiring an actual answer, because the answer is implied. This line fits that definition, as Patrick Henry is not seeking an answer but making a point about the actions of those who value liberty.",
@@ -1270,7 +1185,7 @@
         },
         {
           "title": "Tone and Mood",
-          "content": "■■■■■■\n\nWhen someone writes a persuasive text, they want their readers to feel a certain way. To influence feelings, they write with a certain tone or mood. Some possibilities include the following:\n\n• Critical\n\n• Gloomy\n\n• Pessimistic\n\n• Celebratory\n\n• Encouraging\n\n• Defensive\n\n• Humorous\n\n• Optimistic\n\n• Urgent\n\nDuring the GED® exam, you may be asked to identify how the writer shows the tone or mood. These questions may say something like:\n\n“Which quotation from the text emphasizes the idea that … ?”\n\n“The writer mentioned _____ in order to demonstrate … “\n\n“What approach did the author take to … ?”\n\n“What is the overall tone of the passage?”\n\n“The words _____ and ______ give the passage what tone?”\n\n“In the context of the passage, which of the following is an example of … ?”\n\nAll these questions are asking about the tone or mood of the piece."
+          "content": "When someone writes a persuasive text, they want their readers to feel a certain way. To influence feelings, they write with a certain tone or mood. Some possibilities include the following:\n\n• Critical\n\n• Gloomy\n\n• Pessimistic\n\n• Celebratory\n\n• Encouraging\n\n• Defensive\n\n• Humorous\n\n• Optimistic\n\n• Urgent\n\nDuring the GED® exam, you may be asked to identify how the writer shows the tone or mood. These questions may say something like:\n\n“Which quotation from the text emphasizes the idea that … ?”\n\n“The writer mentioned _____ in order to demonstrate … “\n\n“What approach did the author take to … ?”\n\n“What is the overall tone of the passage?”\n\n“The words _____ and ______ give the passage what tone?”\n\n“In the context of the passage, which of the following is an example of … ?”\n\nAll these questions are asking about the tone or mood of the piece."
         },
         {
           "title": "Rhetorical Strategies",
@@ -1293,10 +1208,6 @@
           "content": "In an argumentative essay, the writer uses logic and evidence to convince the reader of a certain point of view. But how do you know if the argument is strong or believable? You need to use your own thinking skills to evaluate it.\n\nSteps to Evaluate an Argument:\n\n• Look at the Claim : The claim is the main idea or point the writer is trying to make. Even if you don’t agree with it, ask yourself: Is this something that can be argued using facts and logic? A good argument should be based on reasons, not just personal opinions. For example, a claim like &#34;Exercise is important for health&#34; can be argued with facts, while &#34;Vanilla is the best ice cream flavor&#34; is just a personal preference.\n\n• Check the Reasons : Next, see how the writer supports their claim. Do they give good reasons for their argument? Are these reasons logical and based on facts, or are they just opinions? For example, if the writer says, &#34;Exercise helps prevent heart disease,&#34; this is a logical reason that can be supported by research. But if they say, &#34;Exercise is fun,&#34; that’s just a personal opinion, which doesn’t make a strong argument.\n\n• Examine the Evidence : A strong argument will have evidence to back up the reasons. Evidence could be examples, facts, or statistics. This shows that the writer’s reasons are based on real information, not just their own feelings. For example, if the writer says, &#34;A study shows that people who exercise regularly are 30% less likely to develop heart disease,&#34; they are using research-based evidence to support their argument.\n\nBy asking these questions, you can figure out whether an argument is well-supported or just based on opinions. This will help you evaluate the strength of any argumentative essay you read."
         },
         {
-          "title": "Video: Facts and Opinions",
-          "content": "Many pieces of writing contain both facts and opinions. The language arts test will test to see if you know the difference between fact and opinion in texts. Here are some ways to tell fact from opinion: If something is described as good or bad, that is often an opinion. Generally, facts don’t use words like best, worst, or other words that judge quality. Example: My brother is the world’s best football player. It’s possible, but it’s probably your personal opinion! If you can tell what the writer believes, it’s probably an opinion. Example: Children should not be allowed to speak at the dinner table. If you can agree or disagree with a statement, it’s probably an opinion. Example: Food always tastes better with pepper on it. If you can prove it to be true or false, it’s a statement of fact. Don’t waste time worrying about whether it is correct or not, or if you agree with it – just whether it could be proven either way. Example: My car is 8 years old. These facts and opinions are easy to tell apart. But sometimes, opinions can seem like facts and make you think they are true. For example: “By 2035, 80 percent of the world’s population will be living in cities of more than 2 million inhabitants.” It sounds very scientific, but it is a prediction for the future that cannot be proven. On the other hand, facts can seem like opinions if they are expressed in colorful or humorous ways. Here is an example from The New York Times: “In the first step to formally eradicating a thrilling but dangerous staple of the game — and an emphatic response to the concussion crisis that has gripped other sports — Major League Baseball’s rules committee voted Wednesday to eliminate home-plate collisions.” Because of the writing style, you might think this is an opinion. But the writer is actually reporting the fact of a baseball committee’s ruling."
-        },
-        {
           "title": "New Words",
           "content": "**Argument** — a set of reasons a person gives to explain his or her point of view and persuade other people that it is true or correct\n\n**Argumentative Essay** — written work that uses facts, figures, statistics, and other evidence to convince readers to believe a certain point\n\n**Evaluate** — to decide how much value something has (the something can be an idea or an object)\n\n**Evidence** — information that proves or disproves a fact\n\n**Influence** — to have an effect on\n\n**Logic** — conclusions or reasons based on facts\n\n**Persuade** — to convince or try to convince someone, or make someone believe something\n\n**Persuasive Text** — something written or spoken with the intent of convincing the reader to believe a certain position\n\n**Quotation** — a group of words taken from a text or speech and repeated by someone other than the original author or speaker\n\n**Rhetoric** — effective or persuasive speaking or writing\n\n**Rhetorical Strategies** — using rhetoric (persuasive speech or writing) to convince or impress people\n\n**Tone** — general character or attitude of a piece of writing, place, situation, etc."
         },
@@ -1305,7 +1216,7 @@
           "content": "What we learned A persuasive text tries to convince people to agree with the author or a certain position. Appealing to people's feelings is a strong tool in writing. Writers use the tone of their writing to make people feel a certain way. A rhetorical question is a question asked without expecting a response. It might be that the question doesn’t have an answer or that the question is being used to make a point and persuade the reader or listener. Argument-based texts use logic (reasons based on fact) and evidence (proof and examples) to make their point. To evaluate an argument-based text, look at the claim, the arguments, and the evidence."
         },
         {
-          "title": "Quiz on Video: Questions About Facts and Opinions",
+          "title": "Quiz: Questions About Facts and Opinions",
           "content": null
         },
         {

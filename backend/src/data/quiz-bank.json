@@ -485,54 +485,6 @@
   {
     "course": "ged-language-arts",
     "courseTitle": "GED® Language Arts: Prepare for the exam",
-    "quizTitle": "Quiz on Video: Questions About Facts and Opinions",
-    "lesson": "Lesson 5: Expressing and Influencing Opinions",
-    "questionNumber": 1,
-    "question": "What’s the main difference between facts and opinions, as explained in the video?",
-    "options": [
-      "Facts can be fun to read, while opinions are always serious.",
-      "Facts are true or false and can be checked, while opinions are what people think or believe.",
-      "Facts are always written in a formal style, while opinions are more casual.",
-      "Facts are long sentences, while opinions are short and concise."
-    ],
-    "correctIndex": 1,
-    "explanation": "Answer:\nb)\nFacts are true or false and can be checked, while opinions are what people think or believe.\nExplanation\n:\nThe video teaches us that facts are things we can check to see if they’re true or false, like measuring or looking up information. Opinions are what people think, so they can’t always be checked because everyone has different thoughts."
-  },
-  {
-    "course": "ged-language-arts",
-    "courseTitle": "GED® Language Arts: Prepare for the exam",
-    "quizTitle": "Quiz on Video: Questions About Facts and Opinions",
-    "lesson": "Lesson 5: Expressing and Influencing Opinions",
-    "questionNumber": 2,
-    "question": "According to the video, how can you tell if something is an opinion in a text?",
-    "options": [
-      "If it's written in a formal tone.",
-      "If it contains a lot of numbers and statistics.",
-      "If it describes something as good or bad.",
-      "If it uses complex vocabulary."
-    ],
-    "correctIndex": 2,
-    "explanation": "Answer:\nc)\nIf it describes something as good or bad.\nExplanation\n:\nThe video explains that when something says something is good or bad, it’s probably an opinion. Opinions often show what someone likes or dislikes, and they can be different for each person."
-  },
-  {
-    "course": "ged-language-arts",
-    "courseTitle": "GED® Language Arts: Prepare for the exam",
-    "quizTitle": "Quiz on Video: Questions About Facts and Opinions",
-    "lesson": "Lesson 5: Expressing and Influencing Opinions",
-    "questionNumber": 3,
-    "question": "In the video, which statement may sound like a fact but is actually an opinion?",
-    "options": [
-      "\"The Earth orbits the sun.\"",
-      "\"Water boils at 100 degrees Celsius.\"",
-      "\"In 10 years, everyone will have a flying car.\"",
-      "\"The capital of France is Paris.\""
-    ],
-    "correctIndex": 2,
-    "explanation": "Answer:\nc)\n“In 10 years, everyone will have a flying car.”\nExplanation\n:\nThe video gives an example with “In 10 years, everyone will have a flying car” as something that may seem like a fact because it sounds certain, but it’s an opinion because it hasn’t happened yet, and we can’t check it."
-  },
-  {
-    "course": "ged-language-arts",
-    "courseTitle": "GED® Language Arts: Prepare for the exam",
     "quizTitle": "Final Quiz: Expressing and Influencing Opinions",
     "lesson": "Lesson 5: Expressing and Influencing Opinions",
     "questionNumber": 1,
