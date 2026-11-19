@@ -363,8 +363,13 @@
   border: 1px solid var(--border); border-radius: 0.5rem;
 }
 .option.selected { border-color: currentColor; background: var(--accent-bg); }
+.option.correct { border-color: var(--success); background: var(--accent-bg); }
+.option.incorrect { border-color: var(--danger); }
 .option input { margin-top: 0.2rem; }
 .option-label { font-weight: 600; min-width: 1.2rem; }
+
+.practice-quiz { display: flex; flex-direction: column; gap: 1.5rem; margin: 1.5rem 0; }
+.practice-question .result-explanation { margin-top: 0.75rem; }
 
 .quiz-nav {
   display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;

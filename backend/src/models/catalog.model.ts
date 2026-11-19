@@ -1,6 +1,6 @@
 import { and, asc, count, eq, ilike, isNotNull, max, sql } from 'drizzle-orm';
 import { db } from '../db/index.ts';
-import { attempts, courses, subjects, topics } from './schema.ts';
+import { attempts, courses, questionOptions, questions, subjects, topics } from './schema.ts';
 
 export type SubjectSummary = {
   id: string;
@@ -192,6 +192,16 @@ export async function findCourseBySlug(slug: string): Promise<CourseDetail | nul
   return { ...row, topics: await findCourseTopics(row.id) };
 }
 
+export type PracticeOption = { id: string; label: string; body: string; isCorrect: boolean };
+
+export type PracticeQuestion = {
+  id: string;
+  position: number;
+  prompt: string;
+  explanation: string;
+  options: PracticeOption[];
+};
+
 export type TopicDetail = {
   position: number;
   title: string;
@@ -202,6 +212,9 @@ export type TopicDetail = {
   /** The next topic in this course, for a "Next" link — null on the last
    *  topic, where the content page's own quiz link takes over instead. */
   next: { position: number; title: string } | null;
+  /** This topic's module's questions, shown inline as ungraded practice —
+   *  null for a topic whose title doesn't match any module. */
+  practiceQuestions: PracticeQuestion[] | null;
 };
 
 /** One topic's own page — its reading plus enough of its course to render a
@@ -212,6 +225,8 @@ export async function findTopic(courseSlug: string, position: number): Promise<T
       position: topics.position,
       title: topics.title,
       content: topics.content,
+      moduleId: topics.moduleId,
+      courseId: courses.id,
       courseSlug: courses.slug,
       courseTitle: courses.title,
       subjectSlug: subjects.slug,
@@ -233,5 +248,43 @@ export async function findTopic(courseSlug: string, position: number): Promise<T
     .where(and(eq(courses.slug, courseSlug), eq(topics.position, position + 1)))
     .limit(1);
 
-  return { ...row, next: next ?? null };
+  const { moduleId, courseId, ...rest } = row;
+
+  return {
+    ...rest,
+    next: next ?? null,
+    practiceQuestions: moduleId ? await findPracticeQuestions(courseId, moduleId) : null,
+  };
+}
+
+/** A topic's practice questions — same join shape as findQuizByCourseSlug in
+ *  quiz.model.ts, but including isCorrect: this is ungraded practice, not an
+ *  exam in progress, so there's nothing to hide. */
+async function findPracticeQuestions(courseId: string, moduleId: string): Promise<PracticeQuestion[]> {
+  const rows = await db
+    .select({
+      questionId: questions.id,
+      position: questions.position,
+      prompt: questions.prompt,
+      explanation: questions.explanation,
+      optionId: questionOptions.id,
+      label: questionOptions.label,
+      body: questionOptions.body,
+      isCorrect: questionOptions.isCorrect,
+    })
+    .from(questions)
+    .innerJoin(questionOptions, eq(questionOptions.questionId, questions.id))
+    .where(and(eq(questions.courseId, courseId), eq(questions.moduleId, moduleId)))
+    .orderBy(asc(questions.position), asc(questionOptions.label));
+
+  const byQuestion = new Map<string, PracticeQuestion>();
+  for (const r of rows) {
+    let q = byQuestion.get(r.questionId);
+    if (!q) {
+      q = { id: r.questionId, position: r.position, prompt: r.prompt, explanation: r.explanation, options: [] };
+      byQuestion.set(r.questionId, q);
+    }
+    q.options.push({ id: r.optionId, label: r.label, body: r.body, isCorrect: r.isCorrect });
+  }
+  return [...byQuestion.values()];
 }

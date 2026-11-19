@@ -104,6 +104,10 @@ export const modules = pgTable(
       .notNull()
       .references(() => courses.id, { onDelete: 'cascade' }),
     title: text('title').notNull(),
+    /** True excludes this module's questions from the course's graded
+     *  end-of-course quiz (findQuizByCourseSlug, findGradedAttempt) — they're
+     *  only ever reached as a topic's inline ungraded practice. */
+    isPractice: boolean('is_practice').notNull().default(false),
   },
   (t) => [unique('modules_course_title_unique').on(t.courseId, t.title)],
 );
@@ -121,6 +125,10 @@ export const topics = pgTable('topics', {
   /** Null means this heading had no body left after stripping video/quiz
    *  noise (e.g. a bare "Practice Question 2" widget placeholder). */
   content: text('content'),
+  /** Set when this topic's title matches one of the course's module titles
+   *  — the topic page then shows that module's questions inline as
+   *  ungraded practice. Null for ordinary reading topics. */
+  moduleId: uuid('module_id').references(() => modules.id, { onDelete: 'cascade' }),
 });
 
 export const questions = pgTable(

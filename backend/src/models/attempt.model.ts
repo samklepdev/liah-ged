@@ -283,7 +283,7 @@ export async function findGradedAttempt(attemptId: string): Promise<GradedAttemp
         eq(attemptAnswers.attemptId, attemptId),
       ),
     )
-    .where(eq(questions.courseId, attempt.courseId))
+    .where(and(eq(questions.courseId, attempt.courseId), eq(modules.isPractice, false)))
     .orderBy(asc(questions.position), asc(questionOptions.label));
 
   const byQuestion = new Map<string, GradedQuestion>();

@@ -1,0 +1,2 @@
+ALTER TABLE "topics" ADD COLUMN "module_id" uuid;--> statement-breakpoint
+ALTER TABLE "topics" ADD CONSTRAINT "topics_module_id_modules_id_fk" FOREIGN KEY ("module_id") REFERENCES "public"."modules"("id") ON DELETE cascade ON UPDATE no action;

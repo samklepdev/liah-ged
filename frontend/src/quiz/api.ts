@@ -36,6 +36,16 @@ export type CourseDetail = {
   topics: CourseTopicSummary[];
 };
 
+export type PracticeOption = { id: string; label: string; body: string; isCorrect: boolean };
+
+export type PracticeQuestion = {
+  id: string;
+  position: number;
+  prompt: string;
+  explanation: string;
+  options: PracticeOption[];
+};
+
 export type TopicDetail = {
   position: number;
   title: string;
@@ -44,6 +54,7 @@ export type TopicDetail = {
   courseTitle: string;
   subjectSlug: string;
   next: { position: number; title: string } | null;
+  practiceQuestions: PracticeQuestion[] | null;
 };
 
 export type QuizOption = { id: string; label: string; body: string };

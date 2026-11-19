@@ -621,6 +621,10 @@ export type ParsedCourse = {
    *  in the source PDF, independent of moduleTitles/quizzes. Omitted means
    *  this course has no extracted topics. */
   topics?: ParsedTopic[];
+  /** Module titles (a subset of moduleTitles) whose questions are ungraded
+   *  practice only — excluded from the end-of-course quiz, reachable only
+   *  inline on the topic whose title matches. Omitted means none. */
+  practiceModuleTitles?: string[];
 };
 
 export type ParsedTopic = { title: string; content: string | null };

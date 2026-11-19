@@ -54,11 +54,18 @@ export async function seedSubject(
       // Replace content wholesale; questions and options cascade from modules.
       await tx.delete(modules).where(eq(modules.courseId, courseId));
 
+      const practiceModuleTitles = new Set(course.practiceModuleTitles ?? []);
       const moduleRows =
         course.moduleTitles.length > 0
           ? await tx
               .insert(modules)
-              .values(course.moduleTitles.map((title) => ({ courseId, title })))
+              .values(
+                course.moduleTitles.map((title) => ({
+                  courseId,
+                  title,
+                  isPractice: practiceModuleTitles.has(title),
+                })),
+              )
               .returning({ id: modules.id, title: modules.title })
           : [];
 
@@ -93,7 +100,9 @@ export async function seedSubject(
         questionTotal += 1;
       }
 
-      // Replace topics wholesale too, same reasoning as modules above.
+      // Replace topics wholesale too, same reasoning as modules above. A
+      // topic whose title matches one of this course's modules is a
+      // practice-stop: the frontend shows that module's questions inline.
       await tx.delete(topics).where(eq(topics.courseId, courseId));
       if (course.topics && course.topics.length > 0) {
         await tx.insert(topics).values(
@@ -102,6 +111,7 @@ export async function seedSubject(
             position: index + 1,
             title: topic.title,
             content: topic.content,
+            moduleId: moduleIdByTitle.get(topic.title) ?? null,
           })),
         );
       }
