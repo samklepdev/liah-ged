@@ -231,7 +231,7 @@ describe('AppShell — subject disclosure', () => {
     const link = await within(sidebar).findByRole('link', {
       name: /Tire and Rim Essentials/,
     });
-    expect(link).toHaveAttribute('href', '/courses/chassis-tire-and-rim-essentials/quiz');
+    expect(link).toHaveAttribute('href', '/courses/chassis-tire-and-rim-essentials');
     expect(
       within(sidebar).getByRole('link', { name: /Tire Fitment/ }),
     ).toBeInTheDocument();

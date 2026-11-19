@@ -52,7 +52,7 @@ function SubjectGroup({
         {quizzes?.map((c) => (
           <li key={c.id}>
             <NavLink
-              to={`/courses/${c.slug}/quiz`}
+              to={`/courses/${c.slug}`}
               onClick={onNavigate}
               className={({ isActive }: { isActive: boolean }) =>
                 isActive ? 'nav-sublink active' : 'nav-sublink'
