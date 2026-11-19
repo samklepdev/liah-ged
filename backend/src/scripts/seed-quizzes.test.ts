@@ -5,7 +5,7 @@ import { eq, sql } from 'drizzle-orm';
 import { db } from '../db/index.ts';
 import { resetDb, closeDb } from '../test/helpers/db.ts';
 import { seedSubject } from './seed-quizzes.ts';
-import { courses } from '../models/schema.ts';
+import { courses, modules } from '../models/schema.ts';
 import type { ParsedSubject } from '../lib/quiz-parser.ts';
 
 const subject: ParsedSubject = JSON.parse(
@@ -119,6 +119,38 @@ test('seedSubject prefers a markdown override file over JSON content', async () 
     .from(courses)
     .where(eq(courses.slug, 'ged-demo-course'));
   assert.equal(row!.content, '## Overridden\n\nThis came from the markdown file, not the JSON.\n');
+});
+
+test('seedSubject gives each module its position and markdown override content', async () => {
+  const withContent: ParsedSubject = {
+    slug: 'ged-demo',
+    title: 'GED Demo',
+    courses: [
+      {
+        position: 1,
+        slug: 'ged-demo-course',
+        title: 'Demo Course',
+        questionCount: 0,
+        moduleTitles: ['Reading', 'Vocabulary'],
+        questions: [],
+      },
+    ],
+  };
+
+  const contentDir = new URL('../test/fixtures/content-overrides/', import.meta.url);
+  await seedSubject(withContent, contentDir);
+
+  const rows = await db
+    .select({ title: modules.title, position: modules.position, content: modules.content })
+    .from(modules)
+    .innerJoin(courses, eq(courses.id, modules.courseId))
+    .where(eq(courses.slug, 'ged-demo-course'))
+    .orderBy(modules.position);
+
+  assert.deepEqual(rows, [
+    { title: 'Reading', position: 1, content: '## Reading Topic\n\nThis is the reading topic override.\n' },
+    { title: 'Vocabulary', position: 2, content: null },
+  ]);
 });
 
 test('seedSubject defaults passScore to 9 and content to null when omitted', async () => {

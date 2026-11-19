@@ -60,6 +60,29 @@ export function CourseContentPage() {
         </div>
       )}
 
+      {course.modules.map((module) => (
+        <section key={module.id} className="course-topic">
+          <h2>{module.title}</h2>
+
+          {module.content && (
+            <div className="course-content-body">
+              <Markdown remarkPlugins={[remarkGfm]}>{module.content}</Markdown>
+            </div>
+          )}
+
+          {module.questionPrompts.length > 0 && (
+            <div className="course-topic-quiz">
+              <h3>Quiz: {module.title}</h3>
+              <ol>
+                {module.questionPrompts.map((prompt, i) => (
+                  <li key={i}>{prompt}</li>
+                ))}
+              </ol>
+            </div>
+          )}
+        </section>
+      ))}
+
       <Link to={`/courses/${course.slug}/quiz`} className="primary">
         Take the quiz
       </Link>

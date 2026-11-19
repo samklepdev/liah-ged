@@ -104,6 +104,11 @@ export const modules = pgTable(
       .notNull()
       .references(() => courses.id, { onDelete: 'cascade' }),
     title: text('title').notNull(),
+    /** Topic order within the course, matching ParsedCourse.moduleTitles. */
+    position: integer('position').notNull().default(0),
+    /** This topic's reading, shown before its questions on the content page.
+     *  Null means there is no topic-level reading material. */
+    content: text('content'),
   },
   (t) => [unique('modules_course_title_unique').on(t.courseId, t.title)],
 );

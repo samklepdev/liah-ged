@@ -267,6 +267,24 @@
 .course-content-body ol { margin: 0; padding-left: 1.5rem; line-height: 1.6; }
 .course-content-body li { margin: 0.25rem 0; }
 
+.course-topic {
+  margin: 2rem 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.course-topic h2 { font-size: 1.4rem; margin: 0; }
+
+.course-topic-quiz {
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  background: var(--surface-muted, rgba(127, 127, 127, 0.08));
+}
+
+.course-topic-quiz h3 { font-size: 1rem; margin: 0 0 0.5rem; }
+.course-topic-quiz ol { margin: 0; padding-left: 1.5rem; line-height: 1.6; }
+
 .course-content .primary {
   display: inline-block;
   padding: 0.55rem 1rem;

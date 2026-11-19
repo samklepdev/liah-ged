@@ -1,6 +1,6 @@
 import { and, asc, count, eq, ilike, isNotNull, max, sql } from 'drizzle-orm';
 import { db } from '../db/index.ts';
-import { attempts, courses, subjects } from './schema.ts';
+import { attempts, courses, modules, questions, subjects } from './schema.ts';
 
 export type SubjectSummary = {
   id: string;
@@ -142,6 +142,14 @@ export async function searchCatalog(q: string): Promise<SearchResult> {
   };
 }
 
+export type CourseModuleDetail = {
+  id: string;
+  title: string;
+  position: number;
+  content: string | null;
+  questionPrompts: string[];
+};
+
 export type CourseDetail = {
   id: string;
   slug: string;
@@ -152,7 +160,34 @@ export type CourseDetail = {
   content: string | null;
   subjectSlug: string;
   subjectTitle: string;
+  modules: CourseModuleDetail[];
 };
+
+/** Each of a course's topics, in order, with its reading (if any) and its
+ *  questions' prompts (no options — the content page previews what a topic
+ *  covers, it never lets you answer there). */
+async function findCourseModules(courseId: string): Promise<CourseModuleDetail[]> {
+  const moduleRows = await db
+    .select({ id: modules.id, title: modules.title, position: modules.position, content: modules.content })
+    .from(modules)
+    .where(eq(modules.courseId, courseId))
+    .orderBy(asc(modules.position));
+
+  const questionRows = await db
+    .select({ moduleId: questions.moduleId, prompt: questions.prompt })
+    .from(questions)
+    .where(eq(questions.courseId, courseId))
+    .orderBy(asc(questions.position));
+
+  const promptsByModule = new Map<string, string[]>();
+  for (const q of questionRows) {
+    const list = promptsByModule.get(q.moduleId) ?? [];
+    list.push(q.prompt);
+    promptsByModule.set(q.moduleId, list);
+  }
+
+  return moduleRows.map((m) => ({ ...m, questionPrompts: promptsByModule.get(m.id) ?? [] }));
+}
 
 /** The content page's data source. Mirrors listCoursesBySubject's isActive
  *  filter — a soft-deleted course must not be reachable here either. */
@@ -174,5 +209,7 @@ export async function findCourseBySlug(slug: string): Promise<CourseDetail | nul
     .where(and(eq(courses.slug, slug), eq(courses.isActive, true)))
     .limit(1);
 
-  return row ?? null;
+  if (!row) return null;
+
+  return { ...row, modules: await findCourseModules(row.id) };
 }

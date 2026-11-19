@@ -21,6 +21,14 @@ export type CourseSummary = {
 
 export type SearchCourseResult = CourseSummary & { subjectSlug: string; subjectTitle: string };
 
+export type CourseModuleDetail = {
+  id: string;
+  title: string;
+  position: number;
+  content: string | null;
+  questionPrompts: string[];
+};
+
 export type CourseDetail = {
   id: string;
   slug: string;
@@ -31,6 +39,7 @@ export type CourseDetail = {
   content: string | null;
   subjectSlug: string;
   subjectTitle: string;
+  modules: CourseModuleDetail[];
 };
 
 export type QuizOption = { id: string; label: string; body: string };

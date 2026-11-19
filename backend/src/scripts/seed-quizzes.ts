@@ -2,7 +2,12 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { eq } from 'drizzle-orm';
 import { db, pool } from '../db/index.ts';
 import { courses, modules, questionOptions, questions, subjects } from '../models/schema.ts';
-import type { ParsedSubject } from '../lib/quiz-parser.ts';
+import { slugify, type ParsedSubject } from '../lib/quiz-parser.ts';
+
+/** Reads an override file's contents, or returns the fallback if it doesn't exist. */
+function readOverride(path: URL, fallback: string | null | undefined): string | null {
+  return existsSync(path) ? readFileSync(path, 'utf8') : fallback ?? null;
+}
 
 /**
  * Upserts a parsed subject. Content is replaced per course rather than merged —
@@ -24,10 +29,7 @@ export async function seedSubject(
     let questionTotal = 0;
 
     for (const course of subject.courses) {
-      const overridePath = new URL(`${course.slug}.md`, contentDir);
-      const content = existsSync(overridePath)
-        ? readFileSync(overridePath, 'utf8')
-        : course.content ?? null;
+      const content = readOverride(new URL(`${course.slug}.md`, contentDir), course.content);
 
       const [courseRow] = await tx
         .insert(courses)
@@ -58,9 +60,17 @@ export async function seedSubject(
       // Replace content wholesale; questions and options cascade from modules.
       await tx.delete(modules).where(eq(modules.courseId, courseId));
 
+      const moduleContentDir = new URL(`${course.slug}/`, contentDir);
       const moduleRows = await tx
         .insert(modules)
-        .values(course.moduleTitles.map((title) => ({ courseId, title })))
+        .values(
+          course.moduleTitles.map((title, index) => ({
+            courseId,
+            title,
+            position: index + 1,
+            content: readOverride(new URL(`${slugify(title)}.md`, moduleContentDir), null),
+          })),
+        )
         .returning({ id: modules.id, title: modules.title });
 
       const moduleIdByTitle = new Map(moduleRows.map((m) => [m.title, m.id]));

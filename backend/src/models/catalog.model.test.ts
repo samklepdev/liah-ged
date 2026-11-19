@@ -34,6 +34,23 @@ test('findCourseBySlug returns course detail including content', async () => {
   assert.equal(course?.subjectTitle, 'Chassis');
 });
 
+test('findCourseBySlug returns each topic in order, with its question prompts', async () => {
+  const course = await findCourseBySlug('chassis-tire-and-rim-essentials');
+  assert.ok(course);
+  assert.deepEqual(
+    course!.modules.map((m) => m.title),
+    ['Tire Technology', 'Tread and Rim Technology', 'Run Flat Tires', 'Tire Pressure Monitoring'],
+  );
+  assert.deepEqual(
+    course!.modules.map((m) => m.position),
+    [1, 2, 3, 4],
+  );
+  for (const m of course!.modules) {
+    assert.equal(m.content, null);
+    assert.ok(m.questionPrompts.length > 0);
+  }
+});
+
 test('findCourseBySlug returns null for an unknown slug', async () => {
   assert.equal(await findCourseBySlug('does-not-exist'), null);
 });
