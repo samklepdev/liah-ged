@@ -105,6 +105,106 @@ export function stripQuizBlocks(lessonText: string, quizTitles: string[]): strin
   return kept.join('\n');
 }
 
+/**
+ * Splits a lesson's raw text into one chunk per quizTitle (i.e. per module/
+ * topic), walking the same heading/noise-skip logic as stripQuizBlocks but
+ * routing kept lines into "buckets" instead of one combined list. Content
+ * before a topic's own quiz heading is that topic's reading; content after a
+ * quiz's own noise block (and before the next quiz heading) belongs to the
+ * *next* topic — that's simply where it reads next, and trailing content
+ * after the last quiz falls into the last topic rather than being dropped.
+ * Returns one string per quizTitle, same order, each still needing
+ * toParagraphs/stripVideoPrompts/etc. applied.
+ */
+export function splitLessonIntoTopics(lessonText: string, quizTitles: string[]): string[] {
+  if (quizTitles.length === 0) return [];
+
+  const lines = lessonText.split('\n');
+  const headingIndex = (line: string): number =>
+    quizTitles.findIndex((title) => line.trim() === title.trim());
+  const isSkipTrigger = (line: string): boolean => line.trim() !== '' && isQuizNoiseLine(line);
+
+  const buckets: string[][] = quizTitles.map(() => []);
+  let current = 0;
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i]!;
+    const matchedHeading = headingIndex(line);
+    if (matchedHeading !== -1) {
+      i++; // skip the heading itself
+      while (i < lines.length && isQuizNoiseLine(lines[i]!)) i++;
+      current = Math.min(matchedHeading + 1, quizTitles.length - 1);
+      continue;
+    }
+    if (isSkipTrigger(line)) {
+      while (i < lines.length && isQuizNoiseLine(lines[i]!)) i++;
+      continue;
+    }
+    buckets[current]!.push(line);
+    i++;
+  }
+
+  return buckets.map((lines) => lines.join('\n'));
+}
+
+/**
+ * Drops "Video: <title>" lead-in paragraphs and "(no text content — video or
+ * interactive topic)" placeholders entirely — pure scraper artifacts, since
+ * the content page never embeds a video — and unwraps a "Video
+ * Transcript(s) + <text>" label down to just <text>, keeping the transcript
+ * itself since it's real lesson content.
+ */
+export function stripVideoReferences(text: string): string {
+  return text
+    .split('\n\n')
+    .map((paragraph) => {
+      const trimmed = paragraph.trim();
+      const transcriptMatch = /^video transcripts?\s*\+\s*([\s\S]*)$/i.exec(trimmed);
+      if (transcriptMatch) return transcriptMatch[1]!.trim();
+      if (/^video:\s*.+$/i.test(trimmed)) return '';
+      if (/^\(no text content[^)]*\)$/i.test(trimmed)) return '';
+      return paragraph;
+    })
+    .filter((paragraph) => paragraph.trim().length > 0)
+    .join('\n\n');
+}
+
+/** Drops paragraphs of closed-captions/subtitle-toggling instructions aimed
+ *  at a video player the content page never embeds. */
+export function stripCaptionInstructions(text: string): string {
+  const noise = /subtitles?\/cc|auto-translate|closed captions?|settings gear icon/i;
+  return text
+    .split('\n\n')
+    .filter((paragraph) => !noise.test(paragraph))
+    .join('\n\n');
+}
+
+/**
+ * Builds { lessonTitle -> each topic's cleaned content, aligned with that
+ * lesson's quizTitles order } for one subject's PDF text.
+ */
+export function extractTopicContent(
+  pdfText: string,
+  quizTitlesByLesson: Map<string, string[]>,
+): Map<string, string[]> {
+  const rawLessons = splitLessons(pdfText);
+  const content = new Map<string, string[]>();
+
+  for (const [lessonTitle, quizTitles] of quizTitlesByLesson) {
+    const raw = rawLessons.get(lessonTitle);
+    if (raw === undefined) {
+      throw new Error(`No "${lessonTitle}" heading found in the PDF text.`);
+    }
+    const topics = splitLessonIntoTopics(raw, quizTitles).map((topic) => {
+      const paragraphs = toParagraphs(topic);
+      return stripCaptionInstructions(stripVideoReferences(stripVideoPrompts(paragraphs)));
+    });
+    content.set(lessonTitle, topics);
+  }
+
+  return content;
+}
+
 const LESSON_META_RE = /^\s*\d+\s+topics?\s*·\s*\d+\s+quizzes?\s*$/i;
 const CONTINUE_PROMPT_RE = /^Click [“"]Continue[”"].*$/i;
 

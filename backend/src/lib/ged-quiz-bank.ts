@@ -37,6 +37,7 @@ export function buildGedSubject(
   entries: GedBankEntry[],
   subjectSlug: string,
   contentByLesson: Map<string, string> = new Map(),
+  moduleContentByLesson: Map<string, string[]> = new Map(),
 ): ParsedSubject {
   const usable = entries.filter((e) => isUsable(e, subjectSlug));
   if (usable.length === 0) {
@@ -109,6 +110,7 @@ export function buildGedSubject(
       passScore: Math.ceil(questions.length * 0.8),
       questions,
       content: contentByLesson.get(lessonTitle),
+      moduleContent: moduleContentByLesson.get(lessonTitle),
     };
   });
 

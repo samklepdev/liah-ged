@@ -3,9 +3,13 @@ import assert from 'node:assert/strict';
 import {
   splitLessons,
   stripQuizBlocks,
+  splitLessonIntoTopics,
   toParagraphs,
   stripVideoPrompts,
+  stripVideoReferences,
+  stripCaptionInstructions,
   extractLessonContent,
+  extractTopicContent,
   assertNoLeakedQuestions,
 } from './ged-content.ts';
 
@@ -139,6 +143,95 @@ test('stripQuizBlocks strips the widget-dump chrome used by the language-arts ex
   assert.match(stripped, /Vocabulary review/);
   assert.doesNotMatch(stripped, /Quiz Summary/);
   assert.doesNotMatch(stripped, /Correct Incorrect Skip/);
+});
+
+test('splitLessonIntoTopics routes pre-quiz content to its own topic and post-quiz content to the next', () => {
+  const text = [
+    'Intro to topic one.',
+    'Quiz on Video: One',
+    'Q1. drop one.',
+    'a) one',
+    'b) two (correct)',
+    'Explanation: because.',
+    'Content for topic two.',
+    'Quiz on Video: Two',
+    'Q1. drop two.',
+    'Trailing content for topic two.',
+  ].join('\n');
+
+  const [topicOne, topicTwo] = splitLessonIntoTopics(text, ['Quiz on Video: One', 'Quiz on Video: Two']);
+  assert.match(topicOne!, /Intro to topic one\./);
+  assert.doesNotMatch(topicOne!, /drop one/);
+  assert.match(topicTwo!, /Content for topic two\./);
+  assert.match(topicTwo!, /Trailing content for topic two\./);
+  assert.doesNotMatch(topicTwo!, /drop two/);
+});
+
+test('splitLessonIntoTopics returns nothing for a lesson with no quizzes', () => {
+  assert.deepEqual(splitLessonIntoTopics('Some text.', []), []);
+});
+
+test('stripVideoReferences drops a standalone video lead-in paragraph', () => {
+  const text = 'Real content here.\n\nVideo: Context Clues\n\nMore real content.';
+  assert.equal(stripVideoReferences(text), 'Real content here.\n\nMore real content.');
+});
+
+test('stripVideoReferences drops the no-text-content placeholder', () => {
+  const text = 'Real content here.\n\n(no text content — video or interactive topic)\n\nMore content.';
+  assert.equal(stripVideoReferences(text), 'Real content here.\n\nMore content.');
+});
+
+test('stripVideoReferences unwraps a transcript label, keeping the transcript text', () => {
+  const text = 'Video Transcript + Now, let’s take a look at a short story.';
+  assert.equal(stripVideoReferences(text), 'Now, let’s take a look at a short story.');
+});
+
+test('stripVideoReferences leaves unrelated content alone', () => {
+  const text = 'This paragraph never mentions a video at all.';
+  assert.equal(stripVideoReferences(text), text);
+});
+
+test('stripCaptionInstructions drops a subtitle/CC instructions paragraph', () => {
+  const text = [
+    'Real content here.',
+    '',
+    'Click the "CC" (subtitles/closed captions) button at the bottom of the video. Then click on "Subtitles/CC". Then click on "Auto-translate".',
+    '',
+    'More real content.',
+  ].join('\n');
+  assert.equal(stripCaptionInstructions(text), 'Real content here.\n\nMore real content.');
+});
+
+test('stripCaptionInstructions leaves unrelated content alone', () => {
+  const text = 'This paragraph never mentions subtitles at all.';
+  assert.equal(stripCaptionInstructions(text), text);
+});
+
+test('extractTopicContent splits a lesson into one cleaned chunk per quiz', () => {
+  const pdfText = [
+    'Lesson 1: Vocabulary',
+    'Intro text.',
+    '',
+    'Video: Context Clues',
+    '',
+    'Watch the video and then answer the practice questions.',
+    'Quiz on Video: Context Clues',
+    'Q1. What? a) one b) two (correct) Explanation: because.',
+    '',
+    'Vocabulary review text.',
+  ].join('\n');
+
+  const content = extractTopicContent(
+    pdfText,
+    new Map([['Lesson 1: Vocabulary', ['Quiz on Video: Context Clues']]]),
+  );
+
+  assert.equal(content.size, 1);
+  const [topic] = content.get('Lesson 1: Vocabulary')!;
+  assert.match(topic!, /Intro text\./);
+  assert.doesNotMatch(topic!, /Video:/);
+  assert.doesNotMatch(topic!, /Watch the video/);
+  assert.doesNotMatch(topic!, /Q1\./);
 });
 
 test('toParagraphs joins wrapped lines and drops page footers', () => {

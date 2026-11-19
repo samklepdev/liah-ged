@@ -68,7 +68,10 @@ export async function seedSubject(
             courseId,
             title,
             position: index + 1,
-            content: readOverride(new URL(`${slugify(title)}.md`, moduleContentDir), null),
+            content: readOverride(
+              new URL(`${slugify(title)}.md`, moduleContentDir),
+              course.moduleContent?.[index],
+            ),
           })),
         )
         .returning({ id: modules.id, title: modules.title });

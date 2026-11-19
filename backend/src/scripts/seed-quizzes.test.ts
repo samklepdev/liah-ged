@@ -153,6 +153,40 @@ test('seedSubject gives each module its position and markdown override content',
   ]);
 });
 
+test('seedSubject uses each parsed course\'s moduleContent as the module default, overridable by a markdown file', async () => {
+  const withModuleContent: ParsedSubject = {
+    slug: 'ged-demo',
+    title: 'GED Demo',
+    courses: [
+      {
+        position: 1,
+        slug: 'ged-demo-course',
+        title: 'Demo Course',
+        questionCount: 0,
+        moduleTitles: ['Reading', 'Vocabulary'],
+        moduleContent: ['Extracted reading content.', 'Extracted vocabulary content.'],
+        questions: [],
+      },
+    ],
+  };
+
+  const contentDir = new URL('../test/fixtures/content-overrides/', import.meta.url);
+  await seedSubject(withModuleContent, contentDir);
+
+  const rows = await db
+    .select({ title: modules.title, content: modules.content })
+    .from(modules)
+    .innerJoin(courses, eq(courses.id, modules.courseId))
+    .where(eq(courses.slug, 'ged-demo-course'))
+    .orderBy(modules.position);
+
+  assert.deepEqual(rows, [
+    // A matching content-overrides/ged-demo-course/reading.md file still wins.
+    { title: 'Reading', content: '## Reading Topic\n\nThis is the reading topic override.\n' },
+    { title: 'Vocabulary', content: 'Extracted vocabulary content.' },
+  ]);
+});
+
 test('seedSubject defaults passScore to 9 and content to null when omitted', async () => {
   await seedSubject(subject); // the chassis fixture, which sets neither field
 

@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { assertNoLeakedQuestions, extractLessonContent } from '../lib/ged-content.ts';
+import { assertNoLeakedQuestions, extractTopicContent } from '../lib/ged-content.ts';
 import {
   buildGedSubject,
   questionsByLesson,
@@ -27,10 +27,14 @@ for (const { slug, pdf } of SUBJECTS) {
   });
 
   const quizTitles = quizTitlesByLesson(entries, slug);
-  const content = extractLessonContent(pdfText, quizTitles);
-  assertNoLeakedQuestions(content, questionsByLesson(entries, slug));
+  const moduleContent = extractTopicContent(pdfText, quizTitles);
 
-  const subject = buildGedSubject(entries, slug, content);
+  const joinedByLesson = new Map(
+    [...moduleContent].map(([lessonTitle, topics]) => [lessonTitle, topics.join('\n\n')]),
+  );
+  assertNoLeakedQuestions(joinedByLesson, questionsByLesson(entries, slug));
+
+  const subject = buildGedSubject(entries, slug, new Map(), moduleContent);
 
   const outFile = new URL(`${slug}.quiz.json`, dataDir);
   writeFileSync(outFile, `${JSON.stringify(subject, null, 2)}\n`, 'utf8');
