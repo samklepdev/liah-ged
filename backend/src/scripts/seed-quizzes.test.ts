@@ -177,6 +177,38 @@ test('seedSubject links a topic to its module when the titles match', async () =
   ]);
 });
 
+test('seedSubject marks a course\'s practice module titles as isPractice', async () => {
+  const withPractice: ParsedSubject = {
+    slug: 'ged-demo',
+    title: 'GED Demo',
+    courses: [
+      {
+        position: 1,
+        slug: 'ged-demo-course',
+        title: 'Demo Course',
+        questionCount: 1,
+        moduleTitles: ['Final Quiz', 'Practice Question 1'],
+        practiceModuleTitles: ['Practice Question 1'],
+        questions: [],
+      },
+    ],
+  };
+
+  await seedSubject(withPractice);
+
+  const [course] = await db.select().from(courses).where(eq(courses.slug, 'ged-demo-course'));
+  const rows = await db
+    .select({ title: modules.title, isPractice: modules.isPractice })
+    .from(modules)
+    .where(eq(modules.courseId, course!.id))
+    .orderBy(modules.title);
+
+  assert.deepEqual(rows, [
+    { title: 'Final Quiz', isPractice: false },
+    { title: 'Practice Question 1', isPractice: true },
+  ]);
+});
+
 test('seedSubject re-seeding replaces topics wholesale rather than merging', async () => {
   const v1: ParsedSubject = {
     slug: 'ged-demo',

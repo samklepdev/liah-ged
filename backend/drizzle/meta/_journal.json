@@ -50,6 +50,13 @@
       "when": 1795107987132,
       "tag": "0006_cooing_mandroid",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1795109629245,
+      "tag": "0007_normal_echo",
+      "breakpoints": true
     }
   ]
 }

@@ -1,4 +1,4 @@
-import { asc, eq } from 'drizzle-orm';
+import { and, asc, eq } from 'drizzle-orm';
 import { db } from '../db/index.ts';
 import { courses, modules, questionOptions, questions } from './schema.ts';
 
@@ -43,7 +43,7 @@ export async function findQuizByCourseSlug(slug: string): Promise<Quiz | null> {
     .from(questions)
     .innerJoin(modules, eq(modules.id, questions.moduleId))
     .innerJoin(questionOptions, eq(questionOptions.questionId, questions.id))
-    .where(eq(questions.courseId, course.id))
+    .where(and(eq(questions.courseId, course.id), eq(modules.isPractice, false)))
     .orderBy(asc(questions.position), asc(questionOptions.label));
 
   const byQuestion = new Map<string, QuizQuestion>();

@@ -54,11 +54,18 @@ export async function seedSubject(
       // Replace content wholesale; questions and options cascade from modules.
       await tx.delete(modules).where(eq(modules.courseId, courseId));
 
+      const practiceModuleTitles = new Set(course.practiceModuleTitles ?? []);
       const moduleRows =
         course.moduleTitles.length > 0
           ? await tx
               .insert(modules)
-              .values(course.moduleTitles.map((title) => ({ courseId, title })))
+              .values(
+                course.moduleTitles.map((title) => ({
+                  courseId,
+                  title,
+                  isPractice: practiceModuleTitles.has(title),
+                })),
+              )
               .returning({ id: modules.id, title: modules.title })
           : [];
 

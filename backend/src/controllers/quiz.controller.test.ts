@@ -67,6 +67,54 @@ test('GET quiz never leaks correct answers or explanations', async () => {
   );
 });
 
+test('GET quiz excludes practice-only modules\' questions', async () => {
+  await seedSubject({
+    slug: 'ged-demo',
+    title: 'GED Demo',
+    courses: [
+      {
+        position: 2,
+        slug: 'ged-demo-practice-course',
+        title: 'Practice Demo Course',
+        questionCount: 1,
+        moduleTitles: ['Final Quiz', 'Practice Question 1'],
+        practiceModuleTitles: ['Practice Question 1'],
+        questions: [
+          {
+            position: 1,
+            prompt: 'Graded question',
+            moduleTitle: 'Final Quiz',
+            explanation: 'Graded explanation.',
+            options: [
+              { label: 'A', body: 'Wrong', isCorrect: false },
+              { label: 'B', body: 'Right', isCorrect: true },
+            ],
+          },
+          {
+            position: 2,
+            prompt: 'Practice question',
+            moduleTitle: 'Practice Question 1',
+            explanation: 'Practice explanation.',
+            options: [
+              { label: 'A', body: 'Wrong', isCorrect: false },
+              { label: 'B', body: 'Right', isCorrect: true },
+            ],
+          },
+        ],
+      },
+    ],
+  });
+
+  const res = await fetch(`${baseUrl}/api/v1/courses/ged-demo-practice-course/quiz`, {
+    headers: { cookie },
+  });
+  assert.equal(res.status, 200);
+  const { quiz } = (await res.json()) as { quiz: Record<string, any> };
+
+  assert.equal(quiz.questions.length, 1);
+  assert.equal(quiz.questions[0].prompt, 'Graded question');
+});
+
 test('GET quiz 404s for an unknown course', async () => {
   const res = await fetch(`${baseUrl}/api/v1/courses/not-a-course/quiz`, {
     headers: { cookie },

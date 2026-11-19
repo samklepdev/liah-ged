@@ -104,6 +104,10 @@ export const modules = pgTable(
       .notNull()
       .references(() => courses.id, { onDelete: 'cascade' }),
     title: text('title').notNull(),
+    /** True excludes this module's questions from the course's graded
+     *  end-of-course quiz (findQuizByCourseSlug, findGradedAttempt) — they're
+     *  only ever reached as a topic's inline ungraded practice. */
+    isPractice: boolean('is_practice').notNull().default(false),
   },
   (t) => [unique('modules_course_title_unique').on(t.courseId, t.title)],
 );

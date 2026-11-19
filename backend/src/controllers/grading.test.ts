@@ -119,6 +119,64 @@ test('the graded result carries explanations and modules to review', async () =>
   assert.ok(graded.attempt.modulesToReview.length > 0);
 });
 
+test('a practice-only module\'s questions are excluded from the graded review', async () => {
+  await seedSubject({
+    slug: 'ged-demo',
+    title: 'GED Demo',
+    courses: [
+      {
+        position: 2,
+        slug: 'ged-demo-practice-course',
+        title: 'Practice Demo Course',
+        questionCount: 1,
+        moduleTitles: ['Final Quiz', 'Practice Question 1'],
+        practiceModuleTitles: ['Practice Question 1'],
+        questions: [
+          {
+            position: 1,
+            prompt: 'Graded question',
+            moduleTitle: 'Final Quiz',
+            explanation: 'Graded explanation.',
+            options: [
+              { label: 'A', body: 'Wrong', isCorrect: false },
+              { label: 'B', body: 'Right', isCorrect: true },
+            ],
+          },
+          {
+            position: 2,
+            prompt: 'Practice question',
+            moduleTitle: 'Practice Question 1',
+            explanation: 'Practice explanation.',
+            options: [
+              { label: 'A', body: 'Wrong', isCorrect: false },
+              { label: 'B', body: 'Right', isCorrect: true },
+            ],
+          },
+        ],
+      },
+    ],
+  });
+
+  const startRes = await fetch(`${baseUrl}/api/v1/courses/ged-demo-practice-course/attempts`, {
+    method: 'POST',
+    headers: { cookie },
+  });
+  const { attempt } = (await startRes.json()) as any;
+
+  await fetch(`${baseUrl}/api/v1/attempts/${attempt.id}/submit`, {
+    method: 'POST',
+    headers: { cookie },
+  });
+
+  const graded = (await (
+    await fetch(`${baseUrl}/api/v1/attempts/${attempt.id}`, { headers: { cookie } })
+  ).json()) as any;
+
+  assert.equal(graded.attempt.questions.length, 1);
+  assert.equal(graded.attempt.questions[0].prompt, 'Graded question');
+  assert.ok(!graded.attempt.modulesToReview.includes('Practice Question 1'));
+});
+
 test('submitting twice is idempotent and does not regrade', async () => {
   const attemptId = await takeQuiz(cookie, 5);
   const first = await fetch(`${baseUrl}/api/v1/attempts/${attemptId}/submit`, {
