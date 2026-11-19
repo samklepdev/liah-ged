@@ -523,99 +523,14 @@
       "slug": "ged-language-arts-identifying-themes-and-main-ideas",
       "title": "Identifying Themes and Main Ideas",
       "moduleTitles": [
-        "Quiz on Video: What is a Main Idea?",
         "Practice Quiz: Finding the Main Idea",
         "Final Quiz: Main Ideas"
       ],
-      "questionCount": 10,
+      "questionCount": 7,
       "passScore": 8,
       "questions": [
         {
           "position": 1,
-          "prompt": "What is the main idea of the video?",
-          "moduleTitle": "Quiz on Video: What is a Main Idea?",
-          "explanation": "Answer\n:\nb) The importance of understanding main ideas in texts.\nExplanation\n:\nThe video talks about how it’s essential to understand the main idea of what you read. It’s not about animals or squirrels; it’s about why understanding main ideas in texts is important.",
-          "options": [
-            {
-              "label": "A",
-              "body": "Animals fighting over access to a creek.",
-              "isCorrect": false
-            },
-            {
-              "label": "B",
-              "body": "The importance of understanding main ideas in texts.",
-              "isCorrect": true
-            },
-            {
-              "label": "C",
-              "body": "How to train your brain to improve memory.",
-              "isCorrect": false
-            },
-            {
-              "label": "D",
-              "body": "The struggles of a squirrel in a forest.",
-              "isCorrect": false
-            }
-          ]
-        },
-        {
-          "position": 2,
-          "prompt": "How is a main idea different from a summary?",
-          "moduleTitle": "Quiz on Video: What is a Main Idea?",
-          "explanation": "Answer\n:\nb) A main idea is about the big picture, while a summary includes specific supporting details.\nExplanation\n:\nThe video explains that a main idea is like seeing the entire forest, while a summary is like looking at specific trees. The main idea gives you the overall understanding, while a summary focuses on specific supporting details.",
-          "options": [
-            {
-              "label": "A",
-              "body": "A main idea includes all the important details, while a summary focuses on broader concepts.",
-              "isCorrect": false
-            },
-            {
-              "label": "B",
-              "body": "A main idea is about the big picture, while a summary includes specific supporting details.",
-              "isCorrect": true
-            },
-            {
-              "label": "C",
-              "body": "A main idea is more complex, while a summary is simpler and concise.",
-              "isCorrect": false
-            },
-            {
-              "label": "D",
-              "body": "A main idea is what the author wants you to know, while a summary is a personal interpretation.",
-              "isCorrect": false
-            }
-          ]
-        },
-        {
-          "position": 3,
-          "prompt": "How does the speaker determine the main idea of a text?",
-          "moduleTitle": "Quiz on Video: What is a Main Idea?",
-          "explanation": "Answer:\nc) By summarizing each paragraph individually.\nExplanation\n:\nThe video shows a method where the speaker summarizes each paragraph separately to figure out the main idea. They look for the common theme or idea that connects all the paragraphs.",
-          "options": [
-            {
-              "label": "A",
-              "body": "By analyzing key details and events.",
-              "isCorrect": false
-            },
-            {
-              "label": "B",
-              "body": "By focusing on the conflict or central theme.",
-              "isCorrect": false
-            },
-            {
-              "label": "C",
-              "body": "By summarizing each paragraph individually.",
-              "isCorrect": true
-            },
-            {
-              "label": "D",
-              "body": "By understanding the author's writing style.",
-              "isCorrect": false
-            }
-          ]
-        },
-        {
-          "position": 4,
           "prompt": "Read the text below and answer the question.\nDriverless cars zooming past cities’ preparations, report says\nDetroit Free Press\n,\nadapted from newsela.com.\nThe technology industry is racing to create a self-driving vehicle and get it on the road in the next 10 years. To be successful, America’s urban planners need to resolve a host of questions. It is their job to determine how cities will respond to the future of transportation.\nA new report finds only 6 percent of U.S. cities have\ndevoted\nplanning resources to figuring out changes needed to accommodate self-driving vehicles. Only 3 percent have studied the impact of taxi alternatives like Uber and Lyft.\nHowever, 50 percent of cities’ plans recommend new highway construction. More roads, more lanes and more parking garages will help deal with traffic in the traditional way.\nAmong the questions that cities need to consider:\nWill the arrival of self-driving vehicles require dedicated lanes for them?\nWill autonomous vehicles reduce the need for downtown parking garages? One possible future would see most self-driving cars as part of large fleets operated by services like Uber and Lyft.\nShould cities spend more on public transportation to help reduce dependence on privately owned cars?\n“The rate of change is definitely happening much faster,” Rainwater said. “Cities are getting up to speed and they’re looking at what they can do.” Still, he said, the planning perspective often has not been aligning with how quickly technology has been changing.\nQUESTION: Which of the following best states the main idea of the text?",
           "moduleTitle": "Practice Quiz: Finding the Main Idea",
           "explanation": "Answer:\nB)\nThere are many things city planners need to consider before self-driving vehicles become available, but so far they have been slow to do this.\nExplanation:\nLet us follow the same steps that we used before:\nStep 1:\nQuickly read the text.\nMake a list (either on paper or in your mind) of ideas in the text.\nThe ideas in the text are:\nself-driving vehicles/autonomous vehicles\nurban planners\nvery few cities considering future of autonomous vehicles\nhalf of cities thinking about traditional traffic solutions\nmany questions\nself-driving vehicles from services such as Uber and Lyft\ncity planning not quick enough for technology\nStep 2:\nRead the question and the answer choices.\nThen read the text a second time if you need to.\nEvaluate each answer, one at a time. Remind yourself each time that the question is asking about the main idea or point of the text.\nA. Self-driving vehicles still require much testing and development before they can be introduced to consumers.\nThis answer is incorrect because, while the text does mention the development of autonomous vehicles, it also talks at great length about what city planners need to do to anticipate them. The article’s paragraphs do not focus on the testing and development of self-driving vehicles.\nB. There are many things city planners need to consider before self-driving vehicles become available, but so far they have been slow to do this.\nThis answer could be the best answer option. The article talks a lot about what urban planners need to be thinking about. The author mentions several times that cities are not thinking enough about the future of autonomous vehicles.\nFirst paragraph:  “America’s urban planners need to resolve a host of questions.”\nSecond paragraph: “… only 6 percent of U.S. cities have devoted planning resources to figuring out changes needed to accommodate self-driving vehicles.”\nLast paragraph: “… the planning perspective often has not been aligning with how quickly technology has been changing.”\nThis seems like a good answer. Read through and evaluate the last two options to confirm that B is the main idea.\nC. In the future, public transportation and self-driving vehicles will help cut down on traffic in cities.\nThe article mentions public transportation and traffic, but this answer has nothing specific about self-driving vehicles. This is not the best answer.\nD. Services such as Uber and Lyft are leading the way in developing self-driving vehicles.\nUber and Lyft are mentioned in the article. However, the article never says that they are developing autonomous vehicles.  This answer does not say anything about city planning.\nAfter reading and evaluating all four options, we find that B is the best answer.",
@@ -643,7 +558,7 @@
           ]
         },
         {
-          "position": 5,
+          "position": 2,
           "prompt": "Please read this passage and answer the following question.\nSource of Passage:\nNewsla.Com\nSmoking in China\nEvery day in China, women go to work in smoke-filled offices, exposed to the fumes of cigarettes smoked mainly by male colleagues. After work is over, many go home to breathe secondhand\nsmoke created by husbands or other family members.\nAccording to the most recent national survey, 288 million men smoked regularly in China in 2010, compared with 13 million women. Lately, the women are striking back. Last fall, China’s State Council proposed the nation’s toughest restrictions yet on indoor smoking and the marketing of tobacco. The announcement was a major victory for China’s tobacco-control movement, which includes several women who’ve been on the front lines for decades.\nChina’s anti-smoking movement also includes many prominent men. Former NBA center Yao Ming and other celebrities have lent their names to the cause. Yet in government and among tobacco-control groups, women are leading the charge. China’s health commissioner, Li Bin, has been outspoken in seeking a national indoor-smoking ban. Li sits on the State Council, a top-level panel that drafted the restrictions unveiled in November. Two of her key deputies are women.\nThe battle is far from won. Although smoking rates have declined in recent years, more than half of Chinese men smoke regularly, according to the WHO. Some 700 million Chinese — twice the population of the United States — are routinely exposed to secondhand smoke, which kills an estimated 100,000 people annually.\nChinese have smoked tobacco for centuries, and up until the early 1900s women regularly could be seen with men puffing on pipes. But with the advent of cigarettes, Chinese intellectuals and foreign missionaries started frowning on women who smoked.  As a result, women quit smoking, even as Chinese leaders such as Mao Zedong and Deng Xiaoping smoked openly in public, encouraging the habit among men.\nQUESTION: Which of the following statements contains the main ideas of the article?",
           "moduleTitle": "Final Quiz: Main Ideas",
           "explanation": "Answer: b\n) Women are at the head of the anti-smoking movement in China, and they are fighting against years of tradition.\nExplanation:\nThe statement that contains the main ideas of the article is: b) Women are at the head of the anti-smoking movement in China, and they are fighting against years of tradition\nThis answer captures the article’s focus on the role of women leading the charge against smoking, the health risks they face, and their efforts to challenge long-standing smoking habits in Chinese society.",
@@ -671,7 +586,7 @@
           ]
         },
         {
-          "position": 6,
+          "position": 3,
           "prompt": "Please read this passage and answer the following question.\nSource of Passage:\nNewsla.Com\nSmoking in China\nEvery day in China, women go to work in smoke-filled offices, exposed to the fumes of cigarettes smoked mainly by male colleagues. After work is over, many go home to breathe secondhand\nsmoke created by husbands or other family members.\nAccording to the most recent national survey, 288 million men smoked regularly in China in 2010, compared with 13 million women. Lately, the women are striking back. Last fall, China’s State Council proposed the nation’s toughest restrictions yet on indoor smoking and the marketing of tobacco. The announcement was a major victory for China’s tobacco-control movement, which includes several women who’ve been on the front lines for decades.\nChina’s anti-smoking movement also includes many prominent men. Former NBA center Yao Ming and other celebrities have lent their names to the cause. Yet in government and among tobacco-control groups, women are leading the charge. China’s health commissioner, Li Bin, has been outspoken in seeking a national indoor-smoking ban. Li sits on the State Council, a top-level panel that drafted the restrictions unveiled in November. Two of her key deputies are women.\nThe battle is far from won. Although smoking rates have declined in recent years, more than half of Chinese men smoke regularly, according to the WHO. Some 700 million Chinese — twice the population of the United States — are routinely exposed to secondhand smoke, which kills an estimated 100,000 people annually.\nChinese have smoked tobacco for centuries, and up until the early 1900s women regularly could be seen with men puffing on pipes. But with the advent of cigarettes, Chinese intellectuals and foreign missionaries started frowning on women who smoked.  As a result, women quit smoking, even as Chinese leaders such as Mao Zedong and Deng Xiaoping smoked openly in public, encouraging the habit among men.\nQUESTION: According to this passage, are there more men or women who smoke in China?",
           "moduleTitle": "Final Quiz: Main Ideas",
           "explanation": "Answer:\na) Men\nExplanation:\nAccording to the passage, there are more\nmen\nwho smoke in China. The 2010 survey mentioned states that 288 million men smoked regularly, compared with 13 million women.",
@@ -689,7 +604,7 @@
           ]
         },
         {
-          "position": 7,
+          "position": 4,
           "prompt": "Please read this text to answer the question.\nSource:\nNewsla.Com\nConcussion among teenagers\nNew research finds that after sustaining a mild brain injury, such as a concussion from playing sports, nearly 9 in 10 teens who have ongoing symptoms also have academic problems related to headaches, fatigue, and difficulty concentrating. More than three-quarters of those who have yet to recover fully after four weeks report a decline in academic skills. A new study shows the consequences of some brain injuries can extend well beyond the playing field and can persistently hurt an adolescent’s academic performance in and outside the classroom.\nAmong 349 students ages 5 to 18 who had suffered a concussion, 240 continued to experience physical and cognitive symptoms of brain injury, including headaches, dizziness, light sensitivity, and problems of mood and concentration within four weeks of their injury. In that group, those with the highest academic demands — generally students in middle and high school — were most likely to report persistent symptoms of concussions along with difficulties concentrating and keeping up with schoolwork, especially math.\nFor most with mild brain injuries, the process of recovery will take one to three weeks. During that time, physicians have suggested limiting school time, lessening the amount of homework, and including frequent breaks throughout the day. Administrators might allow a concussed student to move between classes ahead of the noise and confusion after the bell, to reschedule tests, and to let a student eat lunch in a quiet place.\nQUESTION: What is a concussion?",
           "moduleTitle": "Final Quiz: Main Ideas",
           "explanation": "Answer:\na) A mild brain injury\nExplanation:\nWe know a concussion is a\nmild brain injury\nfrom the passage because it explicitly states, “after sustaining a mild brain injury, such as a concussion from playing sports.” This directly defines a concussion as a type of mild brain injury.",
@@ -717,7 +632,7 @@
           ]
         },
         {
-          "position": 8,
+          "position": 5,
           "prompt": "Please read this text to answer the question.\nSource:\nNewsla.Com\nConcussion among teenagers\nNew research finds that after sustaining a mild brain injury, such as a concussion from playing sports, nearly 9 in 10 teens who have ongoing symptoms also have academic problems related to headaches, fatigue, and difficulty concentrating. More than three-quarters of those who have yet to recover fully after four weeks report a decline in academic skills. A new study shows the consequences of some brain injuries can extend well beyond the playing field and can persistently hurt an adolescent’s academic performance in and outside the classroom.\nAmong 349 students ages 5 to 18 who had suffered a concussion, 240 continued to experience physical and cognitive symptoms of brain injury, including headaches, dizziness, light sensitivity, and problems of mood and concentration within four weeks of their injury. In that group, those with the highest academic demands — generally students in middle and high school — were most likely to report persistent symptoms of concussions along with difficulties concentrating and keeping up with schoolwork, especially math.\nFor most with mild brain injuries, the process of recovery will take one to three weeks. During that time, physicians have suggested limiting school time, lessening the amount of homework, and including frequent breaks throughout the day. Administrators might allow a concussed student to move between classes ahead of the noise and confusion after the bell, to reschedule tests, and to let a student eat lunch in a quiet place.\nQUESTION: Which answer choice includes two central ideas of the article?",
           "moduleTitle": "Final Quiz: Main Ideas",
           "explanation": "Answer:\nb) Teens may continue to suffer academic consequences for weeks after a brain injury; schools, doctors and families must support students with brain injuries.\nExplanation:\nThis choice captures the key points that teens can experience ongoing academic struggles following a concussion and that support from multiple parties — schools, doctors, and families — is essential for their recovery.",
@@ -745,7 +660,7 @@
           ]
         },
         {
-          "position": 9,
+          "position": 6,
           "prompt": "Read the following office memo. Then choose the best answer to the question.\nThis is an official GED sample question. This excerpt is a composite of information from several business documents.\nHow Shall Employees Conduct Themselves?\nGuidelines for Conducting Business with Those Outside Our Company\nOur employees are the most effective advertisement of our values, beliefs, and abilities. Always keep in mind that when you are acting in your capacity as our employee, you are contributing materially to the public image and the ultimate success of this company.\nGifts for Influence\nNo payment or gift of money, goods, or services should be given or received to influence government or business decisions. Accurate and complete records for all accounts will be strictly monitored for everyone’s protection. If it becomes apparent to you in the course of the performance of your business responsibilities that a payment of some kind is expected by your business associate, please contact your division president.\nConflict of Interest\nA conflict of interest can be described as a situation where a person has a vested interest in two areas of the business world that may give him or her an unfair advantage in business dealings. Our employees should be sensitive to any relationship that creates such a relationship—or even creates the appearance of such a relationship.\nKeep these rules in mind\n:\n• Throughout your employment period, be vigilant about potential conflicts of interest between this company’s interests and your personal or immediate family’s interests.\n• Don’t use your position with this company to obtain a personal benefit of any kind.\n• Avoid any action or relationship that creates, or even creates the appearance of, a conflict of interest. For example, having an interest in a nonpublic company that competes or does business with our company or any of its affiliates might create the appearance of a conflict of interest and might prompt accusations and/or an investigation.\nDisclosure\nThis company respects your privacy, as well as your right to conduct your personal affairs without interference; however, you must make prompt, complete, and continuing disclosure of all facts relating to any factual or potential conflict of interest.\nInvestigations\nInquiries or investigations may be undertaken at this company’s direction by its attorneys, investigators, internal auditors, or independent public accountants. Employees should regard this vigilance as the company’s commitment not only to fair competition but also to the protection of its employees. Your cooperation is needed for your protection as well as that of this company, and it is a condition of your employment.\nQUESTION: Based on the information in this excerpt, what is the company’s policy about accepting gifts or entertainment from people representing your competitors?\nAccepting gifts or entertainment from people representing competitors is considered",
           "moduleTitle": "Final Quiz: Main Ideas",
           "explanation": "Answer:\nd) Unacceptable\nExplanation:\nBased on the information in the excerpt, accepting gifts or entertainment from people representing competitors is considered\nunacceptable\n. The company’s policy states that “no payment or gift of money, goods, or services should be given or received to influence government or business decisions,” emphasizing the need to avoid conflicts of interest.",
@@ -778,7 +693,7 @@
           ]
         },
         {
-          "position": 10,
+          "position": 7,
           "prompt": "Read the following office memo. Then choose the best answer to the question.\nThis is an official GED sample question. This excerpt is a composite of information from several business documents.\nHow Shall Employees Conduct Themselves?\nGuidelines for Conducting Business with Those Outside Our Company\nOur employees are the most effective advertisement of our values, beliefs, and abilities. Always keep in mind that when you are acting in your capacity as our employee, you are contributing materially to the public image and the ultimate success of this company.\nGifts for Influence\nNo payment or gift of money, goods, or services should be given or received to influence government or business decisions. Accurate and complete records for all accounts will be strictly monitored for everyone’s protection. If it becomes apparent to you in the course of the performance of your business responsibilities that a payment of some kind is expected by your business associate, please contact your division president.\nConflict of Interest\nA conflict of interest can be described as a situation where a person has a vested interest in two areas of the business world that may give him or her an unfair advantage in business dealings. Our employees should be sensitive to any relationship that creates such a relationship—or even creates the appearance of such a relationship.\nKeep these rules in mind\n:\n• Throughout your employment period, be vigilant about potential conflicts of interest between this company’s interests and your personal or immediate family’s interests.\n• Don’t use your position with this company to obtain a personal benefit of any kind.\n• Avoid any action or relationship that creates, or even creates the appearance of, a conflict of interest. For example, having an interest in a nonpublic company that competes or does business with our company or any of its affiliates might create the appearance of a conflict of interest and might prompt accusations and/or an investigation.\nDisclosure\nThis company respects your privacy, as well as your right to conduct your personal affairs without interference; however, you must make prompt, complete, and continuing disclosure of all facts relating to any factual or potential conflict of interest.\nInvestigations\nInquiries or investigations may be undertaken at this company’s direction by its attorneys, investigators, internal auditors, or independent public accountants. Employees should regard this vigilance as the company’s commitment not only to fair competition but also to the protection of its employees. Your cooperation is needed for your protection as well as that of this company, and it is a condition of your employment.\nQUESTION: Based on the information in this excerpt, when is it permissible to give money that might be considered a bribe or a tip to a government official in order to facilitate business?",
           "moduleTitle": "Final Quiz: Main Ideas",
           "explanation": "Answer:\na) It is never permissible to give a gift or other payment to influence government of business decisions.\nExplanation:\nBased on the information in this excerpt, the correct answer is: It is never permissible to give a gift or other payment to influence government or business decisions. The company’s policy clearly states that “no payment or gift of money, goods, or services should be given or received to influence government or business decisions,” without exception.",
@@ -829,14 +744,6 @@
           "content": "All of the following questions are asking about the main idea:\n\n• Which of the following best summarizes the main idea of the text?\n\n• Which of the following sentences best summarizes the theme of the passage?\n\n• Which of these statements best describes the theme of the text?\n\n• Which of the following best states the main idea of the text?\n\n• The topic of the passage is …\n\nWhat should I ask myself to identify the main idea?\n\nYou can find answers to these questions by asking yourself, “What is this text about?” or “What is one important point the author wants me to know or remember?”\n\nWhat are the steps for finding the main idea?\n\nSometimes, answering the simple questions above is not so easy. Let’s look at the steps we need to take to find the main idea if it is not immediately clear.\n\nHere is our sample text – we made some important ideas bold to help you:\n\nChanging the ecosystem\n\nText adapted from teacher.depaul.edu\n\nA food chain is a series of links between plants and animals . It starts with a plant. The next part of the link is a plant eater. When the prairie plants started to die or were replaced with houses and roads , the animals that depended on them lost their food source. While farmers produced more food for people, they broke the animals’ food chain and the animals died or had to move . This was a great mistake. We are paying for that mistake today. And, unfortunately, people still keep making the mistake of breaking food chains .\n\nA food chain is part of a bigger system called a food web. That web links the living things in an ecosystem. The herbivores in that system depend on the plants. If the plants are removed, the herbivores (animals which eat plants) cannot survive. Then the carnivores, the animals that eat other animals, lose their food, too. Remove just one kind of plant from an environment and you disrupt the food web. Plow up the land and you destroy the whole system . The problem was there were more and more people and less and less natural habitat .\n\nBy 1900, Illinois and other Midwestern states were becoming known as the nation’s breadbasket. This was because millions of acres of land had been turned from prairie into farms . Those farms could grow corn, wheat, and other grains. Those grains were used to make bread and other food for people. This was not progress for everyone. That agricultural progress benefited many people . The farmers and businesses that processed the grains prospered. Chicago’s population grew , and it became a center for transportation and industry, too. More and more homes, businesses, and roads were built. Many of the animals and plants that were native to this area were destroyed, as was the natural system called the prairie.\n\nQUESTION : Which of the following best states the main idea of the text?\n\n• The population of Chicago grew significantly.\n\n• More farmland was needed to grow crops as the cities of the US expanded.\n\n• When humans destroy the natural habitat of a plant or animal, it negatively affects many other species in the ecosystem.\n\n• Special measures should be taken to protect the habitats of native plants and animals in the Midwest against city expansion and farming.\n\nLet’s look at the video on the next page to help us answer."
         },
         {
-          "title": "Video: Finding Key Ideas",
-          "content": "Sometimes, finding the main idea in a GED Reading Language Arts test can be challenging. However, by following a few simple steps, you can improve your chances of success. Let's take a look at the steps you can take to find the main idea if it's not immediately clear. Consider the following question and answer choices: Based on the article you read , which of the following best states the main idea of the text? A. The population of Chicago grew significantly. B. More farmland was needed to grow crops as the cities of America expanded. C. When humans destroy the natural habitat of a plant or animal, it negatively affects many other species in the ecosystem. D. Special measures should be taken to protect the habitats of native plants and animals in the Midwest against city expansion and farming. Step 1 : Read the text quickly. You do not need to remember all of the details. You need to look for important themes or ideas. In our example above, we made some important ideas bold to help you. Make a list of these key ideas, either on paper or in your mind. Your list may say: food chain/food web growing population (Chicago) roads/farms changing the land animals die or move system destroyed humans benefit Step 2 : Read the question and the answer choices. Then read the text a second time if you need to. This type of question (which of the following best states the main idea of the text?) can be challenging. This is because more than one of these ideas appears in the text. You just have to figure out what the most important idea is. That will show you the best statement. To figure it out, you may need to consider each of the options, one at a time: Answer A: T he population of Chicago grew significantly. The text supports this conclusion. However, Chicago is not mentioned in the first or second paragraph, which is a clue that this is not the most important idea. So A is true but probably not the most important idea. Answer B: More farmland was needed to grow crops as the cities of America expanded. The author mentions the need for more farmland in the first and last paragraphs. However, the author only mentions the population growth of one city, Chicago. This answer option also does not include anything about the destruction of plants and animal habitats, something which was mentioned\n\nthroughout the text. Sometimes an answer choice will be wrong because it leaves out something important. B leaves out information about the food chain and animals. Answer C: When humans destroy the natural habitat of a plant or animal, it negatively affects many other species in the ecosystem. This includes ideas about both humans and plants/animals. The idea that people can harm plants and animals by changing the land comes up repeatedly and in different places in the text. For example: First paragraph: “While farmers produced more food for people, they broke the animals’ food chain and the animals died or had to move.” Second paragraph: “Plow up the land and you destroy the whole system.” Third paragraph: “Many of the animals and plants that were native to this area were destroyed, as was the natural system called the prairie.” This is the best answer so far. We will look at option D to make sure that it is not a better answer. Answer D: Special measures should be taken to protect the habitats of native plants and animals in the Midwest against city expansion and farming. In this case, measures means actions taken with a specific purpose. This option is proposing that specific actions be taken. This is a tempting answer because it mentions both natural habitats and human activity. However, the author did NOT make any suggestions about how to solve the problem. He wrote about the problems but did not discuss special measures. Avoid answers that are related but not in the text. After reading all four options, C seems to be the best option. The right answer is C. Click &#34;Continue&#34; to watch a video about finding the meaning of words from the context clues and surrounding words."
-        },
-        {
-          "title": "Video: What is a main idea?",
-          "content": "*(no text content — video or interactive topic)*"
-        },
-        {
           "title": "GED Exam Tip",
           "content": "Exam tip The reading section on the GED® Language Arts exam uses questions that test how carefully you read. Multiple-choice questions, like those about the main idea, are all asking you to do one thing: find which of several statements are correct or incorrect. They might say, What is the main idea? or Choose the best answer or Which of these statements is NOT true? The best way to find the right answer is to test the possible answers against the text. When you follow the steps for finding the main idea, that is what you are doing. You can use this strategy for many other questions. Compare the answers one by one to the information you were given. Keep the question in mind each time. You will need to do this quickly in your test. With many of the answer choices, you will easily see they are wrong when you test them. But you should test them all, even if you think the first answer is the right one!"
         },
@@ -847,10 +754,6 @@
         {
           "title": "Summary",
           "content": "What we learned The main idea is the point of the text or its most important theme. Questions about the main idea use words such as theme, topic, and summarize. To identify the main idea, first ask yourself, &#34;In a few words, what is the text about or what does the writer most want me to know?&#34; To identify the main idea or ideas in a text: Read the text, make a list of ideas mentioned in the text, and then look at the answers one at a time. Find the one which contains the most important idea or ideas from your list.\n\nExplore further: Discover additional resources to deepen your understanding. English: Click on this link to practice identifying the main idea and theme. Español: Haz clic en este enlace para practicar cómo identificar la idea principal y el tema."
-        },
-        {
-          "title": "Quiz on Video: What is a Main Idea?",
-          "content": null
         },
         {
           "title": "Practice Quiz: Finding the Main Idea",
