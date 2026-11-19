@@ -43,6 +43,7 @@ export type TopicDetail = {
   courseSlug: string;
   courseTitle: string;
   subjectSlug: string;
+  next: { position: number; title: string } | null;
 };
 
 export type QuizOption = { id: string; label: string; body: string };

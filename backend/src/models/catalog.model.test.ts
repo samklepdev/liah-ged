@@ -69,7 +69,7 @@ test('findCourseBySlug returns each topic in reading order', async () => {
   ]);
 });
 
-test('findTopic returns one topic with its course/subject context', async () => {
+test('findTopic returns one topic with its course/subject context and the next topic', async () => {
   const withTopics: ParsedSubject = {
     slug: 'ged-demo',
     title: 'GED Demo',
@@ -80,7 +80,10 @@ test('findTopic returns one topic with its course/subject context', async () => 
         title: 'Demo Course',
         questionCount: 0,
         moduleTitles: [],
-        topics: [{ title: 'In this lesson…', content: 'Overview text.' }],
+        topics: [
+          { title: 'In this lesson…', content: 'Overview text.' },
+          { title: 'Words to know', content: null },
+        ],
         questions: [],
       },
     ],
@@ -95,7 +98,32 @@ test('findTopic returns one topic with its course/subject context', async () => 
     courseSlug: 'ged-demo-course',
     courseTitle: 'Demo Course',
     subjectSlug: 'ged-demo',
+    next: { position: 2, title: 'Words to know' },
   });
+});
+
+test('findTopic returns next: null on the last topic', async () => {
+  await seedSubject({
+    slug: 'ged-demo',
+    title: 'GED Demo',
+    courses: [
+      {
+        position: 1,
+        slug: 'ged-demo-course',
+        title: 'Demo Course',
+        questionCount: 0,
+        moduleTitles: [],
+        topics: [
+          { title: 'In this lesson…', content: 'Overview text.' },
+          { title: 'Words to know', content: null },
+        ],
+        questions: [],
+      },
+    ],
+  });
+
+  const topic = await findTopic('ged-demo-course', 2);
+  assert.equal(topic?.next, null);
 });
 
 test('findTopic returns null for an unknown position', async () => {

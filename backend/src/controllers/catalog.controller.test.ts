@@ -117,6 +117,7 @@ test('GET /api/v1/courses/:slug/topics/:position returns one topic', async () =>
   assert.equal(body.topic.courseSlug, 'ged-demo-course');
   assert.equal(body.topic.courseTitle, 'Demo Course');
   assert.equal(body.topic.subjectSlug, 'ged-demo');
+  assert.deepEqual(body.topic.next, { position: 2, title: 'Words to know' });
 });
 
 test('GET /api/v1/courses/:slug/topics/:position 404s for an unknown position', async () => {

@@ -199,6 +199,9 @@ export type TopicDetail = {
   courseSlug: string;
   courseTitle: string;
   subjectSlug: string;
+  /** The next topic in this course, for a "Next" link — null on the last
+   *  topic, where the content page's own quiz link takes over instead. */
+  next: { position: number; title: string } | null;
 };
 
 /** One topic's own page — its reading plus enough of its course to render a
@@ -221,5 +224,14 @@ export async function findTopic(courseSlug: string, position: number): Promise<T
     )
     .limit(1);
 
-  return row ?? null;
+  if (!row) return null;
+
+  const [next] = await db
+    .select({ position: topics.position, title: topics.title })
+    .from(topics)
+    .innerJoin(courses, eq(courses.id, topics.courseId))
+    .where(and(eq(courses.slug, courseSlug), eq(topics.position, position + 1)))
+    .limit(1);
+
+  return { ...row, next: next ?? null };
 }

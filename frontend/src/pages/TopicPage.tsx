@@ -65,9 +65,15 @@ export function TopicPage() {
         </div>
       )}
 
-      <Link to={`/courses/${topic.courseSlug}/quiz`} className="primary">
-        Take the quiz
-      </Link>
+      {topic.next ? (
+        <Link to={`/courses/${topic.courseSlug}/topics/${topic.next.position}`} className="primary">
+          Next: {topic.next.title}
+        </Link>
+      ) : (
+        <Link to={`/courses/${topic.courseSlug}/quiz`} className="primary">
+          Take the quiz
+        </Link>
+      )}
     </div>
   );
 }

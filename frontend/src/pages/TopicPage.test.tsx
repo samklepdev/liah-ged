@@ -22,6 +22,7 @@ function makeTopicDetail(overrides: Partial<TopicDetail> = {}): TopicDetail {
     courseSlug: 'ged-language-arts-vocabulary-questions',
     courseTitle: 'Vocabulary Questions',
     subjectSlug: 'ged-language-arts',
+    next: { position: 2, title: 'Words to know' },
     ...overrides,
   };
 }
@@ -60,14 +61,24 @@ describe('TopicPage', () => {
     expect(link).toHaveAttribute('href', '/courses/ged-language-arts-vocabulary-questions');
   });
 
-  test('links to the quiz', async () => {
+  test('links to the next topic when there is one', async () => {
+    renderPage();
+    const link = await screen.findByRole('link', { name: 'Next: Words to know' });
+    expect(link).toHaveAttribute(
+      'href',
+      '/courses/ged-language-arts-vocabulary-questions/topics/2',
+    );
+  });
+
+  test('links to the quiz instead, on the last topic', async () => {
+    getTopic.mockResolvedValue({ topic: makeTopicDetail({ next: null }) });
     renderPage();
     const link = await screen.findByRole('link', { name: 'Take the quiz' });
     expect(link).toHaveAttribute('href', '/courses/ged-language-arts-vocabulary-questions/quiz');
   });
 
   test('shows just the links when there is no content', async () => {
-    getTopic.mockResolvedValue({ topic: makeTopicDetail({ content: null }) });
+    getTopic.mockResolvedValue({ topic: makeTopicDetail({ content: null, next: null }) });
     renderPage();
     const link = await screen.findByRole('link', { name: 'Take the quiz' });
     expect(link).toBeInTheDocument();
