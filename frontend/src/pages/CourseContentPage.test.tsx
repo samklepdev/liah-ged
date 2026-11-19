@@ -25,6 +25,7 @@ function makeCourseDetail(overrides: Partial<CourseDetail> = {}): CourseDetail {
     content: 'First paragraph.\n\nSecond paragraph.',
     subjectSlug: 'ged-language-arts',
     subjectTitle: 'GED Language Arts',
+    topics: [],
     ...overrides,
   };
 }
@@ -50,6 +51,36 @@ describe('CourseContentPage', () => {
     expect(await screen.findByText('Vocabulary Questions')).toBeInTheDocument();
     expect(await screen.findByText('First paragraph.')).toBeInTheDocument();
     expect(await screen.findByText('Second paragraph.')).toBeInTheDocument();
+  });
+
+  test('renders markdown headings and lists with structure', async () => {
+    getCourse.mockResolvedValue({
+      course: makeCourseDetail({
+        content: '## Words to Know\n\n- Vocabulary — words you know\n- Context clues — hints in the text',
+      }),
+    });
+    renderPage();
+    expect(await screen.findByRole('heading', { name: 'Words to Know', level: 2 })).toBeInTheDocument();
+    const items = await screen.findAllByRole('listitem');
+    expect(items[0]).toHaveTextContent('Vocabulary — words you know');
+  });
+
+  test('lists each topic as a link to its own page', async () => {
+    getCourse.mockResolvedValue({
+      course: makeCourseDetail({
+        content: null,
+        topics: [
+          { position: 1, title: 'In this lesson…' },
+          { position: 2, title: 'Words to know' },
+        ],
+      }),
+    });
+    renderPage();
+
+    const first = await screen.findByRole('link', { name: 'In this lesson…' });
+    expect(first).toHaveAttribute('href', '/courses/ged-language-arts-vocabulary-questions/topics/1');
+    const second = await screen.findByRole('link', { name: 'Words to know' });
+    expect(second).toHaveAttribute('href', '/courses/ged-language-arts-vocabulary-questions/topics/2');
   });
 
   test('links to the quiz', async () => {

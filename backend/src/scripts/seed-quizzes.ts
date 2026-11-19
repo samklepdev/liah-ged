@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { eq } from 'drizzle-orm';
 import { db, pool } from '../db/index.ts';
-import { courses, modules, questionOptions, questions, subjects } from '../models/schema.ts';
+import { courses, modules, questionOptions, questions, subjects, topics } from '../models/schema.ts';
 import type { ParsedSubject } from '../lib/quiz-parser.ts';
 
 /**
@@ -23,6 +23,8 @@ export async function seedSubject(
     let questionTotal = 0;
 
     for (const course of subject.courses) {
+      const content = course.content ?? null;
+
       const [courseRow] = await tx
         .insert(courses)
         .values({
@@ -32,7 +34,7 @@ export async function seedSubject(
           title: course.title,
           questionCount: course.questionCount,
           passScore: course.passScore ?? 9,
-          content: course.content ?? null,
+          content,
         })
         .onConflictDoUpdate({
           target: courses.slug,
@@ -42,7 +44,7 @@ export async function seedSubject(
             title: course.title,
             questionCount: course.questionCount,
             passScore: course.passScore ?? 9,
-            content: course.content ?? null,
+            content,
           },
         })
         .returning({ id: courses.id });
@@ -52,10 +54,13 @@ export async function seedSubject(
       // Replace content wholesale; questions and options cascade from modules.
       await tx.delete(modules).where(eq(modules.courseId, courseId));
 
-      const moduleRows = await tx
-        .insert(modules)
-        .values(course.moduleTitles.map((title) => ({ courseId, title })))
-        .returning({ id: modules.id, title: modules.title });
+      const moduleRows =
+        course.moduleTitles.length > 0
+          ? await tx
+              .insert(modules)
+              .values(course.moduleTitles.map((title) => ({ courseId, title })))
+              .returning({ id: modules.id, title: modules.title })
+          : [];
 
       const moduleIdByTitle = new Map(moduleRows.map((m) => [m.title, m.id]));
 
@@ -86,6 +91,19 @@ export async function seedSubject(
         );
 
         questionTotal += 1;
+      }
+
+      // Replace topics wholesale too, same reasoning as modules above.
+      await tx.delete(topics).where(eq(topics.courseId, courseId));
+      if (course.topics && course.topics.length > 0) {
+        await tx.insert(topics).values(
+          course.topics.map((topic, index) => ({
+            courseId,
+            position: index + 1,
+            title: topic.title,
+            content: topic.content,
+          })),
+        );
       }
     }
 

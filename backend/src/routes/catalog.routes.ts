@@ -8,4 +8,5 @@ export const catalogRouter = Router();
 catalogRouter.get('/subjects', catalog.getSubjects);
 catalogRouter.get('/courses', catalog.getCourses);
 catalogRouter.get('/courses/:slug', catalog.getCourseBySlug);
+catalogRouter.get('/courses/:slug/topics/:position', catalog.getTopic);
 catalogRouter.get('/search', catalog.search);

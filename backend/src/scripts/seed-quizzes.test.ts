@@ -5,7 +5,7 @@ import { eq, sql } from 'drizzle-orm';
 import { db } from '../db/index.ts';
 import { resetDb, closeDb } from '../test/helpers/db.ts';
 import { seedSubject } from './seed-quizzes.ts';
-import { courses } from '../models/schema.ts';
+import { courses, topics } from '../models/schema.ts';
 import type { ParsedSubject } from '../lib/quiz-parser.ts';
 
 const subject: ParsedSubject = JSON.parse(
@@ -92,6 +92,74 @@ test('seedSubject writes passScore and content when provided', async () => {
 
   assert.equal(row?.passScore, 1);
   assert.equal(row?.content, 'First paragraph.\n\nSecond paragraph.');
+});
+
+test('seedSubject inserts each course\'s topics in order, with their content', async () => {
+  const withTopics: ParsedSubject = {
+    slug: 'ged-demo',
+    title: 'GED Demo',
+    courses: [
+      {
+        position: 1,
+        slug: 'ged-demo-course',
+        title: 'Demo Course',
+        questionCount: 0,
+        moduleTitles: ['Reading'],
+        topics: [
+          { title: 'In this lesson…', content: 'You will learn things.' },
+          { title: 'Practice Question 1', content: null },
+        ],
+        questions: [],
+      },
+    ],
+  };
+
+  await seedSubject(withTopics);
+
+  const rows = await db
+    .select({ position: topics.position, title: topics.title, content: topics.content })
+    .from(topics)
+    .innerJoin(courses, eq(courses.id, topics.courseId))
+    .where(eq(courses.slug, 'ged-demo-course'))
+    .orderBy(topics.position);
+
+  assert.deepEqual(rows, [
+    { position: 1, title: 'In this lesson…', content: 'You will learn things.' },
+    { position: 2, title: 'Practice Question 1', content: null },
+  ]);
+});
+
+test('seedSubject re-seeding replaces topics wholesale rather than merging', async () => {
+  const v1: ParsedSubject = {
+    slug: 'ged-demo',
+    title: 'GED Demo',
+    courses: [
+      {
+        position: 1,
+        slug: 'ged-demo-course',
+        title: 'Demo Course',
+        questionCount: 0,
+        moduleTitles: ['Reading'],
+        topics: [{ title: 'Old Topic', content: 'Old.' }],
+        questions: [],
+      },
+    ],
+  };
+  const v2: ParsedSubject = {
+    ...v1,
+    courses: [{ ...v1.courses[0]!, topics: [{ title: 'New Topic', content: 'New.' }] }],
+  };
+
+  await seedSubject(v1);
+  await seedSubject(v2);
+
+  const rows = await db
+    .select({ title: topics.title })
+    .from(topics)
+    .innerJoin(courses, eq(courses.id, topics.courseId))
+    .where(eq(courses.slug, 'ged-demo-course'));
+
+  assert.deepEqual(rows, [{ title: 'New Topic' }]);
 });
 
 test('seedSubject defaults passScore to 9 and content to null when omitted', async () => {

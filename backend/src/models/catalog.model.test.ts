@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { resetDb, closeDb } from '../test/helpers/db.ts';
 import { seedSubject } from '../scripts/seed-quizzes.ts';
-import { findCourseBySlug } from './catalog.model.ts';
+import { findCourseBySlug, findTopic } from './catalog.model.ts';
 import { deleteCourseById } from './admin-course.model.ts';
 import type { ParsedSubject } from '../lib/quiz-parser.ts';
 
@@ -32,6 +32,102 @@ test('findCourseBySlug returns course detail including content', async () => {
   assert.equal(course?.content, null);
   assert.equal(course?.subjectSlug, 'chassis');
   assert.equal(course?.subjectTitle, 'Chassis');
+});
+
+test('findCourseBySlug returns an empty topics list for a course with none', async () => {
+  const course = await findCourseBySlug('chassis-tire-and-rim-essentials');
+  assert.ok(course);
+  assert.deepEqual(course!.topics, []);
+});
+
+test('findCourseBySlug returns each topic in reading order', async () => {
+  const withTopics: ParsedSubject = {
+    slug: 'ged-demo',
+    title: 'GED Demo',
+    courses: [
+      {
+        position: 1,
+        slug: 'ged-demo-course',
+        title: 'Demo Course',
+        questionCount: 0,
+        moduleTitles: [],
+        topics: [
+          { title: 'In this lesson…', content: 'Overview text.' },
+          { title: 'Words to know', content: null },
+        ],
+        questions: [],
+      },
+    ],
+  };
+  await seedSubject(withTopics);
+
+  const course = await findCourseBySlug('ged-demo-course');
+  assert.ok(course);
+  assert.deepEqual(course!.topics, [
+    { position: 1, title: 'In this lesson…' },
+    { position: 2, title: 'Words to know' },
+  ]);
+});
+
+test('findTopic returns one topic with its course/subject context and the next topic', async () => {
+  const withTopics: ParsedSubject = {
+    slug: 'ged-demo',
+    title: 'GED Demo',
+    courses: [
+      {
+        position: 1,
+        slug: 'ged-demo-course',
+        title: 'Demo Course',
+        questionCount: 0,
+        moduleTitles: [],
+        topics: [
+          { title: 'In this lesson…', content: 'Overview text.' },
+          { title: 'Words to know', content: null },
+        ],
+        questions: [],
+      },
+    ],
+  };
+  await seedSubject(withTopics);
+
+  const topic = await findTopic('ged-demo-course', 1);
+  assert.deepEqual(topic, {
+    position: 1,
+    title: 'In this lesson…',
+    content: 'Overview text.',
+    courseSlug: 'ged-demo-course',
+    courseTitle: 'Demo Course',
+    subjectSlug: 'ged-demo',
+    next: { position: 2, title: 'Words to know' },
+  });
+});
+
+test('findTopic returns next: null on the last topic', async () => {
+  await seedSubject({
+    slug: 'ged-demo',
+    title: 'GED Demo',
+    courses: [
+      {
+        position: 1,
+        slug: 'ged-demo-course',
+        title: 'Demo Course',
+        questionCount: 0,
+        moduleTitles: [],
+        topics: [
+          { title: 'In this lesson…', content: 'Overview text.' },
+          { title: 'Words to know', content: null },
+        ],
+        questions: [],
+      },
+    ],
+  });
+
+  const topic = await findTopic('ged-demo-course', 2);
+  assert.equal(topic?.next, null);
+});
+
+test('findTopic returns null for an unknown position', async () => {
+  assert.equal(await findTopic('chassis-tire-and-rim-essentials', 99), null);
 });
 
 test('findCourseBySlug returns null for an unknown slug', async () => {

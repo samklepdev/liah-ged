@@ -1,144 +1,25 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  splitLessons,
-  stripQuizBlocks,
+  isQuizNoiseLine,
   toParagraphs,
   stripVideoPrompts,
-  extractLessonContent,
+  stripVideoReferences,
+  stripCaptionInstructions,
   assertNoLeakedQuestions,
 } from './ged-content.ts';
 
-test('splitLessons slices text between consecutive Lesson headers', () => {
-  const text = [
-    'Lesson 1: Vocabulary',
-    '1 topics · 1 quizzes',
-    'Some lesson one content.',
-    'Lesson 2: Grammar',
-    'Some lesson two content.',
-  ].join('\n');
-
-  const lessons = splitLessons(text);
-  assert.equal(lessons.size, 2);
-  assert.match(lessons.get('Lesson 1: Vocabulary')!, /Some lesson one content\./);
-  assert.doesNotMatch(lessons.get('Lesson 1: Vocabulary')!, /Lesson 2/);
-  assert.match(lessons.get('Lesson 2: Grammar')!, /Some lesson two content\./);
+test('isQuizNoiseLine recognizes the clean Q1./a)/Explanation: dump style', () => {
+  assert.ok(isQuizNoiseLine('Q1. What is this?'));
+  assert.ok(isQuizNoiseLine('b) two (correct)'));
+  assert.ok(isQuizNoiseLine('Explanation: because.'));
+  assert.ok(!isQuizNoiseLine('A useful tip.'));
 });
 
-test('splitLessons recovers a header hidden behind a glued form-feed', () => {
-  const text = 'Lesson 1: Vocabulary\nIntro text.\n— Page 1\n\fLesson 2: Grammar\nMore text.';
-  const lessons = splitLessons(text);
-  assert.equal(lessons.size, 2);
-  assert.ok(lessons.has('Lesson 2: Grammar'));
-});
-
-test('stripQuizBlocks preserves lesson content that follows a quiz block', () => {
-  const text = [
-    'Intro paragraph.',
-    'Quiz on Video: Example',
-    'Q1. What is this?',
-    'a) one',
-    'b) two (correct)',
-    'Explanation: because.',
-    'GED Exam Tip',
-    'A useful tip.',
-  ].join('\n');
-
-  const stripped = stripQuizBlocks(text, ['Quiz on Video: Example']);
-  assert.match(stripped, /Intro paragraph\./);
-  assert.match(stripped, /A useful tip\./);
-  assert.doesNotMatch(stripped, /What is this\?/);
-});
-
-test('stripQuizBlocks preserves content between two quiz headings', () => {
-  const text = [
-    'Intro paragraph.',
-    'Quiz on Video: One',
-    'Q1. drop one.',
-    'GED Exam Tip',
-    'A useful tip.',
-    'Quiz on Video: Two',
-    'Q1. drop two.',
-  ].join('\n');
-
-  const stripped = stripQuizBlocks(text, ['Quiz on Video: One', 'Quiz on Video: Two']);
-  assert.match(stripped, /Intro paragraph\./);
-  assert.match(stripped, /A useful tip\./);
-  assert.doesNotMatch(stripped, /drop one/);
-  assert.doesNotMatch(stripped, /drop two/);
-});
-
-test('stripQuizBlocks leaves nothing extra when the quiz is the last thing in the lesson', () => {
-  const text = ['Keep this.', 'Quiz on Video: Example', 'Q1. drop this.'].join('\n');
-  const stripped = stripQuizBlocks(text, ['Quiz on Video: Example']);
-  assert.match(stripped, /Keep this\./);
-  assert.doesNotMatch(stripped, /drop this/);
-});
-
-test('stripQuizBlocks keeps skipping a quiz block across a page-footer line', () => {
-  const text = [
-    'Intro paragraph.',
-    'Quiz on Video: Example',
-    'Q1. drop one.',
-    'b) To the left (correct)',
-    '',
-    '                 GED® Math: Prepare for the exam — Page 4',
-    'Explanation: drop two.',
-    'GED Exam Tip',
-    'A useful tip.',
-  ].join('\n');
-
-  const stripped = stripQuizBlocks(text, ['Quiz on Video: Example']);
-  assert.match(stripped, /Intro paragraph\./);
-  assert.match(stripped, /A useful tip\./);
-  assert.doesNotMatch(stripped, /drop one/);
-  assert.doesNotMatch(stripped, /drop two/);
-});
-
-test('stripQuizBlocks re-arms the skip for a second question interleaved with real content', () => {
-  const text = [
-    'Intro paragraph.',
-    'Quiz on Video: Example',
-    'Q1. drop one.',
-    'a) one',
-    'b) two (correct)',
-    'Explanation: because.',
-    '',
-    'Explore further: Root Words',
-    'Some real content about root words.',
-    '',
-    'Q2. drop two.',
-    'a) three',
-    'b) four (correct)',
-    'Explanation: because again.',
-    'GED Exam Tip',
-    'A useful tip.',
-  ].join('\n');
-
-  const stripped = stripQuizBlocks(text, ['Quiz on Video: Example']);
-  assert.match(stripped, /Intro paragraph\./);
-  assert.match(stripped, /Some real content about root words\./);
-  assert.match(stripped, /A useful tip\./);
-  assert.doesNotMatch(stripped, /drop one/);
-  assert.doesNotMatch(stripped, /drop two/);
-});
-
-test('stripQuizBlocks strips the widget-dump chrome used by the language-arts export', () => {
-  const text = [
-    'Intro paragraph.',
-    'Quiz on Video: Example',
-    'Time limit: 0 Quiz Summary 0 of 1 Questions completed Questions: Information Back to topic',
-    'You must sign in or sign up to start the quiz. Quiz is loading…',
-    'Question 1 of 1 1 . Question Question 1 Read the following passage. a) one b) two Correct Incorrect Skip',
-    'Vocabulary review',
-    'Passage — a definition.',
-  ].join('\n');
-
-  const stripped = stripQuizBlocks(text, ['Quiz on Video: Example']);
-  assert.match(stripped, /Intro paragraph\./);
-  assert.match(stripped, /Vocabulary review/);
-  assert.doesNotMatch(stripped, /Quiz Summary/);
-  assert.doesNotMatch(stripped, /Correct Incorrect Skip/);
+test('isQuizNoiseLine recognizes the noisy widget-chrome dump style', () => {
+  assert.ok(isQuizNoiseLine('Time limit: 0 Quiz Summary 0 of 1 Questions completed'));
+  assert.ok(isQuizNoiseLine('You must sign in or sign up to start the quiz. Quiz is loading…'));
+  assert.ok(!isQuizNoiseLine('Vocabulary review'));
 });
 
 test('toParagraphs joins wrapped lines and drops page footers', () => {
@@ -180,29 +61,40 @@ test('stripVideoPrompts leaves unrelated content alone', () => {
   assert.equal(stripVideoPrompts(text), text);
 });
 
-test('extractLessonContent matches lessons by title and strips their quizzes', () => {
-  const pdfText = [
-    'Lesson 1: Vocabulary',
-    'Intro text.',
-    'Quiz on Video: Example',
-    'Q1. What? a) one b) two (correct) Explanation: because.',
-  ].join('\n');
-
-  const content = extractLessonContent(
-    pdfText,
-    new Map([['Lesson 1: Vocabulary', ['Quiz on Video: Example']]]),
-  );
-
-  assert.equal(content.size, 1);
-  assert.match(content.get('Lesson 1: Vocabulary')!, /Intro text\./);
-  assert.doesNotMatch(content.get('Lesson 1: Vocabulary')!, /Q1\./);
+test('stripVideoReferences drops a standalone video lead-in paragraph', () => {
+  const text = 'Real content here.\n\nVideo: Context Clues\n\nMore real content.';
+  assert.equal(stripVideoReferences(text), 'Real content here.\n\nMore real content.');
 });
 
-test('extractLessonContent throws when a lesson has no matching PDF heading', () => {
-  assert.throws(
-    () => extractLessonContent('Lesson 1: Vocabulary\ntext', new Map([['Lesson 2: Missing', []]])),
-    /No "Lesson 2: Missing" heading/,
-  );
+test('stripVideoReferences drops the no-text-content placeholder', () => {
+  const text = 'Real content here.\n\n(no text content — video or interactive topic)\n\nMore content.';
+  assert.equal(stripVideoReferences(text), 'Real content here.\n\nMore content.');
+});
+
+test('stripVideoReferences unwraps a transcript label, keeping the transcript text', () => {
+  const text = 'Video Transcript + Now, let’s take a look at a short story.';
+  assert.equal(stripVideoReferences(text), 'Now, let’s take a look at a short story.');
+});
+
+test('stripVideoReferences leaves unrelated content alone', () => {
+  const text = 'This paragraph never mentions a video at all.';
+  assert.equal(stripVideoReferences(text), text);
+});
+
+test('stripCaptionInstructions drops a subtitle/CC instructions paragraph', () => {
+  const text = [
+    'Real content here.',
+    '',
+    'Click the "CC" (subtitles/closed captions) button at the bottom of the video. Then click on "Subtitles/CC". Then click on "Auto-translate".',
+    '',
+    'More real content.',
+  ].join('\n');
+  assert.equal(stripCaptionInstructions(text), 'Real content here.\n\nMore real content.');
+});
+
+test('stripCaptionInstructions leaves unrelated content alone', () => {
+  const text = 'This paragraph never mentions subtitles at all.';
+  assert.equal(stripCaptionInstructions(text), text);
 });
 
 test('assertNoLeakedQuestions throws when a prompt and one of its options both survive', () => {

@@ -1,26 +1,3 @@
-/**
- * One lesson's raw PDF text slice, keyed by its full "Lesson N: Title"
- * heading. pdftotext sometimes glues a form-feed page-break marker onto the
- * start of the very next line, which can hide a "Lesson N:" heading from a
- * line-anchored match (observed as "...— Page 102\n\fLesson 14: ..."), so
- * every form feed is turned into a newline first.
- */
-export function splitLessons(pdfText: string): Map<string, string> {
-  const text = pdfText.replace(/\f/g, '\n');
-  const headerRe = /^Lesson \d+:.*$/gm;
-  const matches = [...text.matchAll(headerRe)];
-
-  const lessons = new Map<string, string>();
-  for (let i = 0; i < matches.length; i++) {
-    const match = matches[i]!;
-    const title = match[0].trim();
-    const start = match.index! + match[0].length;
-    const end = i + 1 < matches.length ? matches[i + 1]!.index! : text.length;
-    lessons.set(title, text.slice(start, end));
-  }
-  return lessons;
-}
-
 const FOOTER_RE = /—\s*Page\s*\d+\s*$/;
 
 /**
@@ -29,7 +6,7 @@ const FOOTER_RE = /—\s*Page\s*\d+\s*$/;
  * Explanation:" style, and language-arts' noisy quiz-widget chrome dump.
  * Mirrors the FURNITURE allowlist approach in quiz-parser.ts.
  */
-function isQuizNoiseLine(line: string): boolean {
+export function isQuizNoiseLine(line: string): boolean {
   const t = line.trim();
   if (!t) return true;
   if (FOOTER_RE.test(t)) return true; // a page break can land mid-quiz-block
@@ -38,6 +15,9 @@ function isQuizNoiseLine(line: string): boolean {
   if (/^[a-fA-F]\)/.test(t)) return true; // option letters go up to f) on some entries
   if (/\(correct\)/i.test(t)) return true;
   if (/^Explanation:?/i.test(t)) return true;
+  // A literal "Question:" label marks an embedded practice-quiz stem — real
+  // teaching prose describes a question, it never labels itself this way.
+  if (/\bQuestion:/.test(t)) return true;
 
   const chromePhrases = [
     'Quiz Summary',
@@ -65,44 +45,35 @@ function isQuizNoiseLine(line: string): boolean {
 }
 
 /**
- * Removes the inline quiz Q&A dumps from a lesson's raw text. Each dump
- * starts at one of the lesson's own quizTitle headings — verified to appear
- * verbatim as their own line in every one of these PDFs — and everything
- * from there is treated as quiz noise until a line that doesn't look like
- * quiz noise resumes, which is kept as real lesson content.
+ * Drops "Video: <title>" lead-in paragraphs and "(no text content — video or
+ * interactive topic)" placeholders entirely — pure scraper artifacts, since
+ * the content page never embeds a video — and unwraps a "Video
+ * Transcript(s) + <text>" label down to just <text>, keeping the transcript
+ * itself since it's real lesson content.
  */
-export function stripQuizBlocks(lessonText: string, quizTitles: string[]): string {
-  if (quizTitles.length === 0) return lessonText;
+export function stripVideoReferences(text: string): string {
+  return text
+    .split('\n\n')
+    .map((paragraph) => {
+      const trimmed = paragraph.trim();
+      const transcriptMatch = /^video transcripts?\s*\+\s*([\s\S]*)$/i.exec(trimmed);
+      if (transcriptMatch) return transcriptMatch[1]!.trim();
+      if (/^video:\s*.+$/i.test(trimmed)) return '';
+      if (/^\(no text content[^)]*\)$/i.test(trimmed)) return '';
+      return paragraph;
+    })
+    .filter((paragraph) => paragraph.trim().length > 0)
+    .join('\n\n');
+}
 
-  const lines = lessonText.split('\n');
-  const isHeading = (line: string): boolean =>
-    quizTitles.some((title) => line.trim() === title.trim());
-
-  // A blank line alone never (re-)starts a skip run — real paragraphs have
-  // blank lines between them too, and those must survive so toParagraphs can
-  // still find the paragraph breaks. But a quiz can interleave genuine lesson
-  // content *between* two of its own questions (observed in the language-arts
-  // export), so anything else that looks like quiz noise re-arms the skip even
-  // outside the lines immediately following a heading.
-  const isSkipTrigger = (line: string): boolean => line.trim() !== '' && isQuizNoiseLine(line);
-
-  const kept: string[] = [];
-  let i = 0;
-  while (i < lines.length) {
-    const line = lines[i]!;
-    if (isHeading(line)) {
-      i++; // skip the heading itself
-      while (i < lines.length && isQuizNoiseLine(lines[i]!)) i++;
-      continue;
-    }
-    if (isSkipTrigger(line)) {
-      while (i < lines.length && isQuizNoiseLine(lines[i]!)) i++;
-      continue;
-    }
-    kept.push(line);
-    i++;
-  }
-  return kept.join('\n');
+/** Drops paragraphs of closed-captions/subtitle-toggling instructions aimed
+ *  at a video player the content page never embeds. */
+export function stripCaptionInstructions(text: string): string {
+  const noise = /subtitles?\/cc|auto-translate|closed captions?|settings gear icon/i;
+  return text
+    .split('\n\n')
+    .filter((paragraph) => !noise.test(paragraph))
+    .join('\n\n');
 }
 
 const LESSON_META_RE = /^\s*\d+\s+topics?\s*·\s*\d+\s+quizzes?\s*$/i;
@@ -162,29 +133,6 @@ export function stripVideoPrompts(text: string): string {
     .map((paragraph) => paragraph.replace(/\s{2,}/g, ' ').trim())
     .filter((paragraph) => paragraph.length > 0)
     .join('\n\n');
-}
-
-/**
- * Builds { lessonTitle -> cleaned content } for one subject's PDF text, given
- * each lesson's ordered, deduped quizTitle list (from quiz-bank.json).
- */
-export function extractLessonContent(
-  pdfText: string,
-  quizTitlesByLesson: Map<string, string[]>,
-): Map<string, string> {
-  const rawLessons = splitLessons(pdfText);
-  const content = new Map<string, string>();
-
-  for (const [lessonTitle, quizTitles] of quizTitlesByLesson) {
-    const raw = rawLessons.get(lessonTitle);
-    if (raw === undefined) {
-      throw new Error(`No "${lessonTitle}" heading found in the PDF text.`);
-    }
-    const paragraphs = toParagraphs(stripQuizBlocks(raw, quizTitles));
-    content.set(lessonTitle, stripVideoPrompts(paragraphs));
-  }
-
-  return content;
 }
 
 /** How far past a matched prompt to look for one of its own options, when

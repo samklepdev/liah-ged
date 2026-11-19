@@ -613,10 +613,17 @@ export type ParsedCourse = {
   questions: ParsedQuestion[];
   /** Defaults to the column default (9) in seedSubject when omitted. */
   passScore?: number;
-  /** Lesson reading text, as plain `\n\n`-separated paragraphs. Omitted means
-   *  no reading material. */
+  /** Lesson-level reading text, as plain `\n\n`-separated paragraphs. Omitted
+   *  means no lesson-level reading material (the common case — a GED lesson's
+   *  reading lives entirely in topics instead). */
   content?: string;
+  /** The lesson's content sections in reading order — one per bold heading
+   *  in the source PDF, independent of moduleTitles/quizzes. Omitted means
+   *  this course has no extracted topics. */
+  topics?: ParsedTopic[];
 };
+
+export type ParsedTopic = { title: string; content: string | null };
 
 export type ParsedSubject = { slug: string; title: string; courses: ParsedCourse[] };
 

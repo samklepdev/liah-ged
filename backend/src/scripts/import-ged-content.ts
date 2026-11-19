@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { assertNoLeakedQuestions, extractLessonContent } from '../lib/ged-content.ts';
+import { assertNoLeakedQuestions, extractLessonTopics } from '../lib/ged-html-content.ts';
 import {
   buildGedSubject,
   questionsByLesson,
@@ -21,22 +21,30 @@ const entries: GedBankEntry[] = JSON.parse(readFileSync(new URL('quiz-bank.json'
 
 for (const { slug, pdf } of SUBJECTS) {
   const pdfPath = fileURLToPath(new URL(pdf, dataDir));
-  const pdfText = execFileSync('pdftotext', ['-layout', pdfPath, '-'], {
+  const html = execFileSync('pdftohtml', ['-i', '-s', '-stdout', pdfPath], {
     encoding: 'utf8',
     maxBuffer: 32 * 1024 * 1024,
   });
 
   const quizTitles = quizTitlesByLesson(entries, slug);
-  const content = extractLessonContent(pdfText, quizTitles);
-  assertNoLeakedQuestions(content, questionsByLesson(entries, slug));
+  const topicsByLesson = extractLessonTopics(html, quizTitles);
 
-  const subject = buildGedSubject(entries, slug, content);
+  const joinedByLesson = new Map(
+    [...topicsByLesson].map(([lessonTitle, lessonTopics]) => [
+      lessonTitle,
+      lessonTopics.map((t) => t.content ?? '').join('\n\n'),
+    ]),
+  );
+  assertNoLeakedQuestions(joinedByLesson, questionsByLesson(entries, slug));
+
+  const subject = buildGedSubject(entries, slug, new Map(), topicsByLesson);
 
   const outFile = new URL(`${slug}.quiz.json`, dataDir);
   writeFileSync(outFile, `${JSON.stringify(subject, null, 2)}\n`, 'utf8');
 
   const questionCount = subject.courses.reduce((n, c) => n + c.questions.length, 0);
+  const topicCount = subject.courses.reduce((n, c) => n + (c.topics?.length ?? 0), 0);
   console.log(
-    `${slug}: ${subject.courses.length} courses, ${questionCount} questions -> src/data/${slug}.quiz.json`,
+    `${slug}: ${subject.courses.length} courses, ${questionCount} questions, ${topicCount} topics -> src/data/${slug}.quiz.json`,
   );
 }
