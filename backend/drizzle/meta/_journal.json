@@ -43,6 +43,13 @@
       "when": 1795103056345,
       "tag": "0005_wise_emma_frost",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1795107987132,
+      "tag": "0006_cooing_mandroid",
+      "breakpoints": true
     }
   ]
 }

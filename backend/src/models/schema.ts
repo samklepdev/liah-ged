@@ -121,6 +121,10 @@ export const topics = pgTable('topics', {
   /** Null means this heading had no body left after stripping video/quiz
    *  noise (e.g. a bare "Practice Question 2" widget placeholder). */
   content: text('content'),
+  /** Set when this topic's title matches one of the course's module titles
+   *  — the topic page then shows that module's questions inline as
+   *  ungraded practice. Null for ordinary reading topics. */
+  moduleId: uuid('module_id').references(() => modules.id, { onDelete: 'cascade' }),
 });
 
 export const questions = pgTable(
