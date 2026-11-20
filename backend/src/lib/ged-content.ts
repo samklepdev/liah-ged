@@ -45,11 +45,11 @@ export function isQuizNoiseLine(line: string): boolean {
 }
 
 /**
- * Drops "Video: <title>" lead-in paragraphs and "(no text content — video or
- * interactive topic)" placeholders entirely — pure scraper artifacts, since
- * the content page never embeds a video — and unwraps a "Video
- * Transcript(s) + <text>" label down to just <text>, keeping the transcript
- * itself since it's real lesson content.
+ * Drops "Video: <title>" lead-in paragraphs and "(no text content —
+ * video or interactive topic)" placeholders entirely — pure scraper
+ * artifacts — and unwraps a "Video Transcript(s) + <text>" label down to
+ * just <text>, keeping the transcript itself since it's real lesson
+ * content.
  */
 export function stripVideoReferences(text: string): string {
   return text
@@ -67,7 +67,7 @@ export function stripVideoReferences(text: string): string {
 }
 
 /** Drops paragraphs of closed-captions/subtitle-toggling instructions aimed
- *  at a video player the content page never embeds. */
+ *  at the video player's own UI chrome — not lesson content. */
 export function stripCaptionInstructions(text: string): string {
   const noise = /subtitles?\/cc|auto-translate|closed captions?|settings gear icon/i;
   return text
@@ -106,33 +106,6 @@ export function toParagraphs(text: string): string {
   if (current.length > 0) paragraphs.push(current.join(' '));
 
   return paragraphs.join('\n\n');
-}
-
-/**
- * Removes sentences that tell the reader to watch a video — e.g. "Watch the
- * video, then take the optional quiz.", "Watch this video to learn more
- * about genetics research", "Click here to watch the video" — since no
- * video is ever shown on the content page and none of these source PDFs
- * carry an actual video URL to link to. The source always attaches these
- * directly after a short lead-in ("Video: Context Clues Watch the video and
- * then answer the practice questions."), so only the prompt sentence itself
- * is stripped, never the lead-in or anything in a different paragraph.
- *
- * A paragraph that was *only* a video prompt (a common case — many videos
- * get their own one-line paragraph) ends up empty and is dropped entirely so
- * no stray blank paragraph is left behind.
- */
-export function stripVideoPrompts(text: string): string {
-  const withoutPrompts = text
-    .replace(/\b(?:you can also )?click here to watch[^.\n]*\.?/gi, '')
-    .replace(/\bwatch (?:the|this) video\b[^.\n]*\./gi, '')
-    .replace(/\bwatch (?:the|this) video\b[^.\n]*$/gim, '');
-
-  return withoutPrompts
-    .split('\n\n')
-    .map((paragraph) => paragraph.replace(/\s{2,}/g, ' ').trim())
-    .filter((paragraph) => paragraph.length > 0)
-    .join('\n\n');
 }
 
 /** How far past a matched prompt to look for one of its own options, when

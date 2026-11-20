@@ -627,7 +627,7 @@ export type ParsedCourse = {
   practiceModuleTitles?: string[];
 };
 
-export type ParsedTopic = { title: string; content: string | null };
+export type ParsedTopic = { title: string; content: string | null; videoUrl?: string | null };
 
 export type ParsedSubject = { slug: string; title: string; courses: ParsedCourse[] };
 
