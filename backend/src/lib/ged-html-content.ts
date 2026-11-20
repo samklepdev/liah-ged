@@ -1,6 +1,7 @@
 import {
   assertNoLeakedQuestions,
   isQuizNoiseLine,
+  salvageQuizWidgetQuestion,
   stripCaptionInstructions,
   stripVideoReferences,
   toParagraphs,
@@ -88,10 +89,18 @@ function parseParagraphs(html: string): RawParagraph[] {
  *  elements in this source, so one noisy line means the whole paragraph is
  *  noise — e.g. an "Explanation: …" paragraph that wraps onto a second
  *  display line has no noise marker on that continuation line, so filtering
- *  line-by-line would leak it; dropping the whole paragraph does not. */
+ *  line-by-line would leak it; dropping the whole paragraph does not.
+ *
+ *  One exception: an embedded quiz-widget paragraph (see
+ *  salvageQuizWidgetQuestion) runs its real question text together with
+ *  Thinkific UI chrome on the same line, so the line-level check alone
+ *  would also drop that real content. Before giving up on a noisy
+ *  paragraph, try salvaging it from that specific widget template first. */
 function cleanParagraph(innerHtml: string): string | null {
   const rawLines = innerHtml.split(/<br\s*\/?>/gi);
-  if (rawLines.some((rawLine) => isQuizNoiseLine(plainText(rawLine)))) return null;
+  if (rawLines.some((rawLine) => isQuizNoiseLine(plainText(rawLine)))) {
+    return salvageQuizWidgetQuestion(plainText(innerHtml));
+  }
   const text = htmlToMarkdown(innerHtml);
   return text.length > 0 ? text : null;
 }

@@ -56,6 +56,23 @@ test('extractLessonTopics strips quiz-widget noise from a topic, leaving null if
   assert.equal(topic!.content, null);
 });
 
+test('extractLessonTopics salvages the real question from a quiz-widget-chrome topic', () => {
+  const html = page(
+    '<b>Lesson 1: Vocabulary Questions</b>',
+    '<i><b>1 topics · 1 quizzes</b></i>',
+    '<i><b>Practice Question 1</b></i>',
+    'Quiz question',
+    'Time limit: 0 Quiz Summary 0 of 1 Questions completed. Continue Show Question 1 Review Answered<br/>' +
+      'Correct Incorrect Question 1 / 1 Question 1 of 1 1 . Question<br/>' +
+      'Question 1 Read the passage. What does the word mean? a) One b) Two Correct Incorrect Skip',
+  );
+
+  const lessons = extractLessonTopics(html);
+  const [topic] = lessons.get('Lesson 1: Vocabulary Questions')!;
+  assert.equal(topic!.title, 'Practice Question 1');
+  assert.equal(topic!.content, 'Read the passage. What does the word mean? a) One b) Two');
+});
+
 test('extractLessonTopics strips the clean Q1./option/Explanation quiz dump from a topic', () => {
   const html = page(
     '<b>Lesson 1: Vocabulary Questions</b>',

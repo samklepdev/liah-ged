@@ -44,6 +44,29 @@ export function isQuizNoiseLine(line: string): boolean {
   return chromePhrases.some((phrase) => t.includes(phrase));
 }
 
+/** Matches an embedded Thinkific quiz-widget paragraph's real question
+ *  text, buried between its UI-chrome prefix ("...1 . Question Question
+ *  N ") and trailer ("Correct Incorrect" / "Correct Incorrect Skip"). This
+ *  specific widget template runs chrome and real content together on one
+ *  line, which the line-level noise check in isQuizNoiseLine can't
+ *  separate — it only tells a whole line is noisy, not which part of it. */
+const QUIZ_WIDGET_QUESTION_RE =
+  /\d+\s*\.\s*Question\s+Question\s+\d+\s+([\s\S]*?)\s*Correct\s+Incorrect(?:\s+Skip)?\s*$/i;
+
+/** Pulls the real question text out of a quiz-widget paragraph that
+ *  otherwise reads as pure noise to isQuizNoiseLine — e.g. a "Practice
+ *  Question N" topic scraped as one run-on paragraph of Thinkific chrome
+ *  with the actual passage/question/options embedded inside it. Returns
+ *  null when the text doesn't match this widget's specific template (not
+ *  every noisy paragraph is one of these — the clean "Q1./a)/Explanation:"
+ *  quiz-dump style, for one, never matches). */
+export function salvageQuizWidgetQuestion(text: string): string | null {
+  const match = QUIZ_WIDGET_QUESTION_RE.exec(text);
+  if (!match) return null;
+  const salvaged = match[1]!.trim();
+  return salvaged.length > 0 ? salvaged : null;
+}
+
 /**
  * Drops "Video: <title>" lead-in paragraphs and "(no text content —
  * video or interactive topic)" placeholders entirely — pure scraper

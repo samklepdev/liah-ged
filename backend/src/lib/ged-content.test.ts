@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   isQuizNoiseLine,
+  salvageQuizWidgetQuestion,
   toParagraphs,
   stripVideoReferences,
   stripCaptionInstructions,
@@ -19,6 +20,22 @@ test('isQuizNoiseLine recognizes the noisy widget-chrome dump style', () => {
   assert.ok(isQuizNoiseLine('Time limit: 0 Quiz Summary 0 of 1 Questions completed'));
   assert.ok(isQuizNoiseLine('You must sign in or sign up to start the quiz. Quiz is loading…'));
   assert.ok(!isQuizNoiseLine('Vocabulary review'));
+});
+
+test('salvageQuizWidgetQuestion pulls the real question out of the widget-chrome template', () => {
+  const text =
+    'Time limit: 0 Quiz Summary 0 of 1 Questions completed. Continue Show Question 1 Review Answered ' +
+    'Correct Incorrect Question 1 / 1 Question 1 of 1 1 . Question Question 1 Read the passage. ' +
+    'What does the word mean? a) One b) Two Correct Incorrect Skip';
+  assert.equal(
+    salvageQuizWidgetQuestion(text),
+    'Read the passage. What does the word mean? a) One b) Two',
+  );
+});
+
+test('salvageQuizWidgetQuestion returns null when the text does not match the widget template', () => {
+  assert.equal(salvageQuizWidgetQuestion('Q1. What is this? a) one b) two (correct)'), null);
+  assert.equal(salvageQuizWidgetQuestion('Just a plain sentence.'), null);
 });
 
 test('toParagraphs joins wrapped lines and drops page footers', () => {
