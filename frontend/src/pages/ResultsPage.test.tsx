@@ -7,6 +7,7 @@ import { ApiError } from '../quiz/api';
 import { ResultsPage } from './ResultsPage';
 
 const getAttempt = vi.fn();
+const refreshSubject = vi.fn();
 
 vi.mock('../quiz/api', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../quiz/api')>();
@@ -15,6 +16,8 @@ vi.mock('../quiz/api', async (importOriginal) => {
     quizApi: { ...actual.quizApi, getAttempt: (id: string) => getAttempt(id) },
   };
 });
+
+vi.mock('../quiz/useCatalog', () => ({ useCatalog: () => ({ subjects: [], refreshSubject }) }));
 
 const SLUG = 'chassis-tire-and-rim-essentials';
 

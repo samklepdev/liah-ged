@@ -9,6 +9,10 @@ export type SubjectNavState = {
   /** Courses per subject slug; undefined until that group has been opened. */
   courses: Readonly<Record<string, CourseSummary[] | undefined>>;
   toggle: (slug: string) => void;
+  /** Drops the cached course list for a subject, so it is refetched. Call
+   * after a quiz attempt is submitted — otherwise a newly-earned pass tick
+   * never appears in the sidebar until a full reload. */
+  refresh: (slug: string) => void;
 };
 
 /**
@@ -86,5 +90,13 @@ export function useSubjectNav(currentSubjectSlug?: string): SubjectNavState {
     [currentSubjectSlug],
   );
 
-  return { subjects, loading, error, isOpen, courses, toggle };
+  const refresh = useCallback((slug: string) => {
+    setCourses((prev) => {
+      if (!(slug in prev)) return prev;
+      const { [slug]: _dropped, ...rest } = prev;
+      return rest;
+    });
+  }, []);
+
+  return { subjects, loading, error, isOpen, courses, toggle, refresh };
 }

@@ -89,7 +89,9 @@ export function AppShell() {
         {!collapsed && <div className="shell-scrim" onClick={close} aria-hidden="true" />}
 
         <main className="shell-main">
-          <Outlet context={{ subjects: nav.subjects } satisfies CatalogContext} />
+          <Outlet
+            context={{ subjects: nav.subjects, refreshSubject: nav.refresh } satisfies CatalogContext}
+          />
         </main>
       </div>
     </div>

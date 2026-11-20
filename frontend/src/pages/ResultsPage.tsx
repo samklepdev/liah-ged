@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { quizApi, type GradedAttempt } from '../quiz/api';
+import { useCatalog } from '../quiz/useCatalog';
 import { ResultsBreakdown } from '../quiz/ResultsBreakdown';
 import { PassBadge } from '../quiz/PassBadge';
 import { hasPassed } from '../quiz/passed';
@@ -11,6 +12,7 @@ type State =
 
 export function ResultsPage() {
   const { slug = '', attemptId = '' } = useParams();
+  const { refreshSubject } = useCatalog();
   const [state, setState] = useState<State | null>(null);
 
   // Same slug-keyed pattern as useQuizAttempt: loading is derived, so nothing
@@ -33,6 +35,7 @@ export function ResultsPage() {
           return;
         }
         setState({ kind: 'ready', attemptId, attempt });
+        refreshSubject(attempt.subjectSlug);
       } catch (err) {
         if (cancelled) return;
         setState({

@@ -2,13 +2,15 @@ import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router';
-import { makeCourse } from '../test/fixtures';
+import { makeCourse, makeGradedAttempt } from '../test/fixtures';
 import { ApiError, type SubjectSummary } from '../quiz/api';
 import { AppShell } from './AppShell';
+import { ResultsPage } from '../pages/ResultsPage';
 
 const listSubjects = vi.fn();
 const listCourses = vi.fn();
 const getCourse = vi.fn();
+const getAttempt = vi.fn();
 const logout = vi.fn();
 
 vi.mock('../quiz/api', async (importOriginal) => {
@@ -20,6 +22,7 @@ vi.mock('../quiz/api', async (importOriginal) => {
       listSubjects: () => listSubjects(),
       listCourses: (s: string) => listCourses(s),
       getCourse: (s: string) => getCourse(s),
+      getAttempt: (id: string) => getAttempt(id),
     },
   };
 });
@@ -49,6 +52,7 @@ function renderAt(path = '/subjects') {
               unmounts entirely, sidebar included. */}
           <Route path="/subjects/:subjectSlug" element={<div>SUBJECT CONTENT</div>} />
           <Route path="/courses/:slug/quiz" element={<div>QUIZ CONTENT</div>} />
+          <Route path="/courses/:slug/results/:attemptId" element={<ResultsPage />} />
         </Route>
       </Routes>
     </MemoryRouter>,
@@ -69,6 +73,7 @@ beforeEach(() => {
   getCourse.mockResolvedValue({
     course: { topics: [{ position: 1, title: 'Checking Tread Depth' }] },
   });
+  getAttempt.mockReset();
   window.localStorage.clear();
 });
 
@@ -376,5 +381,32 @@ describe('AppShell — subject disclosure', () => {
     renderAt();
 
     expect(await screen.findByText('No subjects imported yet')).toBeInTheDocument();
+  });
+
+  test('passing a quiz refreshes the sidebar so the tick appears without a reload', async () => {
+    listCourses.mockResolvedValueOnce({ courses: [makeCourse({ bestScore: null })] });
+    // Held open until the sidebar has already cached the (unpassed) course
+    // list — otherwise the results fetch below would resolve before
+    // "chassis" is even in the cache, and refreshing it would be a no-op.
+    let resolveAttempt!: (value: { attempt: ReturnType<typeof makeGradedAttempt> }) => void;
+    getAttempt.mockReturnValue(new Promise((resolve) => (resolveAttempt = resolve)));
+
+    renderAt('/courses/chassis-tire-and-rim-essentials/results/attempt-1');
+    const sidebar = await nav();
+
+    await userEvent.click(within(sidebar).getByRole('button', { name: /Chassis/ }));
+    await waitFor(() => expect(listCourses).toHaveBeenCalledTimes(1));
+    expect(within(sidebar).queryByRole('img', { name: 'Passed' })).not.toBeInTheDocument();
+
+    listCourses.mockResolvedValueOnce({ courses: [makeCourse({ bestScore: 9 })] });
+    resolveAttempt({
+      attempt: makeGradedAttempt({ subjectSlug: 'chassis', score: 9, passScore: 9, questionCount: 9 }),
+    });
+    await screen.findByText('Target of 9/9 met');
+
+    await waitFor(() => expect(listCourses).toHaveBeenCalledTimes(2));
+    expect(
+      await within(sidebar).findByRole('img', { name: 'Passed' }),
+    ).toBeInTheDocument();
   });
 });
