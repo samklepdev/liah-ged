@@ -50,6 +50,7 @@ export type TopicDetail = {
   position: number;
   title: string;
   content: string | null;
+  videoUrl: string | null;
   courseSlug: string;
   courseTitle: string;
   subjectSlug: string;

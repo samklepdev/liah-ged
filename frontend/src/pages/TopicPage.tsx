@@ -5,6 +5,13 @@ import remarkGfm from 'remark-gfm';
 import { quizApi, type TopicDetail } from '../quiz/api';
 import { PracticeQuiz } from '../quiz/PracticeQuiz';
 
+/** Pulls the video ID out of a YouTube watch or short link, e.g.
+ *  "https://www.youtube.com/watch?v=ID" or "https://youtu.be/ID". */
+function youTubeEmbedId(url: string): string | null {
+  const match = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/.exec(url);
+  return match?.[1] ?? null;
+}
+
 type Key = { slug: string; position: string };
 
 type State =
@@ -52,6 +59,7 @@ export function TopicPage() {
   }
 
   const { topic } = current;
+  const videoId = topic.videoUrl ? youTubeEmbedId(topic.videoUrl) : null;
 
   return (
     <div className="course-content">
@@ -59,6 +67,17 @@ export function TopicPage() {
         {topic.courseTitle}
       </Link>
       <h1>{topic.title}</h1>
+
+      {videoId && (
+        <div className="course-video-embed">
+          <iframe
+            src={`https://www.youtube.com/embed/${videoId}`}
+            title={topic.title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+      )}
 
       {topic.content && (
         <div className="course-content-body">
