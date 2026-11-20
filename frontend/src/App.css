@@ -267,6 +267,23 @@
 .course-content-body ol { margin: 0; padding-left: 1.5rem; line-height: 1.6; }
 .course-content-body li { margin: 0.25rem 0; }
 
+.course-video-embed {
+  position: relative;
+  width: 100%;
+  max-width: 40rem;
+  margin: 1.5rem auto;
+  aspect-ratio: 16 / 9;
+}
+
+.course-video-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0.5rem;
+}
+
 .course-topic-list {
   margin: 1.5rem 0 2rem;
   padding: 0;

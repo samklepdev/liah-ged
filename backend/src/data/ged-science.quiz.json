@@ -10,6 +10,7 @@
         "Quiz on Video: Apply the Scientific Method",
         "Final Quiz: Scientific Method"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 8,
       "passScore": 7,
       "questions": [
@@ -310,6 +311,7 @@
         "Quiz on Video: How To Read a Line Graph",
         "Final Quiz: Using Data"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 11,
       "passScore": 9,
       "questions": [
@@ -704,6 +706,7 @@
         "Quiz on Video: Mean, Median, and Mode",
         "Final Quiz: Using Statistics"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 11,
       "passScore": 9,
       "questions": [
@@ -1074,6 +1077,7 @@
         "Quiz on Video: Cell Division Processes",
         "Final Quiz: Understanding Cells"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 15,
       "passScore": 12,
       "questions": [
@@ -1595,6 +1599,7 @@
         "Quiz on Video: Systems in the Body",
         "Final Quiz: Human Biology"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 10,
       "passScore": 8,
       "questions": [
@@ -1956,6 +1961,7 @@
         "Quiz on Video: Punnett Squares",
         "Final Quiz: DNA, Genes, and Heredity"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 9,
       "passScore": 8,
       "questions": [
@@ -2298,6 +2304,7 @@
         "Quiz on Video: Using Scientific Data",
         "Final Quiz"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 6,
       "passScore": 5,
       "questions": [
@@ -2542,6 +2549,7 @@
         "Quiz on Video: People and the Biosphere",
         "Final Quiz: Ecology"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 10,
       "passScore": 8,
       "questions": [
@@ -2884,6 +2892,7 @@
         "Quiz on Video: The Food Chain",
         "Final Quiz: Ecosystems"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 10,
       "passScore": 8,
       "questions": [
@@ -3249,6 +3258,7 @@
         "Quiz on Video: Tectonic Plates",
         "Final Quiz: Geology"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 8,
       "passScore": 7,
       "questions": [
@@ -3544,6 +3554,7 @@
         "Quiz on Video: Questions with Different Viewpoints",
         "Final Quiz: Earth's Atmosphere"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 10,
       "passScore": 8,
       "questions": [
@@ -3884,6 +3895,7 @@
         "Quiz on Video: Earth's Orbit",
         "Final Quiz: Solar System"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 7,
       "passScore": 6,
       "questions": [
@@ -4151,6 +4163,7 @@
         "Quiz on Video: Elements and Molecules",
         "Final Quiz: Atoms and Molecules"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 8,
       "passScore": 7,
       "questions": [
@@ -4450,6 +4463,7 @@
         "Quiz on Video: Chemical Reactions",
         "Final Quiz: Changes and Reactions"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 6,
       "passScore": 5,
       "questions": [
@@ -4693,6 +4707,7 @@
         "Quiz on Video: Balancing a Chemical Equation",
         "Final Quiz: Symbols and Chemical Equations"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 6,
       "passScore": 5,
       "questions": [
@@ -4932,6 +4947,7 @@
         "Quiz on Video: Laws of Motion",
         "Final Quiz: Motion and Forces"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 12,
       "passScore": 10,
       "questions": [
@@ -5383,6 +5399,7 @@
         "Quiz on Video: Understanding Energy",
         "Final Quiz: Energy and Work"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 5,
       "passScore": 4,
       "questions": [
@@ -5603,6 +5620,7 @@
         "Quiz on Video: The Metric System",
         "Final Quiz: Units and Formulas"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 8,
       "passScore": 7,
       "questions": [
@@ -5921,6 +5939,7 @@
       "moduleTitles": [
         "Final Quiz"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 13,
       "passScore": 11,
       "questions": [
