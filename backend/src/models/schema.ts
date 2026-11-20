@@ -125,6 +125,9 @@ export const topics = pgTable('topics', {
   /** Null means this heading had no body left after stripping video/quiz
    *  noise (e.g. a bare "Practice Question 2" widget placeholder). */
   content: text('content'),
+  /** The lesson's video link (e.g. a YouTube watch URL), extracted from the
+   *  source PDF. Null for topics with no video. */
+  videoUrl: text('video_url'),
   /** Set when this topic's title matches one of the course's module titles
    *  — the topic page then shows that module's questions inline as
    *  ungraded practice. Null for ordinary reading topics. */

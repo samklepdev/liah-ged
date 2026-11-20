@@ -1,8 +1,8 @@
 import {
   assertNoLeakedQuestions,
   isQuizNoiseLine,
+  salvageQuizWidgetQuestion,
   stripCaptionInstructions,
-  stripVideoPrompts,
   stripVideoReferences,
   toParagraphs,
 } from './ged-content.ts';
@@ -89,13 +89,30 @@ function parseParagraphs(html: string): RawParagraph[] {
  *  elements in this source, so one noisy line means the whole paragraph is
  *  noise — e.g. an "Explanation: …" paragraph that wraps onto a second
  *  display line has no noise marker on that continuation line, so filtering
- *  line-by-line would leak it; dropping the whole paragraph does not. */
+ *  line-by-line would leak it; dropping the whole paragraph does not.
+ *
+ *  One exception: an embedded quiz-widget paragraph (see
+ *  salvageQuizWidgetQuestion) runs its real question text together with
+ *  Thinkific UI chrome on the same line, so the line-level check alone
+ *  would also drop that real content. Before giving up on a noisy
+ *  paragraph, try salvaging it from that specific widget template first. */
 function cleanParagraph(innerHtml: string): string | null {
   const rawLines = innerHtml.split(/<br\s*\/?>/gi);
-  if (rawLines.some((rawLine) => isQuizNoiseLine(plainText(rawLine)))) return null;
+  if (rawLines.some((rawLine) => isQuizNoiseLine(plainText(rawLine)))) {
+    return salvageQuizWidgetQuestion(plainText(innerHtml));
+  }
   const text = htmlToMarkdown(innerHtml);
   return text.length > 0 ? text : null;
 }
+
+/** Matches the "■ Watch video" anchor paragraph pdftohtml emits right after
+ *  a video topic's heading, e.g.
+ *  `■&#160;<a href="https://www.youtube.com/watch?v=ID"><b>Watch video</b>...`.
+ *  Captures the href so the player can embed it — the whole paragraph,
+ *  including the duplicated plain-text URL that follows the link, is pure
+ *  scraper chrome once a real player renders it, so it's excluded from
+ *  content entirely rather than kept as text. */
+const VIDEO_LINK_RE = /<a href="([^"]+)">\s*<b>\s*Watch video\s*<\/b>/i;
 
 /**
  * Splits a subject's pdftohtml output into one lesson per "Lesson N:"
@@ -103,7 +120,10 @@ function cleanParagraph(innerHtml: string): string | null {
  * reading order — "In this lesson…", "Words to know", "Video: X",
  * "Quiz on Video: X", everything. A topic's content is every paragraph
  * between it and the next heading, cleaned of quiz-widget noise and
- * video/caption references; null if nothing survives that cleaning.
+ * caption-instruction references; null if nothing survives that cleaning.
+ * A "■ Watch video" link paragraph is captured into the topic's videoUrl
+ * instead of its content — see VIDEO_LINK_RE — and attaches to whichever
+ * topic is currently open, regardless of that topic's title.
  *
  * quizTitlesByLesson (from quiz-bank.json) forces content to null for a
  * topic whose title is one of that lesson's own quiz headings — those
@@ -120,7 +140,7 @@ export function extractLessonTopics(
   const lessons = new Map<string, ParsedTopic[]>();
 
   let currentLessonTitle: string | null = null;
-  let currentTopic: { title: string; paragraphs: string[] } | null = null;
+  let currentTopic: { title: string; paragraphs: string[]; videoUrl: string | null } | null = null;
 
   const flushTopic = () => {
     if (!currentTopic || currentLessonTitle === null) return;
@@ -128,11 +148,13 @@ export function extractLessonTopics(
       currentTopic.title,
     );
     const raw = currentTopic.paragraphs.join('\n\n');
-    const cleaned = isQuizTopic
-      ? ''
-      : stripCaptionInstructions(stripVideoReferences(stripVideoPrompts(toParagraphs(raw))));
+    const cleaned = isQuizTopic ? '' : stripCaptionInstructions(stripVideoReferences(toParagraphs(raw)));
     const topics = lessons.get(currentLessonTitle)!;
-    topics.push({ title: currentTopic.title, content: cleaned.length > 0 ? cleaned : null });
+    topics.push({
+      title: currentTopic.title,
+      content: cleaned.length > 0 ? cleaned : null,
+      videoUrl: currentTopic.videoUrl,
+    });
   };
 
   for (const p of paragraphs) {
@@ -147,11 +169,17 @@ export function extractLessonTopics(
 
     if (p.heading !== null) {
       flushTopic();
-      currentTopic = { title: p.heading, paragraphs: [] };
+      currentTopic = { title: p.heading, paragraphs: [], videoUrl: null };
       continue;
     }
 
     if (currentTopic === null) continue; // stray content before this lesson's first heading
+
+    const videoMatch = VIDEO_LINK_RE.exec(p.html);
+    if (videoMatch) {
+      currentTopic.videoUrl = videoMatch[1]!;
+      continue;
+    }
 
     const cleaned = cleanParagraph(p.html);
     if (cleaned !== null) currentTopic.paragraphs.push(cleaned);

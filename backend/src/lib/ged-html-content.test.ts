@@ -56,6 +56,23 @@ test('extractLessonTopics strips quiz-widget noise from a topic, leaving null if
   assert.equal(topic!.content, null);
 });
 
+test('extractLessonTopics salvages the real question from a quiz-widget-chrome topic', () => {
+  const html = page(
+    '<b>Lesson 1: Vocabulary Questions</b>',
+    '<i><b>1 topics · 1 quizzes</b></i>',
+    '<i><b>Practice Question 1</b></i>',
+    'Quiz question',
+    'Time limit: 0 Quiz Summary 0 of 1 Questions completed. Continue Show Question 1 Review Answered<br/>' +
+      'Correct Incorrect Question 1 / 1 Question 1 of 1 1 . Question<br/>' +
+      'Question 1 Read the passage. What does the word mean? a) One b) Two Correct Incorrect Skip',
+  );
+
+  const lessons = extractLessonTopics(html);
+  const [topic] = lessons.get('Lesson 1: Vocabulary Questions')!;
+  assert.equal(topic!.title, 'Practice Question 1');
+  assert.equal(topic!.content, 'Read the passage. What does the word mean? a) One b) Two');
+});
+
 test('extractLessonTopics strips the clean Q1./option/Explanation quiz dump from a topic', () => {
   const html = page(
     '<b>Lesson 1: Vocabulary Questions</b>',
@@ -72,7 +89,7 @@ test('extractLessonTopics strips the clean Q1./option/Explanation quiz dump from
   assert.equal(topic!.content, null);
 });
 
-test('extractLessonTopics strips video prompts and caption instructions from a topic body', () => {
+test('extractLessonTopics keeps "watch the video" prompts but still strips caption instructions', () => {
   const html = page(
     '<b>Lesson 1: Vocabulary Questions</b>',
     '<i><b>1 topics · 1 quizzes</b></i>',
@@ -84,7 +101,10 @@ test('extractLessonTopics strips video prompts and caption instructions from a t
 
   const lessons = extractLessonTopics(html);
   const [topic] = lessons.get('Lesson 1: Vocabulary Questions')!;
-  assert.equal(topic!.content, 'Real teaching content survives.');
+  assert.equal(
+    topic!.content,
+    'Watch the video and then answer the practice questions.\n\nReal teaching content survives.',
+  );
 });
 
 test('extractLessonTopics splits multiple lessons independently', () => {
@@ -103,4 +123,46 @@ test('extractLessonTopics splits multiple lessons independently', () => {
   assert.equal(lessons.size, 2);
   assert.equal(lessons.get('Lesson 1: Vocabulary Questions')![0]!.content, 'Lesson one content.');
   assert.equal(lessons.get('Lesson 2: Analyzing Text')![0]!.content, 'Lesson two content.');
+});
+
+test('extractLessonTopics captures a video link as videoUrl and excludes it from content', () => {
+  const html = page(
+    '<b>Lesson 1: Vocabulary Questions</b>',
+    '<i><b>1 topics · 1 quizzes</b></i>',
+    '<i><b>Video: Sequence of Events</b></i>',
+    '■&#160;<a href="https://www.youtube.com/watch?v=WTZh-xKpEEE"><b>Watch video</b>&#160;&#160;</a>https://www.youtube.com/watch?v=WTZh-xKpEEE',
+    'Watch this video to learn more about the sequence of events.',
+  );
+
+  const lessons = extractLessonTopics(html);
+  const [topic] = lessons.get('Lesson 1: Vocabulary Questions')!;
+  assert.equal(topic!.videoUrl, 'https://www.youtube.com/watch?v=WTZh-xKpEEE');
+  assert.equal(topic!.content, 'Watch this video to learn more about the sequence of events.');
+});
+
+test('extractLessonTopics attaches a trailing video link by position, not by heading title', () => {
+  const html = page(
+    '<b>Lesson 1: Civil Rights</b>',
+    '<i><b>1 topics · 1 quizzes</b></i>',
+    '<i><b>I Have A Dream</b></i>',
+    '■&#160;<a href="https://www.youtube.com/watch?v=g3idXXAqK8w"><b>Watch video</b>&#160;&#160;</a>https://www.youtube.com/watch?v=g3idXXAqK8w',
+  );
+
+  const lessons = extractLessonTopics(html);
+  const [topic] = lessons.get('Lesson 1: Civil Rights')!;
+  assert.equal(topic!.title, 'I Have A Dream');
+  assert.equal(topic!.videoUrl, 'https://www.youtube.com/watch?v=g3idXXAqK8w');
+});
+
+test('extractLessonTopics leaves videoUrl null for a topic with no video link', () => {
+  const html = page(
+    '<b>Lesson 1: Vocabulary Questions</b>',
+    '<i><b>1 topics · 1 quizzes</b></i>',
+    '<i><b>In this lesson…</b></i>',
+    'You will learn about vocabulary.',
+  );
+
+  const lessons = extractLessonTopics(html);
+  const [topic] = lessons.get('Lesson 1: Vocabulary Questions')!;
+  assert.equal(topic!.videoUrl, null);
 });

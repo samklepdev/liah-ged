@@ -22,6 +22,12 @@ export type GedBankEntry = {
 const OPTION_LABELS = ['A', 'B', 'C', 'D', 'E', 'F'] as const;
 const LESSON_NUMBER_RE = /^Lesson (\d+):\s*(.+)$/;
 
+/** A module named "Practice Question N" is an ungraded inline practice
+ *  stop, not a real assessed quiz — matches the PDF's own naming for these
+ *  (never "Practice Question" bare, which is a distinct, already-graded
+ *  quizTitle elsewhere). */
+const PRACTICE_QUESTION_RE = /^Practice Question \d+$/;
+
 /** Entries the schema can represent: a single correct option out of several. */
 function isUsable(entry: GedBankEntry, subjectSlug: string): boolean {
   return entry.course === subjectSlug && typeof entry.correctIndex === 'number';
@@ -72,6 +78,8 @@ export function buildGedSubject(
       if (!moduleTitles.includes(entry.quizTitle)) moduleTitles.push(entry.quizTitle);
     }
 
+    const practiceModuleTitles = moduleTitles.filter((title) => PRACTICE_QUESTION_RE.test(title));
+
     const questions: ParsedQuestion[] = lessonEntries.map((entry, index) => {
       const correctIndex = entry.correctIndex as number;
       if (correctIndex < 0 || correctIndex >= entry.options.length) {
@@ -102,13 +110,18 @@ export function buildGedSubject(
       };
     });
 
+    const gradedQuestionCount = questions.filter(
+      (q) => !practiceModuleTitles.includes(q.moduleTitle),
+    ).length;
+
     return {
       position,
       slug: `${subjectSlug}-${slugify(title)}`,
       title,
       moduleTitles,
-      questionCount: questions.length,
-      passScore: Math.ceil(questions.length * 0.8),
+      practiceModuleTitles,
+      questionCount: gradedQuestionCount,
+      passScore: Math.ceil(gradedQuestionCount * 0.8),
       questions,
       content: contentByLesson.get(lessonTitle),
       topics: topicsByLesson.get(lessonTitle),

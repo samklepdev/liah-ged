@@ -19,6 +19,7 @@ function makeTopicDetail(overrides: Partial<TopicDetail> = {}): TopicDetail {
     position: 1,
     title: 'In this lesson…',
     content: 'You will learn about vocabulary.',
+    videoUrl: null,
     courseSlug: 'ged-language-arts-vocabulary-questions',
     courseTitle: 'Vocabulary Questions',
     subjectSlug: 'ged-language-arts',
@@ -54,6 +55,38 @@ describe('TopicPage', () => {
     renderPage();
     expect(await screen.findByText('In this lesson…')).toBeInTheDocument();
     expect(await screen.findByText('You will learn about vocabulary.')).toBeInTheDocument();
+  });
+
+  test('shows a video embed above the content when the topic has a video url', async () => {
+    getTopic.mockResolvedValue({
+      topic: makeTopicDetail({
+        content: 'Watch this video to learn more.',
+        videoUrl: 'https://www.youtube.com/watch?v=WTZh-xKpEEE',
+      }),
+    });
+    renderPage();
+
+    const iframe = await screen.findByTitle('In this lesson…');
+    expect(iframe).toHaveAttribute('src', 'https://www.youtube.com/embed/WTZh-xKpEEE');
+
+    const content = await screen.findByText('Watch this video to learn more.');
+    // eslint-disable-next-line no-bitwise
+    expect(iframe.compareDocumentPosition(content) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  test('derives the embed id from a youtu.be short link', async () => {
+    getTopic.mockResolvedValue({
+      topic: makeTopicDetail({ videoUrl: 'https://youtu.be/WTZh-xKpEEE' }),
+    });
+    renderPage();
+    const iframe = await screen.findByTitle('In this lesson…');
+    expect(iframe).toHaveAttribute('src', 'https://www.youtube.com/embed/WTZh-xKpEEE');
+  });
+
+  test('shows no video embed when the topic has no video url', async () => {
+    renderPage();
+    await screen.findByText('In this lesson…');
+    expect(screen.queryByTitle('In this lesson…')).not.toBeInTheDocument();
   });
 
   test('links back to the course', async () => {

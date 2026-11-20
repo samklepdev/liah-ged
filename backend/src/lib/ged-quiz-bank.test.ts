@@ -79,6 +79,34 @@ test('buildGedSubject attaches matching lesson content', () => {
   assert.equal(subject.courses[0]!.content, 'Some reading text.');
 });
 
+test('buildGedSubject marks "Practice Question N" modules as practice and excludes them from questionCount/passScore', () => {
+  const entries: GedBankEntry[] = [
+    entry({ quizTitle: 'Final Quiz', questionNumber: 1, correctIndex: 0 }),
+    entry({ quizTitle: 'Final Quiz', questionNumber: 2, correctIndex: 0 }),
+    entry({ quizTitle: 'Practice Question 1', questionNumber: 1, correctIndex: 0 }),
+    entry({ quizTitle: 'Practice Question 2', questionNumber: 1, correctIndex: 0 }),
+  ];
+
+  const subject = buildGedSubject(entries, 'ged-demo');
+  const course = subject.courses[0]!;
+
+  assert.deepEqual(course.moduleTitles, ['Final Quiz', 'Practice Question 1', 'Practice Question 2']);
+  assert.deepEqual(course.practiceModuleTitles, ['Practice Question 1', 'Practice Question 2']);
+  assert.equal(course.questions.length, 4); // all questions still seeded
+  assert.equal(course.questionCount, 2); // but only the graded ones count
+  assert.equal(course.passScore, 2); // ceil(2 * 0.8) = 2, not ceil(4 * 0.8) = 4
+});
+
+test('buildGedSubject does not mark a bare "Practice Question" module (no number) as practice', () => {
+  const entries: GedBankEntry[] = [entry({ quizTitle: 'Practice Question', questionNumber: 1, correctIndex: 0 })];
+
+  const subject = buildGedSubject(entries, 'ged-demo');
+  const course = subject.courses[0]!;
+
+  assert.deepEqual(course.practiceModuleTitles, []);
+  assert.equal(course.questionCount, 1);
+});
+
 test('buildGedSubject throws for a lesson title with no leading number', () => {
   const entries: GedBankEntry[] = [entry({ lesson: 'Vocabulary (no number)' })];
   assert.throws(() => buildGedSubject(entries, 'ged-demo'), /no leading "Lesson N:" number/);

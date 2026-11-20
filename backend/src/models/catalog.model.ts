@@ -206,6 +206,7 @@ export type TopicDetail = {
   position: number;
   title: string;
   content: string | null;
+  videoUrl: string | null;
   courseSlug: string;
   courseTitle: string;
   subjectSlug: string;
@@ -225,6 +226,7 @@ export async function findTopic(courseSlug: string, position: number): Promise<T
       position: topics.position,
       title: topics.title,
       content: topics.content,
+      videoUrl: topics.videoUrl,
       moduleId: topics.moduleId,
       courseId: courses.id,
       courseSlug: courses.slug,

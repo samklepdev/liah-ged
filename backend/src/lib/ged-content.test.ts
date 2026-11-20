@@ -2,8 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   isQuizNoiseLine,
+  salvageQuizWidgetQuestion,
   toParagraphs,
-  stripVideoPrompts,
   stripVideoReferences,
   stripCaptionInstructions,
   assertNoLeakedQuestions,
@@ -22,6 +22,22 @@ test('isQuizNoiseLine recognizes the noisy widget-chrome dump style', () => {
   assert.ok(!isQuizNoiseLine('Vocabulary review'));
 });
 
+test('salvageQuizWidgetQuestion pulls the real question out of the widget-chrome template', () => {
+  const text =
+    'Time limit: 0 Quiz Summary 0 of 1 Questions completed. Continue Show Question 1 Review Answered ' +
+    'Correct Incorrect Question 1 / 1 Question 1 of 1 1 . Question Question 1 Read the passage. ' +
+    'What does the word mean? a) One b) Two Correct Incorrect Skip';
+  assert.equal(
+    salvageQuizWidgetQuestion(text),
+    'Read the passage. What does the word mean? a) One b) Two',
+  );
+});
+
+test('salvageQuizWidgetQuestion returns null when the text does not match the widget template', () => {
+  assert.equal(salvageQuizWidgetQuestion('Q1. What is this? a) one b) two (correct)'), null);
+  assert.equal(salvageQuizWidgetQuestion('Just a plain sentence.'), null);
+});
+
 test('toParagraphs joins wrapped lines and drops page footers', () => {
   const text = [
     'This sentence',
@@ -33,32 +49,6 @@ test('toParagraphs joins wrapped lines and drops page footers', () => {
   ].join('\n');
 
   assert.equal(toParagraphs(text), 'This sentence wraps across lines.\n\nSecond paragraph.');
-});
-
-test('stripVideoPrompts removes a prompt attached after a lead-in, keeping the lead-in', () => {
-  const text = 'Video: Context Clues Watch the video and then answer the practice questions.';
-  assert.equal(stripVideoPrompts(text), 'Video: Context Clues');
-});
-
-test('stripVideoPrompts drops a paragraph that is only a video prompt', () => {
-  const text = 'Video: Becoming a Citizen\n\nWatch the video and then answer the questions.\n\nReal content here.';
-  assert.equal(stripVideoPrompts(text), 'Video: Becoming a Citizen\n\nReal content here.');
-});
-
-test('stripVideoPrompts handles a prompt with no trailing period, up to the paragraph end', () => {
-  const text = 'Video: Genetics Research Watch this video to learn more about genetics research\n\nNext paragraph.';
-  assert.equal(stripVideoPrompts(text), 'Video: Genetics Research\n\nNext paragraph.');
-});
-
-test('stripVideoPrompts removes a "click here to watch" prompt', () => {
-  const text =
-    'Click here to watch the video You can also click here to watch an extensive video with examples.\n\nReal content.';
-  assert.equal(stripVideoPrompts(text), 'Real content.');
-});
-
-test('stripVideoPrompts leaves unrelated content alone', () => {
-  const text = 'This paragraph never mentions a video at all.';
-  assert.equal(stripVideoPrompts(text), text);
 });
 
 test('stripVideoReferences drops a standalone video lead-in paragraph', () => {
