@@ -95,12 +95,40 @@ test('findTopic returns one topic with its course/subject context and the next t
     position: 1,
     title: 'In this lesson…',
     content: 'Overview text.',
+    videoUrl: null,
     courseSlug: 'ged-demo-course',
     courseTitle: 'Demo Course',
     subjectSlug: 'ged-demo',
     next: { position: 2, title: 'Words to know' },
     practiceQuestions: null,
   });
+});
+
+test('findTopic returns the topic\'s video url when it has one', async () => {
+  await seedSubject({
+    slug: 'ged-demo',
+    title: 'GED Demo',
+    courses: [
+      {
+        position: 1,
+        slug: 'ged-demo-course',
+        title: 'Demo Course',
+        questionCount: 0,
+        moduleTitles: [],
+        topics: [
+          {
+            title: 'Video: Example',
+            content: null,
+            videoUrl: 'https://www.youtube.com/watch?v=abc123',
+          },
+        ],
+        questions: [],
+      },
+    ],
+  });
+
+  const topic = await findTopic('ged-demo-course', 1);
+  assert.equal(topic?.videoUrl, 'https://www.youtube.com/watch?v=abc123');
 });
 
 test('findTopic returns next: null on the last topic', async () => {
