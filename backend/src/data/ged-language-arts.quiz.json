@@ -8,7 +8,13 @@
       "title": "Vocabulary Questions",
       "moduleTitles": [
         "Quiz on Video: Finding the Meaning of a Word",
+        "Practice Question 1",
+        "Practice Question 2",
         "Final Quiz: Vocabulary"
+      ],
+      "practiceModuleTitles": [
+        "Practice Question 1",
+        "Practice Question 2"
       ],
       "questionCount": 6,
       "passScore": 5,
@@ -71,6 +77,62 @@
         },
         {
           "position": 3,
+          "prompt": "Read the following passage. Determine the meaning of the word Identical.\n“Mark Twain’s book “The Prince and the Pauper” is about two boys who look identical. One is a prince and one is a pauper. After they meet, they switch places with each other. They become trapped in the other boy’s world. Both boys have difficulty living as the other boy.”\nIn this passage, the word identical means which of the following?",
+          "moduleTitle": "Practice Question 1",
+          "explanation": "Answer:\nb) Looking the same\nExplanation:\n“Identical” means exactly alike, or looking the same. In the passage, the prince and the pauper look so alike that they can switch places with each other without anyone noticing — that’s what makes them identical.",
+          "options": [
+            {
+              "label": "A",
+              "body": "Different",
+              "isCorrect": false
+            },
+            {
+              "label": "B",
+              "body": "Looking the same",
+              "isCorrect": true
+            },
+            {
+              "label": "C",
+              "body": "Brothers",
+              "isCorrect": false
+            },
+            {
+              "label": "D",
+              "body": "Like a Prince and a Pauper",
+              "isCorrect": false
+            }
+          ]
+        },
+        {
+          "position": 4,
+          "prompt": "Read the following text. Then answer the question.\n“Starting at age 55, our hippocampus, a brain region critical to memory, shrinks 1 to 2 percent every year, to say nothing of the fact that one in nine people age 65 and older has Alzheimer’s disease. The number afflicted is expected to grow rapidly as the baby boom generation ages. Given these grim statistics, it’s no wonder that Americans are a captive market for anything, from supposed smart drugs and supplements to brain training, which promises to boost normal mental functioning or to stem its all-too-common decline.” (courtesy of The New York Times.)\nIn the text, the word stem means which of the following?",
+          "moduleTitle": "Practice Question 2",
+          "explanation": "Answer:\nb) Prevent\nExplanation:\nHere, “stem” is used as a verb meaning to hold something back or stop it from getting worse — “to stem its…decline” means to prevent further decline. “Stalk”, the plant part, is a different meaning of “stem” used as a noun, which doesn’t fit this sentence.",
+          "options": [
+            {
+              "label": "A",
+              "body": "Stalk",
+              "isCorrect": false
+            },
+            {
+              "label": "B",
+              "body": "Prevent",
+              "isCorrect": true
+            },
+            {
+              "label": "C",
+              "body": "Originate",
+              "isCorrect": false
+            },
+            {
+              "label": "D",
+              "body": "Develop",
+              "isCorrect": false
+            }
+          ]
+        },
+        {
+          "position": 5,
           "prompt": "This text is adapted from the GED Study Guide.\nDIRECTIONS: Read the text and choose the best answer to the question.\nPetition: Ban Drilling for Resources in the Arctic National Wildlife Refuge\nTo: U.S. Congress\nWe are urging members of the U.S. Congress to protect the nearly 9 million acres of unspoiled coastal plain and mountains in Alaska’s Arctic National Wildlife Refuge (ANWR). For many years, this land has been protected, but recently there has been a renewed call for accessing the oil in the Alaskan wilderness to boost the national economy and increase security. Today, more than 80% of Alaska’s state revenues result from the oil and gas business, a direct effect of tapping into Alaska’s rich energy reserves. Once again, economic interests in oil drilling and production of natural gas and coal are vying with environmental concerns, and the ANWR is in danger. The damage that could be done to the ecosystem would simply be too great.\nQUESTION: What does the word revenues mean in the above text?",
           "moduleTitle": "Final Quiz: Vocabulary",
           "explanation": "Answer:\nc) income\nExplanation:\nAsk yourself the following questions, when trying to figure out the best answer:\nWhat is the text about? It’s about protecting the environment in the face of economic and political pressure to exploit land for oil and gas.\nUnderstand the question – what do you need to find? The meaning of the word revenues.\nFind the key information – which sentence is the word revenues in? Today, more than 80% of Alaska’s state revenues result from the oil and gas business, a direct effect of tapping into Alaska’s rich energy reserves.\nCan you predict the answer? In what way is the state of Alaska benefiting from oil and gas? Looking at the text around the key sentence, we learn that money and energy are the reasons that people want to drill for oil in ANWR. Both money and energy would make sense in place of the word revenues.\nDo money and energy fit with any of the answers?\nEnergy doesn’t fit with any of the answers, but money fits with income. So,\nincome\nis the best answer.",
@@ -98,7 +160,7 @@
           ]
         },
         {
-          "position": 4,
+          "position": 6,
           "prompt": "This text is adapted from the GED Study Guide.\nDIRECTIONS: Read the text and choose the best answer to the question.\nPetition: Ban Drilling for Resources in the Arctic National Wildlife Refuge\nTo: U.S. Congress\nWe are urging members of the U.S. Congress to protect the nearly 9 million acres of unspoiled coastal plain and mountains in Alaska’s Arctic National Wildlife Refuge (ANWR). For many years, this land has been protected, but recently there has been a renewed call for accessing the oil in the Alaskan wilderness to boost the national economy and increase security. Today, more than 80% of Alaska’s state revenues result from the oil and gas business, a direct effect of tapping into Alaska’s rich energy reserves. Once again, economic interests in oil drilling and production of natural gas and coal are vying with environmental concerns, and the ANWR is in danger. The damage that could be done to the ecosystem would simply be too great.\nQUESTION: What does the word vying mean in the above text?",
           "moduleTitle": "Final Quiz: Vocabulary",
           "explanation": "Answer:\na) Competing\nExplanation:\nThink:\nWhat is the text about? It’s about protecting the environment in the face of economic and political pressure to exploit land for oil and gas.\nUnderstand the question – what do you need to find? The meaning of the word\nvying\n.\nFind the key information – which sentence is the word\nvying\nin?\nOnce again, economic interests in oil drilling and production of natural gas and coal are vying with environmental concerns, and the ANWR is in danger.\nCan you predict the answer? What is the relationship between economic and oil interests on the one hand and  environmental interests on the other hand? Looking at the text around the key sentence, we learn that they are\nagainst\neach other.\nDoes\nagainst\nfit with any of the answers?  It fits only with competing.\nSo\ncompeting\nis the best answer.",
@@ -126,7 +188,7 @@
           ]
         },
         {
-          "position": 5,
+          "position": 7,
           "prompt": "DIRECTIONS: Use this passage from\nThe Adventures of Tom Sawyer\nby Mark Twain to answer the following question.\nTom gave up the brush with reluctance in his face, but alacrity in his heart. … The retired artist sat on a barrel in the shade close by, dangled his legs, munched his apple, and planned the slaughter of more innocents. There was no lack of material; boys happened along every little while; they came to jeer, but remained to whitewash [paint]. By the time Ben was fagged [cigarettes] out, Tom had traded the next chance to Billy Fisher for a kite, in good repair; and when\nhe\nplayed out, Johnny Miller bought in for a dead rat and a string to swing it with – and so on, and so on, hour after hour. And when the middle of the afternoon came, from being a poor poverty-stricken boy in the morning, Tom was literally rolling in wealth.\nQUESTION: In the text, the word\nalacrity\nmeans which of the following:",
           "moduleTitle": "Final Quiz: Vocabulary",
           "explanation": "Answer:\nb) readiness\nExplanation:\nTom had reluctance (not wanting to do something) in his face,\nbut\nalacrity in his heart. The word\nbut\nhelps the reader know that he feels differently in his heart than in his face. In the text, Tom relaxes and eats while he lets the other boys do his work if they give him treats. It seems like Tom has found a way to trick the other boys into doing his work for him.\nHe wasn’t sad, tired, or angry – he was secretly\nready\nto give up the brush.",
@@ -154,7 +216,7 @@
           ]
         },
         {
-          "position": 6,
+          "position": 8,
           "prompt": "Adapted from TASC reading test practice items\nDIRECTIONS: Read the text and then answer the question.\nHow to Shop Safely Online\nWhat is the best way to save parking charges and avoid crowds at the mall? You can shop online. More and more consumers are finding online shopping the most convenient way to make purchases. In 2010, online sales on the day after Thanksgiving were 15.9 percent higher than they were in 2009. New technology even makes it possible to shop from mobile devices. However, there is a downside to this new and easy shopping access. Not every online site is safe from hackers, and some sites deliberately try to mislead consumers.\nSome websites use web addresses that are formatted to look almost the same as legitimate sites. This tactic is called spoofing. The site may also use icons and trademarks similar to those on safe sites. A spoofed website often engages in another illegitimate activity called phishing. The object of phishing is to obtain credit card, bank account, or Social Security numbers from an unsuspecting consumer. On one of these sites, you might believe you are charging a pair of hiking boots, when you are actually providing some stranger with the information needed to book a flight to Acapulco on your credit card.\nQUESTION: What does the word\nlegitimate\nmean as it is used in the text?",
           "moduleTitle": "Final Quiz: Vocabulary",
           "explanation": "Answer:\nd) genuine\nExplanation:\nThe clue is in the rest of the sentence: Some websites use web addresses that are formatted to look almost the same as legitimate sites. The text is about fake websites, and this sentence they make themselves look the same as … what is your prediction? They are trying to make themselves look real. Which of the answers fits best with real?\nOnly genuine means the same as real, so that is the correct answer.",
@@ -205,12 +267,12 @@
         },
         {
           "title": "Practice Question 1",
-          "content": "Read the following passage. Determine the meaning of the word Identical. “Mark Twain’s book “The Prince and the Pauper” is about two boys who look identical. One is a prince and one is a pauper. After they meet, they switch places with each other. They become trapped in the other boy’s world. Both boys have difficulty living as the other boy.” Question: In this passage, the word identical means which of the following? a) Different b) Looking the same c) Brothers d) Like a Prince and a Pauper",
+          "content": null,
           "videoUrl": null
         },
         {
           "title": "Practice Question 2",
-          "content": "Read the following text. Then answer the question. “Starting at age 55, our hippocampus, a brain region critical to memory, shrinks 1 to 2 percent every year, to say nothing of the fact that one in nine people age 65 and older has Alzheimer’s disease. The number afflicted is expected to grow rapidly as the baby boom generation ages. Given these grim statistics, it’s no wonder that Americans are a captive market for anything, from supposed smart drugs and supplements to brain training, which promises to boost normal mental functioning or to stem its all-too-common decline.” (courtesy of The New York Times.) QUESTION: In the text, the word stem means which of the following? Stalk Prevent Originate Develop",
+          "content": null,
           "videoUrl": null
         },
         {
@@ -258,6 +320,7 @@
         "Quiz on Video: Making Inferences",
         "Final Quiz: Analyzing Text"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 6,
       "passScore": 5,
       "questions": [
@@ -512,6 +575,7 @@
         "Practice Quiz: Finding the Main Idea",
         "Final Quiz: Main Ideas"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 10,
       "passScore": 8,
       "questions": [
@@ -867,6 +931,7 @@
         "Quiz on Video: Transition Words",
         "Final Quiz: Parts of Text"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 10,
       "passScore": 8,
       "questions": [
@@ -1227,6 +1292,7 @@
         "Quiz on Video: Questions About Facts and Opinions",
         "Final Quiz: Expressing and Influencing Opinions"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 8,
       "passScore": 7,
       "questions": [
@@ -1536,6 +1602,7 @@
         "Quiz on Video: Cause and Effect",
         "Final Quiz: Sequence and Cause & Effect"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 6,
       "passScore": 5,
       "questions": [
@@ -1775,6 +1842,7 @@
         "Quiz on Video: Finding Evidence",
         "Final Quiz: Evidence and Explanation"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 13,
       "passScore": 11,
       "questions": [
@@ -2215,6 +2283,7 @@
         "Quiz on Video: Tense Agreement",
         "Final Quiz: Verb Tenses"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 7,
       "passScore": 6,
       "questions": [
@@ -2516,6 +2585,7 @@
         "Quiz on Video: Subjects and Predicates",
         "Final Quiz: Run-ons and Fragments"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 13,
       "passScore": 11,
       "questions": [
@@ -2939,6 +3009,7 @@
       "moduleTitles": [
         "Final Quiz: Capitalization"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 2,
       "passScore": 2,
       "questions": [
@@ -3074,6 +3145,7 @@
       "moduleTitles": [
         "Final Quiz: Punctuation"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 5,
       "passScore": 4,
       "questions": [
@@ -3288,6 +3360,7 @@
       "moduleTitles": [
         "Final Quiz: Getting Ready to Write"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 1,
       "passScore": 1,
       "questions": [
@@ -3377,6 +3450,7 @@
         "Quiz on Video: Parts of an Essay",
         "Final Quiz: Parts of an Essay"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 11,
       "passScore": 9,
       "questions": [
@@ -3800,6 +3874,7 @@
         "Quiz on Video: Transition Words",
         "Final Quiz: Transition Words and Phrases"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 7,
       "passScore": 6,
       "questions": [
@@ -4100,6 +4175,7 @@
       "moduleTitles": [
         "Final Quiz: Points of View"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 4,
       "passScore": 4,
       "questions": [
@@ -4287,6 +4363,7 @@
         "Quiz on Video: What is on the Test",
         "Final Quiz: Language Arts"
       ],
+      "practiceModuleTitles": [],
       "questionCount": 18,
       "passScore": 15,
       "questions": [

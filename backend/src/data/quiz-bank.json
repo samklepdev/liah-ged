@@ -34,6 +34,38 @@
  {
   "course": "ged-language-arts",
   "courseTitle": "GED® Language Arts: Prepare for the exam",
+  "quizTitle": "Practice Question 1",
+  "lesson": "Lesson 1: Vocabulary Questions",
+  "questionNumber": 1,
+  "question": "Read the following passage. Determine the meaning of the word Identical.\n“Mark Twain’s book “The Prince and the Pauper” is about two boys who look identical. One is a prince and one is a pauper. After they meet, they switch places with each other. They become trapped in the other boy’s world. Both boys have difficulty living as the other boy.”\nIn this passage, the word identical means which of the following?",
+  "options": [
+   "Different",
+   "Looking the same",
+   "Brothers",
+   "Like a Prince and a Pauper"
+  ],
+  "correctIndex": 1,
+  "explanation": "Answer:\nb) Looking the same\nExplanation:\n“Identical” means exactly alike, or looking the same. In the passage, the prince and the pauper look so alike that they can switch places with each other without anyone noticing — that’s what makes them identical."
+ },
+ {
+  "course": "ged-language-arts",
+  "courseTitle": "GED® Language Arts: Prepare for the exam",
+  "quizTitle": "Practice Question 2",
+  "lesson": "Lesson 1: Vocabulary Questions",
+  "questionNumber": 1,
+  "question": "Read the following text. Then answer the question.\n“Starting at age 55, our hippocampus, a brain region critical to memory, shrinks 1 to 2 percent every year, to say nothing of the fact that one in nine people age 65 and older has Alzheimer’s disease. The number afflicted is expected to grow rapidly as the baby boom generation ages. Given these grim statistics, it’s no wonder that Americans are a captive market for anything, from supposed smart drugs and supplements to brain training, which promises to boost normal mental functioning or to stem its all-too-common decline.” (courtesy of The New York Times.)\nIn the text, the word stem means which of the following?",
+  "options": [
+   "Stalk",
+   "Prevent",
+   "Originate",
+   "Develop"
+  ],
+  "correctIndex": 1,
+  "explanation": "Answer:\nb) Prevent\nExplanation:\nHere, “stem” is used as a verb meaning to hold something back or stop it from getting worse — “to stem its…decline” means to prevent further decline. “Stalk”, the plant part, is a different meaning of “stem” used as a noun, which doesn’t fit this sentence."
+ },
+ {
+  "course": "ged-language-arts",
+  "courseTitle": "GED® Language Arts: Prepare for the exam",
   "quizTitle": "Final Quiz: Vocabulary",
   "lesson": "Lesson 1: Vocabulary Questions",
   "questionNumber": 1,
