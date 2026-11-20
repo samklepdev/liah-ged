@@ -111,6 +111,7 @@ export async function seedSubject(
             position: index + 1,
             title: topic.title,
             content: topic.content,
+            videoUrl: topic.videoUrl ?? null,
             moduleId: moduleIdByTitle.get(topic.title) ?? null,
           })),
         );

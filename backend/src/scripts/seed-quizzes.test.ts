@@ -94,7 +94,7 @@ test('seedSubject writes passScore and content when provided', async () => {
   assert.equal(row?.content, 'First paragraph.\n\nSecond paragraph.');
 });
 
-test('seedSubject inserts each course\'s topics in order, with their content', async () => {
+test('seedSubject inserts each course\'s topics in order, with their content and video url', async () => {
   const withTopics: ParsedSubject = {
     slug: 'ged-demo',
     title: 'GED Demo',
@@ -107,7 +107,11 @@ test('seedSubject inserts each course\'s topics in order, with their content', a
         moduleTitles: ['Reading'],
         topics: [
           { title: 'In this lesson…', content: 'You will learn things.' },
-          { title: 'Practice Question 1', content: null },
+          {
+            title: 'Video: Example',
+            content: null,
+            videoUrl: 'https://www.youtube.com/watch?v=abc123',
+          },
         ],
         questions: [],
       },
@@ -117,15 +121,25 @@ test('seedSubject inserts each course\'s topics in order, with their content', a
   await seedSubject(withTopics);
 
   const rows = await db
-    .select({ position: topics.position, title: topics.title, content: topics.content })
+    .select({
+      position: topics.position,
+      title: topics.title,
+      content: topics.content,
+      videoUrl: topics.videoUrl,
+    })
     .from(topics)
     .innerJoin(courses, eq(courses.id, topics.courseId))
     .where(eq(courses.slug, 'ged-demo-course'))
     .orderBy(topics.position);
 
   assert.deepEqual(rows, [
-    { position: 1, title: 'In this lesson…', content: 'You will learn things.' },
-    { position: 2, title: 'Practice Question 1', content: null },
+    { position: 1, title: 'In this lesson…', content: 'You will learn things.', videoUrl: null },
+    {
+      position: 2,
+      title: 'Video: Example',
+      content: null,
+      videoUrl: 'https://www.youtube.com/watch?v=abc123',
+    },
   ]);
 });
 
